@@ -1,6 +1,7 @@
 #include <functional>
 #include <string>
 #include <vector>
+#include <cmath>
 
 namespace hagame {
 	namespace math {
