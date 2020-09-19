@@ -41,6 +41,12 @@ else()
     find_library(_SDL2_LIB SDL2)
     message("SDL LIBS: ${SDL2}")
     set(SDL2_LIBS ${SDL2})
+
+    if("${SDL2_LIBS}" STREQUAL "")
+        message("SETTING SDL2::SDL2 manually")
+        set(SDL_LIBS "SDL2::SDL2")
+    endif()
+
     mark_as_advanced(SDL2_INCLUDE_DIRS _SDL2_LIB _SDL2main_LIB)
     find_package_handle_standard_args(SDL2 DEFAULT_MSG SDL2_INCLUDE_DIRS SDL2_LIBS)
 endif()
