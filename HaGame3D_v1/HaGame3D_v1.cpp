@@ -8,21 +8,26 @@ using Vec3 = hagame::math::Vector<3, double>;
 
 int main()
 {
-	Vec3 vect = Vec3({ 1, 2, 3});
-	Vec3 vect2 = Vec3({ 1 / 1.0, 1 / 2.0, 1 / 3.0 });
-	Vec3 vect3 = Vec3({ 5, 10, 15 });
+    SDL_Init(SDL_INIT_VIDEO);
 
-	std::cout << vect.toString() << std::endl;
-	std::cout << "Size: " << sizeof(Vec3) << std::endl;
-	std::cout << "Magnitude: " << vect.magnitude() << std::endl;
-	std::cout << "Normalized: " << vect.normalized().toString() << std::endl;
-	std::cout << "Original: " << vect.toString() << std::endl;
-	std::cout << "Vect 2: " << vect2.toString() << std::endl;
-	std::cout << "Prod: " << vect.prod(vect2).toString() << std::endl;
-	std::cout << "Dot: " << vect.dot(vect2) << std::endl;
-	std::cout << "A + C = " << (vect + vect3).toString() << std::endl;
-	std::cout << "A *= 10 = " << (vect *= 10).toString() << std::endl;
-	std::cout << "A * 1/10. = " << (vect * 1 / 10.0).toString() << std::endl;
-	std::cout << "1/10.0 * A = " << (1 / 10.0 * vect).toString() << std::endl;
+    SDL_Window* window = SDL_CreateWindow(
+        "SDL2Test",
+        SDL_WINDOWPOS_UNDEFINED,
+        SDL_WINDOWPOS_UNDEFINED,
+        640,
+        480,
+        0
+    );
+
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+    SDL_RenderClear(renderer);
+    SDL_RenderPresent(renderer);
+
+    SDL_Delay(3000);
+
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+
 	return 0;
 }
