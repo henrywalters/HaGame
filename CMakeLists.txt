@@ -11,13 +11,27 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/modules")
  
 find_package(SDL2 REQUIRED)
 
+find_package(OpenGL REQUIRED)
+message(STATUS "OpenGL: ${OPENGL_INCLUDE_DIR}")
+
+#find_package(GLM REQUIRED)
+
+list(APPEND CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR}/extern/glew-2.1.0)
+
+find_package(GLEW REQUIRED)
+
+message("GLEW_LIBS: ${GLEW_INCLUDE_DIRS}")
+
 message("SDL2_DIR = ${SDL2_INCLUDE_DIRS}")
 message("SDL2_LIB = ${SDL2_LIBS}")
 
 include_directories(${SDL2_INCLUDE_DIRS})
 
 add_executable(HaGame3D HaGame3D_v1/HaGame3D_v1.cpp)
-target_link_libraries(HaGame3D ${SDL2_LIBS})    
+
+set(LIBS ${SDL2_LIBS} opengl32 GLEW::GLEW)
+
+target_link_libraries(HaGame3D ${LIBS})
 
 # Copy SDL2 DLLs to output folder on Windows
 if(WIN32)
