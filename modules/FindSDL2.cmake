@@ -43,8 +43,7 @@ else()
     set(SDL2_LIBS ${SDL2})
 
     if("${SDL2_LIBS}" STREQUAL "")
-        message("SETTING SDL2::SDL2 manually")
-        set(SDL2_LIBS "SDL2::SDL2")
+        set(SDL2_LIBS "SDL2")
     endif()
 
     message("SDL LIBS: ${SDL2_LIBS}")
