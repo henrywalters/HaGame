@@ -14,7 +14,7 @@ find_package(SDL2 REQUIRED)
 message("SDL2_DIR = ${SDL2_INCLUDE_DIRS}")
 message("SDL2_LIB = ${SDL2_LIBS}")
 
-include_directories(${SDL2_INCLUDE_DIRS} ${CMAKE_BINARY_DIR})
+include_directories(${SDL2_INCLUDE_DIRS})
 
 add_executable(HaGame3D_v1 HaGame3D_v1/HaGame3D_v1.cpp)
 target_link_libraries(HaGame3D_v1 ${SDL2_LIBS})    
