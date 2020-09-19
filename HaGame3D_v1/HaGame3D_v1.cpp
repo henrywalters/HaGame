@@ -2,6 +2,7 @@
 //
 
 #include "HaGame3D_v1.h"
+#include <SDL.h>
 
 using Vec3 = hagame::math::Vector<3, double>;
 

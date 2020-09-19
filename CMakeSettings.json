@@ -10,7 +10,9 @@
       "cmakeCommandArgs": "",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
-      "variables": []
+      "variables": [
+
+      ]
     },
     {
       "name": "x64-Release",
@@ -22,7 +24,9 @@
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
       "inheritEnvironments": [ "msvc_x64_x64" ],
-      "variables": []
+      "variables": [
+
+      ]
     },
     {
       "name": "Linux-Debug",
