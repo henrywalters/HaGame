@@ -29,7 +29,7 @@ include_directories(${SDL2_INCLUDE_DIRS})
 
 add_executable(HaGame3D HaGame3D_v1/HaGame3D_v1.cpp)
 
-set(LIBS ${SDL2_LIBS} opengl32 GLEW::GLEW)
+set(LIBS ${SDL2_LIBS} GLEW::GLEW)
 
 target_link_libraries(HaGame3D ${LIBS})
 
