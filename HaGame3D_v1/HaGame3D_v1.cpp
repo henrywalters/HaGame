@@ -1,8 +1,8 @@
 ﻿// HaGame3D_v1.cpp : Defines the entry point for the application.
 //
-
+#define SDL_MAIN_HANDLED // insert this
 #include "HaGame3D_v1.h"
-#include <SDL.h>
+#include "SDL.h"
 
 using Vec3 = hagame::math::Vector<3, double>;
 
@@ -20,7 +20,7 @@ int main()
     );
 
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+    SDL_SetRenderDrawColor(renderer, 155, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(renderer);
     SDL_RenderPresent(renderer);
 
