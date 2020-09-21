@@ -3,6 +3,9 @@
 #include <vector>
 #include <cmath>
 
+#ifndef VECTOR
+#define VECTOR
+
 namespace hagame {
 	namespace math {
 		
@@ -191,3 +194,5 @@ namespace hagame {
 		}
 	}
 }
+
+#endif

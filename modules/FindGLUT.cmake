@@ -1,0 +1,8 @@
+if (WIN32)
+	message("ATTEMPTING TO FIND GLUT")
+	set(GLUT_LIBS ${CMAKE_SOURCE_DIR}/extern/freeglut/lib/x64/freeglut.lib)
+	set(GLUT_DLLS ${CMAKE_SOURCE_DIR}/extern/freeglut/bin/x64/freeglut.lib)
+	set(GLUT_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/extern/freeglut/include/)
+else()
+	set(GLUT_LIBS "GLUT::GLUT")
+endif()

@@ -5,5 +5,10 @@
 
 #include <iostream>
 #include "Math/Vector.h"
+#include "Graphics/Window.h"
+#include "Graphics/Shader.h"
+#include "Input/Device.h"
+#include "Input/Devices/Gamepad.h"
+#include "Utils/FileSystem.h"
 
 // TODO: Reference additional headers your program requires here.

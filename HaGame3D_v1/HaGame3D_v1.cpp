@@ -3,40 +3,34 @@
 #define SDL_MAIN_HANDLED // insert this
 #include "HaGame3D_v1.h"
 #include "SDL.h"
-#include "GL/glew.h"
-#include "SDL_opengl.h"
 
 using Vec3 = hagame::math::Vector<3, double>;
 
 int main()
-{
-    SDL_Init(SDL_INIT_VIDEO);
+{	
+	hagame::graphics::Window window = hagame::graphics::Window(hagame::math::Vector<2, uint32_t>({ 400, 400 }), "DEMO");
+	auto fs = hagame::utils::FileSystem("../../../HaGame3D_v1/Assets");
 
-    SDL_Window* window = SDL_CreateWindow(
-        "SDL2Test",
-        SDL_WINDOWPOS_UNDEFINED,
-        SDL_WINDOWPOS_UNDEFINED,
-        640,
-        480,
-        SDL_WINDOW_OPENGL
-    );
+	auto vert = fs.readFile("Shaders/simple_vert.glsl");
+	auto frag = fs.readFile("Shaders/simple_Frag.glsl");
 
-    SDL_GLContext context;
+	auto vShader = hagame::graphics::Shader::LoadVertex(vert);
+	auto fShader = hagame::graphics::Shader::LoadFragment(frag);
 
-    glewInit();
+	// std::cout << vert << std::endl;
 
-    context = SDL_GL_CreateContext(window);
+	auto gamepad = new hagame::input::devices::Gamepad(0);
+	bool running = true;
+	while (running) {
+		gamepad->pollDevice();
+		if (gamepad->startPressed) {
+			std::cout << "Start" << std::endl;
+		}
 
-    if (context == NULL) {
-        std::cout << SDL_GetError() << std::endl;
-    }
-
-    while (true) {
-
-    }
-
-    SDL_DestroyWindow(window);
-    SDL_Quit();
-
+		if (gamepad->homePressed) {
+			running = false;
+		}
+		// std::cout << gamepad->lAxis.toString() << std::endl;
+	}
 	return 0;
 }
