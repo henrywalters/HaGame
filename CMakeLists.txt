@@ -15,7 +15,7 @@ find_package(OpenGL REQUIRED)
 
 message(STATUS "OpenGL_FOUND:= ${OpenGL_FOUND}")
  
-#find_package(GLM REQUIRED)
+find_package(GLM REQUIRED)
  
 #list(APPEND CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR}/extern/glew-2.1.0)
 
@@ -27,11 +27,12 @@ message(STATUS "OpenGL LIBS: ${OPENGL_INCLUDE_DIR}")
 message(STATUS "GLEW_LIBS: ${GLEW_LIBS}")
 message(STATUS "GLUT_LIBS: ${GLUT_INCLUDE_DIRS}")
 message(STATUS "SDL2_DIR = ${SDL2_INCLUDE_DIRS}")
+message(STATUS "GLM_INCLUDE_DIR = ${GLM_INCLUDE_DIRS}")
 message(STATUS "SDL2_LIB = ${SDL2_LIBS}")
 
-include_directories(${SDL2_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIR})
+include_directories(${SDL2_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIR} ${GLM_INCLUDE_DIRS})
 
-add_executable(HaGame3D HaGame3D_v1/HaGame3D_v1.cpp "HaGame3D_v1/Graphics/Color.h"  "HaGame3D_v1/Input/Device.h" "HaGame3D_v1/Input/Devices/Gamepad.h" "HaGame3D_v1/Graphics/ShaderProgram.h" "HaGame3D_v1/Graphics/Window.cpp" "HaGame3D_v1/Graphics/Shader.cpp" "HaGame3D_v1/Utils/FileSystem.cpp")
+add_executable(HaGame3D HaGame3D_v1/HaGame3D_v1.cpp "HaGame3D_v1/Graphics/Color.h"  "HaGame3D_v1/Input/Device.h" "HaGame3D_v1/Input/Devices/Gamepad.h" "HaGame3D_v1/Graphics/Window.cpp" "HaGame3D_v1/Graphics/Shader.cpp" "HaGame3D_v1/Utils/FileSystem.cpp" "HaGame3D_v1/Graphics/ShaderProgram.cpp" "HaGame3D_v1/Utils/Clock.h" "HaGame3D_v1/Graphics/Mesh.h" "HaGame3D_v1/Utils/Aliases.h" "HaGame3D_v1/Graphics/Routines.h" "HaGame3D_v1/Graphics/Routines.cpp" "HaGame3D_v1/Graphics/Camera.h" "HaGame3D_v1/Graphics/Camera.cpp" "HaGame3D_v1/Core/Transform.h" "HaGame3D_v1/Core/Transform.cpp" "HaGame3D_v1/Graphics/Primitives.h")
 
 set(LIBS ${SDL2_LIBS} ${OPENGL_LIBRARIES} ${GLEW_LIBS})
 

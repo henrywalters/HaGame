@@ -9,6 +9,7 @@
 
 namespace hagame {
 	namespace graphics {
+
 		class Shader {
 		public:
 			GLuint id;

@@ -1,5 +1,5 @@
-varying out vec4 Fragment;
+varying out vec4 LFragment;
 
 void main() {
-	Fragment = vec4(1.0, 1.0, 1.0, 1.0);
+	LFragment = vec4(1.0, 1.0, 1.0, 1.0);
 }

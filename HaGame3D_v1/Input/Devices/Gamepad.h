@@ -52,9 +52,9 @@ namespace hagame {
 				}
 
 				void pollDevice() {
-					rAxis = hagame::math::Vector<2, double>::Zero();
-					lAxis = hagame::math::Vector<2, double>::Zero();
-					dPad = hagame::math::Vector<2, double>::Zero();
+					rAxis = Vec2::Zero();
+					lAxis = Vec2::Zero();
+					dPad = Vec2::Zero();
 
 					if (active) {
 						lAxis[0] = SDL_GameControllerGetAxis(joystick, SDL_CONTROLLER_AXIS_LEFTX);

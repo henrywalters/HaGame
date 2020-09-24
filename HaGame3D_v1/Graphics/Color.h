@@ -3,10 +3,10 @@ namespace hagame {
 #pragma once
 
 		struct RGB {
-			int r;
-			int g;
-			int b;
-			int a;
+			float r;
+			float g;
+			float b;
+			float a;
 		};
 
 		class Color
@@ -17,11 +17,11 @@ namespace hagame {
 
 			Color() {}
 
-			Color(int r, int g, int b) {
-				Color(r, g, b, 0xFF);
+			Color(float r, float g, float b) {
+				Color(r, g, b, 1.0);
 			}
 
-			Color(int r, int g, int b, int a) {
+			Color(float r, float g, float b, float a) {
 				rgb.r = r;
 				rgb.g = g;
 				rgb.b = b;
@@ -35,29 +35,29 @@ namespace hagame {
 			~Color() {}
 
 			static RGB red() {
-				return RGB{ 0xFF, 0x00, 0x00, 0xFF };
+				return RGB{ 1.0, 0.0, 0.0, 1.0 };
 			}
 
 			static RGB green() {
-				return RGB{ 0x00, 0xFF, 0x00, 0xFF };
+				return RGB{ 0.0, 1.0, 0.0, 1.0 };
 			}
 
 			static RGB blue() {
-				return RGB{ 0x00, 0x00, 0xFF, 0xFF };
+				return RGB{ 0.0, 0.0, 1.0, 1.0 };
 			}
 
 			static RGB white() {
-				return RGB{ 0xFF, 0xFF, 0xFF, 0xFF };
+				return RGB{ 1.0, 1.0, 1.0, 1.0 };
 			}
 
 			static RGB black() {
-				return RGB{ 0x00, 0x00, 0x00, 0xFF };
+				return RGB{ 0.0, 0.0, 0.0, 1.0 };
 			}
 
 			static RGB parseHex(char* hex) {
 				int r, g, b;
 				sscanf_s(hex, "#%02x%02x%02x", &r, &g, &b);
-				return RGB{ r, g, b, 0xFF };
+				return RGB{ (float) (r / 255.0), (float)(g / 255.0), (float)(b / 255.0), 1.0 };
 			}
 		};
 	}

@@ -6,9 +6,9 @@
 namespace hagame {
 	namespace input {
 		struct DeviceState {
-			hagame::math::Vector<2, double> rAxis;
-			hagame::math::Vector<2, double> lAxis;
-			hagame::math::Vector<2, double> dPad;
+			Vec2 rAxis;
+			Vec2 lAxis;
+			Vec2 dPad;
 
 			bool select, selectPressed;
 			bool home, homePressed;
