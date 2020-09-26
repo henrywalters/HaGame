@@ -32,7 +32,7 @@ message(STATUS "SDL2_LIB = ${SDL2_LIBS}")
 
 include_directories(${SDL2_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIR} ${GLM_INCLUDE_DIRS})
 
-add_executable(HaGame3D HaGame3D_v1/HaGame3D_v1.cpp "HaGame3D_v1/Graphics/Color.h"  "HaGame3D_v1/Input/Device.h" "HaGame3D_v1/Input/Devices/Gamepad.h" "HaGame3D_v1/Graphics/Window.cpp" "HaGame3D_v1/Graphics/Shader.cpp" "HaGame3D_v1/Utils/FileSystem.cpp" "HaGame3D_v1/Graphics/ShaderProgram.cpp" "HaGame3D_v1/Utils/Clock.h" "HaGame3D_v1/Graphics/Mesh.h" "HaGame3D_v1/Utils/Aliases.h" "HaGame3D_v1/Graphics/Routines.h" "HaGame3D_v1/Graphics/Routines.cpp" "HaGame3D_v1/Graphics/Camera.h" "HaGame3D_v1/Graphics/Camera.cpp" "HaGame3D_v1/Core/Transform.h" "HaGame3D_v1/Core/Transform.cpp" "HaGame3D_v1/Graphics/Primitives.h")
+add_executable(HaGame3D HaGame3D_v1/HaGame3D_v1.cpp "HaGame3D_v1/Graphics/Color.h"  "HaGame3D_v1/Input/Device.h" "HaGame3D_v1/Input/Devices/Gamepad.h" "HaGame3D_v1/Graphics/Window.cpp" "HaGame3D_v1/Graphics/Shader.cpp" "HaGame3D_v1/Utils/FileSystem.cpp" "HaGame3D_v1/Graphics/ShaderProgram.cpp" "HaGame3D_v1/Utils/Clock.h" "HaGame3D_v1/Graphics/Mesh.h" "HaGame3D_v1/Utils/Aliases.h" "HaGame3D_v1/Graphics/Routines.h" "HaGame3D_v1/Graphics/Routines.cpp" "HaGame3D_v1/Graphics/Camera.h" "HaGame3D_v1/Graphics/Camera.cpp" "HaGame3D_v1/Core/Transform.h" "HaGame3D_v1/Core/Transform.cpp" "HaGame3D_v1/Graphics/Primitives.h" "HaGame3D_v1/Graphics/Texture.h" "HaGame3D_v1/Vendor/stb/stb_image.cpp" "HaGame3D_v1/Graphics/Texture.cpp" "HaGame3D_v1/Math/Functions.h")
 
 set(LIBS ${SDL2_LIBS} ${OPENGL_LIBRARIES} ${GLEW_LIBS})
 

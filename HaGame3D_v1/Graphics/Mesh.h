@@ -56,12 +56,15 @@ namespace hagame {
 
 			Mesh(std::vector<Vec3> verts, std::vector<Vec2> texts, std::vector<Vec3Int> inds) {
 				textures = texts;
-				Mesh(verts, inds);
+				vertices = verts;
+				indices = inds;
+				calculateNormals();
 			}
 		};
 
 		struct GLMesh {
 			GLuint vertexBuffer;
+			GLuint textureBuffer;
 			GLuint normalBuffer;
 			GLuint indexBuffer;
 
@@ -75,6 +78,10 @@ namespace hagame {
 				glGenBuffers(1, &glMesh.normalBuffer);
 				glBindBuffer(GL_ARRAY_BUFFER, glMesh.normalBuffer);
 				glBufferData(GL_ARRAY_BUFFER, mesh.normals.size() * sizeof(hagame::math::Vector<3, float>), flattenVectorArray<3, float>(mesh.normals).data(), GL_STATIC_DRAW);
+
+				glGenBuffers(1, &glMesh.textureBuffer);
+				glBindBuffer(GL_ARRAY_BUFFER, glMesh.textureBuffer);
+				glBufferData(GL_ARRAY_BUFFER, mesh.textures.size() * sizeof(Vec2), flattenVectorArray<2, float>(mesh.textures).data(), GL_STATIC_DRAW);
 
 				glGenBuffers(1, &glMesh.indexBuffer);
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, glMesh.indexBuffer);

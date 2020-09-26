@@ -80,9 +80,9 @@ namespace hagame {
 			}
 
 			void normalize() {
-				T magnitude = magnitude();
+				T mag = magnitude();
 				for (int i = 0; i < size; i++) {
-					vector[i] /= magnitude;
+					vector[i] /= mag;
 				}
 			}
 

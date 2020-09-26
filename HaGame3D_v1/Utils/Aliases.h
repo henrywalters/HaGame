@@ -6,6 +6,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
+#include "../Math/Vector.h"
 
 using Vec3 = hagame::math::Vector < 3, float >;
 inline Vec3 hgVec3(glm::vec3 vec) {

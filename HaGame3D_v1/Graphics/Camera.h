@@ -14,6 +14,9 @@ namespace hagame {
 	namespace graphics {
 		class Camera {
 		public:
+			float xRot;
+			float yRot;
+
 			Vec3 position;
 			Vec3 direction;
 			Vec3UInt32 size;

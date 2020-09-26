@@ -11,6 +11,7 @@
 #include "Graphics/Mesh.h"
 #include "Graphics/Camera.h"
 #include "Graphics/Primitives.h"
+#include "Graphics/Texture.h"
 #include "Input/Device.h"
 #include "Input/Devices/Gamepad.h"
 #include "Utils/FileSystem.h"

@@ -49,7 +49,7 @@ void hagame::graphics::Window::initGL() {
 
 void hagame::graphics::Window::clear() {
 	glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void hagame::graphics::Window::render() {

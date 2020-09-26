@@ -6,6 +6,7 @@
 #include <SDL_opengl.h>
 #include <string>
 #include <iostream>
+#include "../Utils/Aliases.h"
 
 namespace hagame {
 	namespace graphics {
