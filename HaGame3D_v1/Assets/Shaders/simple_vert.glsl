@@ -1,6 +1,8 @@
-varying in vec3 aVertexPos;
-varying in vec3 aNormal;
-varying in vec2 aTex;
+#version 150
+
+in vec3 aVertexPos;
+in vec3 aNormal;
+in vec2 aTex;
 
 uniform mat4 Model;
 uniform mat4 View;

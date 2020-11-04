@@ -1,3 +1,5 @@
+#version 150
+
 uniform vec3 Color;
 
 varying out vec4 LFragment;

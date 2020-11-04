@@ -10,6 +10,12 @@ hagame::graphics::Camera::Camera(Vec3UInt32 _size): size(_size) {
 	zFar = 100.0f;
 }
 
+glm::mat4 hagame::graphics::Camera::getOrthographicMatrix() {
+	return glm::ortho(-(800.0f / 2.0f), 800.0f / 2.0f,
+		600.0f / 2.0f, -(600.0f / 2.0f),
+		-10.0f, 10.0f);
+}
+
 glm::mat4 hagame::graphics::Camera::getProjectionMatrix() {
 	return glm::perspective(glm::radians(fov), (float)size[0] / (float)size[1], zNear, zFar);
 }

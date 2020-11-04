@@ -1,7 +1,8 @@
+#version 150
 
-varying in vec2 Tex;
-varying in vec3 FragPos;
-varying in vec3 Normal;
+varying vec2 Tex;
+varying vec3 FragPos;
+varying vec3 Normal;
 
 varying out vec4 LFragment;
 

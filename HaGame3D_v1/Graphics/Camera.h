@@ -26,6 +26,7 @@ namespace hagame {
 
 			Camera(Vec3UInt32 _size);
 
+			glm::mat4 getOrthographicMatrix();
 			glm::mat4 getProjectionMatrix();
 			glm::mat4 getViewMatrix();
 
