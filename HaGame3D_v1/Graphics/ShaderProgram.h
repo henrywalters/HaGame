@@ -22,12 +22,16 @@ namespace hagame {
 
 			std::string getProgramLog();
 
+			void use();
+
 			GLuint getUniform(std::string var);
 			GLint getAttrib(std::string var);
-			void setUniformInt(std::string var, int val);
-			void setUniformFloat(std::string var, float val);
-			void setUniformVec3(std::string var, glm::vec3 vect);
-			void setUniformMat4(std::string var, glm::mat4 mat);
+			void setInt(std::string var, int val);
+			void setFloat(std::string var, float val);
+			void setVec2(std::string var, glm::vec2 vect);
+			void setVec3(std::string var, glm::vec3 vect);
+			void setVec4(std::string var, glm::vec4 vect);
+			void setMat4(std::string var, glm::mat4 mat);
 		};
 	}
 }

@@ -1,10 +1,10 @@
+#ifndef VECTOR
+#define VECTOR
+
 #include <functional>
 #include <string>
 #include <vector>
 #include <cmath>
-
-#ifndef VECTOR
-#define VECTOR
 
 namespace hagame {
 	namespace math {
@@ -24,6 +24,12 @@ namespace hagame {
 			Vector() {
 				for (int i = 0; i < size; i++) {
 					vector[i] = 0;
+				}
+			}
+			
+			Vector(T val) {
+				for (int i = 0; i < size; i++) {
+					vector[i] = val;
 				}
 			}
 

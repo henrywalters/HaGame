@@ -18,3 +18,8 @@ hagame::graphics::Texture::Texture(std::string _path) : path(_path) {
 
 	stbi_image_free(data);
 }
+
+void hagame::graphics::Texture::bind()
+{
+	glBindTexture(GL_TEXTURE_2D, id);
+}

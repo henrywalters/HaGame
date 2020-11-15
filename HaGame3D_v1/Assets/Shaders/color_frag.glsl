@@ -1,9 +1,9 @@
-#version 150
+#version 330 core
 
-uniform vec3 Color;
+uniform vec4 color;
 
-varying out vec4 LFragment;
+out vec4 LFragment;
 
 void main() {
-	LFragment = vec4(Color, 1.0f);
+	LFragment = vec4(1.0, 1.0, 0.0, 1.0);
 }

@@ -1,3 +1,6 @@
+#ifndef MESH
+#define MESH
+
 #include <SDL.h>
 #include <gl/glew.h>
 #include <glm/glm.hpp>
@@ -5,9 +8,6 @@
 #include "../Math/Vector.h"
 #include "../Utils/Aliases.h"
 #include <iostream>
-
-#ifndef MESH
-#define MESH
 
 namespace hagame {
 	namespace graphics {

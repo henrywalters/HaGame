@@ -19,12 +19,12 @@ namespace hagame {
 
 			Vec3 position;
 			Vec3 direction;
-			Vec3UInt32 size;
+			Vec3 size;
 			float fov;
 			float zNear;
 			float zFar;
 
-			Camera(Vec3UInt32 _size);
+			Camera(Vec3 _size);
 
 			glm::mat4 getOrthographicMatrix();
 			glm::mat4 getProjectionMatrix();

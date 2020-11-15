@@ -23,6 +23,15 @@ std::string hagame::utils::FileSystem::getFullPath(std::string path) {
 	return basePath + "/" + path;
 }
 
+hagame::utils::File hagame::utils::FileSystem::getFile(std::string path)
+{
+	if (!isFile(path)) {
+		throw new std::exception("File does not exist");
+	}
+
+	return File(basePath, path);
+}
+
 std::string hagame::utils::FileSystem::readFile(std::string path) {
 	std::ifstream stream(getFullPath(path));
 	return std::string(std::istreambuf_iterator<char>(stream), std::istreambuf_iterator<char>());

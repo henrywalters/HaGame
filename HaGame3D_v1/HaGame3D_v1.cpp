@@ -3,6 +3,7 @@
 #define SDL_MAIN_HANDLED // insert this
 #include "HaGame3D_v1.h"
 #include "SDL.h"
+#include "Demos/Breakout.hpp"
 
 const int MAP[10][10] = {
 	{ 1, 1, 1, 1, 1, 1, 1, 1, 1 },
@@ -18,66 +19,70 @@ const int MAP[10][10] = {
 };
 
 int main()
-{	
-	hagame::graphics::Window window = hagame::graphics::Window(hagame::math::Vector<2, uint32_t>({ 800, 800 }), "DEMO");
-	auto fs = hagame::utils::FileSystem("../../../HaGame3D_v1/Assets");
+{
 
-	auto vert = fs.readFile("Shaders/simple_vert.glsl");
-	auto frag = fs.readFile("Shaders/simple_frag.glsl");
+	hagame::Breakout breakout = hagame::Breakout(Vec2({ 800.0f, 800.0f }));
+	breakout.run();
 
-	auto vShader = hagame::graphics::Shader::LoadVertex(vert);
-	auto fShader = hagame::graphics::Shader::LoadFragment(frag);
+	/*
+	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_HAPTIC);
 
-	auto sProgram = hagame::graphics::ShaderProgram(vShader, fShader);
+	auto monitors = hagame::graphics::MonitorManager::GetAvailableMonitorCount();
 
-	auto colorShader = hagame::graphics::ShaderProgram(
-		hagame::graphics::Shader::LoadVertex(fs.readFile("Shaders/color_vert.glsl")),
-		hagame::graphics::Shader::LoadFragment(fs.readFile("Shaders/color_frag.glsl"))
-	);
+	auto window = std::make_shared<hagame::graphics::Window>(Vec2({ 800, 800 }), "Demo");
 
-	auto gamepad = new hagame::input::devices::Gamepad(0);
+	auto resources = hagame::ResourceManager("../../../HaGame3D_v1/Assets");
+
+	window->create();
+
+	auto gamepad = new hagame::input::devices::KeyboardMouse();
 	bool running = true;
 
-	// window.clearColor = hagame::graphics::Color::parseHex("#1ee8a5");
-
-	hagame::graphics::GLMesh glMesh = hagame::graphics::GLMesh::FromMesh(hagame::graphics::Cube);
-
-	GLint vertexPosAttrib = glGetAttribLocation(sProgram.id, "aVertexPos");
-	GLint normalAttrib = glGetAttribLocation(sProgram.id, "aNormal");
-	GLint texAttrib = glGetAttribLocation(sProgram.id, "aTex");
-
-	auto camera = hagame::graphics::Camera(Vec3UInt32({ 400, 400 }));
-
-	auto perspective = camera.getProjectionMatrix();
-	auto view = camera.getViewMatrix();
-
-	std::vector<hagame::Transform> transforms = std::vector<hagame::Transform>();
-
-	std::cout << glMat4ToString(glm::mat4(1.0f)) << std::endl;
-
-	hagame::graphics::Texture texture = hagame::graphics::Texture(fs.getFullPath("Textures/crate.jpg"));
-
-	hagame::Transform light = hagame::Transform();
-
-	light.position = Vec3({ 10.0f, 2.0f, 10.0f });
-
-	for (int i = 0; i < 10; i++) {
-		for (int j = 0; j < 10; j++) {
-			if (MAP[j][i] == 1) {
-				hagame::Transform transform = hagame::Transform();
-				transform.grow(Vec3({ 1.0f, 1.0f, 1.0f }));
-				transform.move(Vec3({ i * 2.0f, -1.0f, j * 2.0f }));
-				transforms.push_back(transform);
-			}
-		}
-	}
+	auto camera = hagame::graphics::Camera(Vec3({ 800, 800 }));
 
 	float dt = 0;
 	float t = 0;
 
-	window.clearColor = hagame::graphics::Color::blue();
+	window->clearColor = hagame::graphics::Color::blue();
+
+	// Sprite Test
+
+	resources.loadTexture("nat", "Textures/natalie.jpg");
+	resources.loadTexture("cat", "Textures/kitty.jpg");
+	resources.loadTexture("fire", "Textures/fireball.png");
+
+	auto spriteShader = resources.loadShaderProgram("sprite", "Shaders/sprite_vert.glsl", "Shaders/sprite_frag.glsl");
+	auto particleShader = resources.loadShaderProgram("particle", "Shaders/particle_vert.glsl", "Shaders/particle_frag.glsl");
+
+	spriteShader->use();
+	spriteShader->setMat4("projection", camera.getOrthographicMatrix());
+
+	particleShader->use();
+	particleShader->setMat4("projection", camera.getOrthographicMatrix());
+
+	auto renderer = std::make_shared<hagame::graphics::SpriteRenderer>(resources.getShaderProgram("sprite"));
+	auto particleRenderer = std::make_shared<hagame::graphics::SpriteRenderer>(resources.getShaderProgram("sprite"));
+
+	auto player = hagame::graphics::Sprite(resources.getTexture("nat"), Rect(Vec2({ 100, 100 }), Vec2({ 200, 200 })), 45.0f, hagame::graphics::Color::white(), 0.0f);
+
+	using Sprite = hagame::graphics::Sprite;
+	using Particle = hagame::graphics::Particle;
+
+	int max_particles = 50;
+	Array<Sprite> enemies = Array<Sprite>();
+	Queue<Sprite> particles = Queue<Sprite>();
+
+	for (int i = 0; i < 1000; i++) {
+
+		enemies.push_back(hagame::graphics::Sprite(resources.getTexture("cat"), Rect({ Vec2({i * 50.0f, i * 50.0f}), Vec2({20.0f, 20.0f}) }), 0.0f, hagame::graphics::Color::white(), -1.0f));
+	}
+
+	player.origin = player.rect.size * 0.5f;
 
 	while (running) {
+
+		glEnable(GL_DEPTH_TEST);
+		window->clear();
 
 		SDL_Event e;
 
@@ -90,111 +95,52 @@ int main()
 		auto t1 = hagame::utils::Clock::Now();
 
 		gamepad->pollDevice();
-		if (gamepad->startPressed) {
-			std::cout << "Start" << std::endl;
-			running = false;
-		}
 
 		if (gamepad->homePressed) {
-			running = false;
+			// running = false;
 		}
 
-		glEnable(GL_DEPTH_TEST);
-		window.clear();
+		float speed = 200;
 
-		float speed = 5;
+		//if (gamepad->lAxis.magnitude() > 0.2) {
+		//	player.rect.pos += gamepad->lAxis * dt * speed;
+		//}
 
-		if (gamepad->lAxis.magnitude() > 0.2) {
-			camera.position -= speed * dt * camera.direction.normalized() * gamepad->lAxis[1];
+		player.rect.pos = gamepad->getMousePos() - player.rect.size * 0.5;
+
+		Sprite particle = Sprite(resources.getTexture("nat"), Rect({ player.rect.pos, Vec2({200.0f, 200.0f}) }), player.rotation, hagame::graphics::Color::white(), max_particles - particles.size());
+		particles.push_back(particle);
+
+		if (particles.size() > max_particles) {
+			particles.pop_front();
 		}
 
-		if (gamepad->rAxis.magnitude() > 0.2) {
-			camera.xRot += gamepad->rAxis[0] * dt;
-			camera.yRot -= gamepad->rAxis[1] * dt;
+		for (auto &particle : particles) {
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+			hagame::graphics::drawSprite(window, renderer, particle);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		}
 
-		// std::cout << "Drawing : " << hagame::graphics::Cube.indices.size() * transforms.size() << " triangles \n";
+		
+
+		player.rotation = getAngle<float>((gamepad->mousePos - (player.rect.pos + player.origin))) * RAD_TO_DEG;
 
 		t += dt;
 
-		light.position[1] = sin(t) * 5.0f;
+		hagame::graphics::drawSprite(window, renderer, player);
 
-		auto vp = camera.getProjectionMatrix() * camera.getViewMatrix();
-
-		glUseProgram(colorShader.id);
-
-		colorShader.setUniformMat4("Model", light.getModelMatrix());
-		colorShader.setUniformVec3("Color", glVec3(Vec3({ 1.0, 1.0, 1.0 })));
-
-		colorShader.setUniformMat4("View", camera.getViewMatrix());
-		colorShader.setUniformMat4("Projection", camera.getProjectionMatrix());
-
-		glEnableVertexAttribArray(vertexPosAttrib);
-		glBindBuffer(GL_ARRAY_BUFFER, glMesh.vertexBuffer);
-		glVertexAttribPointer(vertexPosAttrib, 3, GL_FLOAT, GL_FALSE, sizeof(Vec3), NULL);
-
-		glEnableVertexAttribArray(normalAttrib);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, glMesh.normalBuffer);
-		glVertexAttribPointer(normalAttrib, 3, GL_FLOAT, GL_FALSE, sizeof(Vec3), NULL);
-
-		glEnableVertexAttribArray(texAttrib);
-		glBindBuffer(GL_ARRAY_BUFFER, glMesh.textureBuffer);
-		glVertexAttribPointer(texAttrib, 3, GL_FLOAT, GL_FALSE, sizeof(Vec2), NULL);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, glMesh.indexBuffer);
-
-		glDrawElements(GL_TRIANGLES, hagame::graphics::Cube.indices.size() * 3, GL_UNSIGNED_INT, NULL);
-
-		glDisableVertexAttribArray(vertexPosAttrib);
-		glDisableVertexAttribArray(normalAttrib);
-		glDisableVertexAttribArray(texAttrib);
-
-
-		glUseProgram(sProgram.id);
-		sProgram.setUniformFloat("AmbientStrength", 0.5);
-		sProgram.setUniformFloat("SpecularStrength", 0.8);
-		sProgram.setUniformFloat("Shininess", 32);
-		sProgram.setUniformVec3("ViewPos", glVec3(camera.position));
-		sProgram.setUniformVec3("AmbientColor", glVec3(Vec3({ 1.0, 1.0, 1.0 })));
-		sProgram.setUniformVec3("LightColor", glVec3(Vec3({ 1.0, 1.0, 1.0 })));
-		sProgram.setUniformVec3("LightPos", glVec3(light.position));
-		sProgram.setUniformMat4("View", camera.getViewMatrix());
-		sProgram.setUniformMat4("Projection", camera.getProjectionMatrix());
-
-		for (int i = 0; i < transforms.size(); i++) {
-
-			// transforms[i].rotation += dt;
-			
-			sProgram.setUniformMat4("Model", transforms[i].getModelMatrix());
-
-			glEnableVertexAttribArray(vertexPosAttrib);
-			glBindBuffer(GL_ARRAY_BUFFER, glMesh.vertexBuffer);
-			glVertexAttribPointer(vertexPosAttrib, 3, GL_FLOAT, GL_FALSE, sizeof(Vec3), NULL);
-
-			glEnableVertexAttribArray(normalAttrib);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, glMesh.normalBuffer);
-			glVertexAttribPointer(normalAttrib, 3, GL_FLOAT, GL_FALSE, sizeof(Vec3), NULL);
-
-			glEnableVertexAttribArray(texAttrib);
-			glBindBuffer(GL_ARRAY_BUFFER, glMesh.textureBuffer);
-			glVertexAttribPointer(texAttrib, 3, GL_FLOAT, GL_FALSE, sizeof(Vec2), NULL);
-
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, glMesh.indexBuffer);
-
-			glDrawElements(GL_TRIANGLES, hagame::graphics::Cube.indices.size() * 3, GL_UNSIGNED_INT, NULL);
-
-			glDisableVertexAttribArray(vertexPosAttrib);
-			//glDisableVertexAttribArray(normalAttrib);
-			//glDisableVertexAttribArray(texAttrib);
+		for (auto enemy : enemies) {
+			hagame::graphics::drawSprite(window, renderer, enemy);
 		}
 
-		window.render();
+		window->render();
 
 		dt = (hagame::utils::Clock::Now() - t1) / 1000000.0f;
 		auto FPS = 1 / (dt );
 
-		// std::cout << FPS << std::endl;
+		std::cout << FPS << std::endl;
 
 	}
 	return 0;
+	*/
 }
