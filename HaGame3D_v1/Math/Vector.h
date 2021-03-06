@@ -54,6 +54,19 @@ namespace hagame {
 				return vect;
 			}
 
+			// Basic accessors
+			const T x() {
+				return vector[0];
+			}
+
+			const T y() {
+				return vector[1];
+			}
+
+			const T z() {
+				return vector[2];
+			}
+
 			// Basic functions
 
 			size_t getSize() {
@@ -105,6 +118,20 @@ namespace hagame {
 				for (int i = 0; i < size; i++) {
 					copy[i] *= vect[i];
 				};
+				return copy;
+			}
+
+			template <size_t toSize>
+			Vector<toSize, T> resize() {
+				Vector<toSize, T> copy = Vector<toSize, T>();
+				for (int i = 0; i < toSize; i++) {
+					if (i <= size) {
+						copy.vector[i] = vector[i];
+					}
+					else {
+						copy.vector[i] = 0;
+					}
+				}
 				return copy;
 			}
 

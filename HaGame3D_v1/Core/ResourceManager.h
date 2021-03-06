@@ -17,14 +17,19 @@ namespace hagame {
 	public:
 		ResourceManager(String basePath);
 
-		Ptr<hagame::utils::File> loadFile(String fileName, String rawFileName);
-		Ptr<hagame::utils::File> getFile(String fileName);
+		hagame::utils::File* loadFile(String fileName, String rawFileName);
+		hagame::utils::File* getFile(String fileName);
 
-		Ptr<hagame::graphics::ShaderProgram> loadShaderProgram(String programName, String vertPath, String fragPath);
-		Ptr<hagame::graphics::ShaderProgram> getShaderProgram(String programName);
+		// Create a shader program from files that match fs_path/{shaderName}_vert.glsl and fs_path/{shaderName}_frag.glsl
+		hagame::graphics::ShaderProgram* loadShaderProgram(String shaderName);
 
-		Ptr<hagame::graphics::Texture> loadTexture(String textureName, String path);
-		Ptr<hagame::graphics::Texture> getTexture(String textureName);
+		// Create a shader program from individually specified vertex and fragment paths
+		hagame::graphics::ShaderProgram* loadShaderProgram(String programName, String vertPath, String fragPath);
+
+		hagame::graphics::ShaderProgram* getShaderProgram(String programName);
+
+		hagame::graphics::Texture* loadTexture(String textureName, String path);
+		hagame::graphics::Texture* getTexture(String textureName);
 	};
 }
 

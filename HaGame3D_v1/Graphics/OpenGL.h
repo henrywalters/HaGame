@@ -37,7 +37,7 @@ namespace hagame {
 				return vao;
 			}
 
-			glm::mat4 get2DModelMatrix(Vec3 position, Vec3 origin, Vec3 scale, float rotation);
+			glm::mat4 getModelMatrix(Vec3 position, Vec3 origin, Vec3 scale, float rotation);
 		}
 	}
 }

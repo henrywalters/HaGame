@@ -12,6 +12,7 @@
 #include "../Graphics/Routines.h"
 #include "../Core/ResourceManager.h"
 #include "../Core/Game.h"
+#include "../Physics/Collisions.h"
 
 namespace hagame {
 
@@ -30,13 +31,14 @@ namespace hagame {
 			bool alive;
 		};
 
-		const float initBallSpeed = 200.0f;
+		const float initBallSpeed = 100.0f;
 		const float paddleSpeed = 400.0f;
 
 		const int rows = 100;
 		const int cols = 100;
 
 		float ballSpeed = initBallSpeed;
+		Vec3 ballVel = Vec3::Zero();
 		
 		Vec2 cellSize;
 		Vec3 paddleSize;
@@ -84,7 +86,7 @@ namespace hagame {
 			controller = std::make_shared<input::devices::KeyboardMouse>();
 			controller->pollDevice();
 
-			window = std::make_shared<graphics::Window>(graphics::Window::ForMonitor(graphics::MonitorManager::GetMonitor(0)));
+			window = std::make_shared<graphics::Window>(graphics::Window::ForMonitor(graphics::MonitorManager::GetMonitor(1)));
 			window->create();
 
 			quadVAO = graphics::gl::loadVAO<float, 4>(graphics::QuadVertices);
@@ -120,6 +122,8 @@ namespace hagame {
 				}
 			}
 
+			launchBall();
+
 		}
 
 		void onGameUpdate(double dt) {
@@ -133,24 +137,29 @@ namespace hagame {
 			glEnable(GL_DEPTH_TEST);
 
 			// Game code here
-			auto shader = shaders->getShaderProgram("sprite");
-			shader->use();
-			shader->setMat4("projection", camera->getOrthographicMatrix());
-			shader->setMat4("view", camera->getViewMatrix());
+			spriteShader->use();
+			spriteShader->setMat4("projection", camera->getOrthographicMatrix());
+			spriteShader->setMat4("view", camera->getViewMatrix());
+
+			colorShader->use();
+			colorShader->setMat4("projection", camera->getOrthographicMatrix());
+			colorShader->setMat4("view", camera->getViewMatrix());
 
 			handlePaddle(dt);
 			handleBall(dt);
 
 			graphics::drawTexture(quadVAO, spriteShader, textures->getTexture("ball"), ball, graphics::Color::white());
-			graphics::drawTexture(quadVAO, spriteShader, textures->getTexture("paddle"), player, graphics::Color::white());
+			graphics::drawCube(quadVAO, colorShader, player, graphics::Color(1.0, 0.0, 1.0, 1.0));
 
 			for (auto brick : bricks) {
 				if (brick.alive) {
+					float paddingSize = 2.0f;
+					Cube padded = Cube(brick.pos.pos + Vec3({ paddingSize, paddingSize }), brick.pos.size - 2.0f * Vec3({ paddingSize, paddingSize }));
 					if (brick.type == BrickType::Normal) {
-						graphics::drawTexture(quadVAO, spriteShader, textures->getTexture("brick"), brick.pos, graphics::Color::white());
+						graphics::drawTexture(quadVAO, colorShader, textures->getTexture("brick"), padded, graphics::Color::blue());
 					}
 					else {
-						graphics::drawTexture(quadVAO, spriteShader, textures->getTexture("solid_brick"), brick.pos, graphics::Color::white());
+						graphics::drawTexture(quadVAO, colorShader, textures->getTexture("solid_brick"), padded, graphics::Color::green());
 					}
 				}
 			}
@@ -162,8 +171,41 @@ namespace hagame {
 			std::cout << "Thanks for playing :)\n";
 		}
 
-		void handleBall(double dt) {
+		void launchBall() {
+			ballVel = Vec3({ 0.5f, 1.0f }).normalized();
+		}
 
+		void handleBall(double dt) {
+			Vec3 newPos = ball.pos + (ballVel * ballSpeed * dt);
+			
+			// Handle wall collisions
+			if (newPos[0] <= 0) {
+				newPos[0] = 0;
+				ballVel[0] *= -1;
+			}
+
+			if (newPos[0] + ballSize[0] >= screenSize[0]) {
+				newPos[0] = screenSize[0] - ballSize[0];
+				ballVel[0] *= -1;
+			}
+
+			if (newPos[1] <= 0) {
+				newPos[1] = 0;
+				ballVel[1] *= -1;
+			}
+
+			if (newPos[1] + ballSize[1] >= screenSize[0]) {
+				newPos[1] = screenSize[1] - ballSize[1];
+				ballVel[1] *= -1;
+			}
+
+			// Paddle collisions
+
+			if (physics::isColliding(cubeToRect(ball), cubeToRect(player))) {
+				ballVel[1] = -ballVel[1];
+			}
+
+			ball.pos += ballVel * ballSpeed * dt;
 		}
 
 		void handlePaddle(double dt) {

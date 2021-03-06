@@ -1,10 +1,10 @@
 #version 330 core
 in vec2 TexCoords;
-out vec4 color;
+out vec4 LFragment;
 
 uniform sampler2D image;
-uniform vec4 spriteColor;
+uniform vec4 color;
 
 void main() {
-	color = spriteColor * texture(image, TexCoords);
+	LFragment = color * texture(image, TexCoords);
 }

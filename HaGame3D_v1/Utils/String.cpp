@@ -21,3 +21,16 @@ Array<String> stringSplit(String str, char delim)
 
 	return parts;
 }
+
+String stringJoin(Array<String> strs, String delim)
+{
+	String out = "";
+	int size = strs.size();
+	for (int i = 0; i < size; i++) {
+		out += strs[i];
+		if (i < size - 1) {
+			out += delim;
+		}
+	}
+	return out;
+}

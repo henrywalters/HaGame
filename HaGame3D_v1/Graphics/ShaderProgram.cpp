@@ -44,7 +44,6 @@ GLuint hagame::graphics::ShaderProgram::getUniform(std::string var)
 }
 
 GLint hagame::graphics::ShaderProgram::getAttrib(std::string var) {
-	std::cout << "Shader id: " << id << std::endl;
 	return glGetAttribLocation(id, var.c_str());
 }
 
@@ -72,4 +71,11 @@ void hagame::graphics::ShaderProgram::setVec4(std::string var, glm::vec4 vec) {
 
 void hagame::graphics::ShaderProgram::setMat4(std::string var, glm::mat4 mat) {
 	glUniformMatrix4fv(getUniform(var), 1, GL_FALSE, &mat[0][0]);
+}
+
+void hagame::graphics::ShaderProgram::setMVP(glm::mat4 model, glm::mat4 view, glm::mat4 projection)
+{
+	setMat4("model", model);
+	setMat4("projection", projection);
+	setMat4("view", view);
 }

@@ -6,7 +6,7 @@ hagame::graphics::Camera::Camera(Vec3 _size): size(_size) {
 	position = hagame::math::Vector<3, float>::Zero();
 	direction = hagame::math::Vector < 3, float>({ 0, 0, 1 });
 	fov = 45.0f;
-	zNear = -100.0f;
+	zNear = 0.1;
 	zFar = 100.0f;
 }
 

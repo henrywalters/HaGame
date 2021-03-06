@@ -32,6 +32,8 @@ namespace hagame {
 			void setVec3(std::string var, glm::vec3 vect);
 			void setVec4(std::string var, glm::vec4 vect);
 			void setMat4(std::string var, glm::mat4 mat);
+
+			void setMVP(glm::mat4 model, glm::mat4 view, glm::mat4 projection);
 		};
 	}
 }

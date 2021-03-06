@@ -40,9 +40,7 @@ namespace hagame {
 				}
 			}
 		public:
-			virtual void pollDevice() {
-				throw new Exception("pollDevice unimplemented");
-			};
+			virtual void pollDevice() = 0;
 		};
 	}
 }

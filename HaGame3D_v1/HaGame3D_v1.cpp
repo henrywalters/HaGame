@@ -3,26 +3,18 @@
 #define SDL_MAIN_HANDLED // insert this
 #include "HaGame3D_v1.h"
 #include "SDL.h"
-#include "Demos/Breakout.hpp"
-
-const int MAP[10][10] = {
-	{ 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-	{ 1, 0, 0, 0, 0, 0, 0, 0, 1 },
-	{ 1, 0, 0, 0, 0, 0, 0, 0, 1 },
-	{ 1, 0, 0, 1, 1, 0, 0, 0, 1 },
-	{ 1, 0, 0, 1, 1, 0, 0, 0, 1 },
-	{ 1, 0, 0, 0, 0, 0, 0, 0, 1 },
-	{ 1, 0, 0, 1, 1, 1, 1, 0, 1 },
-	{ 1, 0, 0, 0, 0, 0, 1, 0, 1 },
-	{ 1, 0, 0, 1, 0, 0, 1, 0, 1 },
-	{ 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-};
+//#include "Demos/Breakout.hpp"
+#include "Demos/ECS.hpp"
+#include <typeinfo>
+#include "Utils/Reflection.h"
 
 int main()
 {
 
-	hagame::Breakout breakout = hagame::Breakout(Vec2({ 800.0f, 800.0f }));
-	breakout.run();
+
+	hagame::ECSDemo demo = hagame::ECSDemo();
+	demo.run();
+	//breakout.run();
 
 	/*
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_HAPTIC);

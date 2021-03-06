@@ -25,6 +25,16 @@ using UniqPtr = std::unique_ptr<T>;
 template <class T>
 using Array = std::vector<T>;
 
+template <class T>
+std::string printArray(Array<T> arr) {
+	std::string out = "[\n";
+	for (int i = 0; i < arr.size(); i++) {
+		out += "\t" + arr[i] + ",\n";
+	}
+	out += "]";
+	return out;
+}
+
 template <class K, class V>
 using Map = std::unordered_map<K, V>;
 
@@ -47,6 +57,7 @@ using Vec4Int = hagame::math::Vector<4, int>;
 using Vec4UInt32 = hagame::math::Vector<4, uint32_t>;
 
 using Vec3 = hagame::math::Vector <3, float>;
+using Vec3UInt = hagame::math::Vector <3, unsigned int>;
 using Vec3Int = hagame::math::Vector<3, int>;
 using Vec3UInt32 = hagame::math::Vector<3, uint32_t>;
 
@@ -61,7 +72,15 @@ using Cube = hagame::math::Hypercube<3, float>;
 using CubeInt = hagame::math::Hypercube<3, int>;
 using CubeUInt32 = hagame::math::Hypercube<3, uint32_t>;
 
+inline Rect cubeToRect(Cube cube) {
+	return Rect(Vec2({ cube.pos[0], cube.pos[1] }), Vec2({ cube.size[0], cube.size[1] }));
+}
+
 // Simple helpers
+
+inline std::string glVec3ToString(glm::vec3 vec3) {
+	return "[" + std::to_string(vec3.x) + ", " + std::to_string(vec3.y) + ", " + std::to_string(vec3.z) + "]";
+}
 
 inline std::string glMat4ToString(glm::mat4 mat) {
 	std::string out = "";

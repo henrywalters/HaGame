@@ -10,11 +10,11 @@
 namespace hagame {
 	namespace graphics {
 
-		void drawMesh(GLMesh mesh);
-		void drawCube(GLuint vao, Ptr<ShaderProgram> shader, hagame::math::Hypercube<3, float> cube, Color color, float rotation = 0.0f);
-		void drawTexture(GLuint vao, Ptr<ShaderProgram> shader, Ptr<Texture> texture, hagame::math::Hypercube<3, float> cube, Color color, float rotation = 0.0f);
-		void drawSprite(GLuint vao, Ptr<ShaderProgram> shader, Sprite sprite);
-		void drawParticle(GLuint vao, Ptr<ShaderProgram> shader, Particle particle);
+		void drawMesh(Mesh mesh, ShaderProgram* shader);
+		void drawCube(GLuint vao, ShaderProgram* shader, hagame::math::Hypercube<3, float> cube, Color color, float rotation = 0.0f);
+		void drawTexture(GLuint vao, ShaderProgram* shader, Texture* texture, hagame::math::Hypercube<3, float> cube, Color color, float rotation = 0.0f);
+		void drawSprite(GLuint vao, ShaderProgram* shader, Sprite sprite);
+		void drawParticle(GLuint vao, ShaderProgram* shader, Particle particle);
 	}
 }
 

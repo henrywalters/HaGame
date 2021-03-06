@@ -103,8 +103,6 @@ void hagame::graphics::Window::create() {
 		break;
 	}
 
-	std::cout << "Creating: " << x << ", " << y << ": " << w << "x" << h << "\n";
-
 	window = SDL_CreateWindow(title.c_str(), x, y, w, h, flags);
 
 	if (window == NULL) {
@@ -121,6 +119,7 @@ void hagame::graphics::Window::destroy() {
 void hagame::graphics::Window::clear() {
 	glClearColor(clearColor.rgb.r, clearColor.rgb.g, clearColor.rgb.b, clearColor.rgb.a);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
 }
 
 void hagame::graphics::Window::render() {
