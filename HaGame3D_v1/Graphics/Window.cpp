@@ -1,16 +1,12 @@
 #include "Window.h"
+#include "Monitors.h"
 
-hagame::graphics::Window::Window(hagame::math::Vector<2, uint32_t> _size, std::string _title) : size(_size), title(_title)
-{
-
-	clearColor = Color::black();
-
-	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_HAPTIC);
-	window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, size[0], size[1], SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
-
+void hagame::graphics::Window::initGL() {
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
+	glewExperimental = GL_TRUE;
 
 	gl = SDL_GL_CreateContext(window);
 
@@ -31,10 +27,6 @@ hagame::graphics::Window::Window(hagame::math::Vector<2, uint32_t> _size, std::s
 		throw new std::exception("Failed to set VSync");
 	}
 
-	initGL();
-}
-
-void hagame::graphics::Window::initGL() {
 	GLenum error = GL_NO_ERROR;
 	//Check for error
 	error = glGetError();
@@ -42,14 +34,92 @@ void hagame::graphics::Window::initGL() {
 	{
 		printf("Error initializing OpenGL! %s\n", gluErrorString(error));
 	}
-	else {
-		printf("No OpenGL Errors here");
+}
+
+hagame::graphics::Window::Window()
+{
+	mode = WindowMode::FULLSCREEN;
+	pos = Vec2::Zero();
+	size = Vec2::Zero();
+}
+
+hagame::graphics::Window::Window(Vec2 _size)
+{
+	mode = WindowMode::BORDERLESS_CENTERED;
+	size = _size;
+	pos = Vec2::Zero();
+}
+
+hagame::graphics::Window::Window(Vec2 _pos, Vec2 _size)
+{
+	mode = WindowMode::BORDERLESS;
+	size = _size;
+	pos = _pos;
+}
+
+hagame::graphics::Window::Window(Vec2 _size, std::string _title)
+{
+	mode = WindowMode::BORDERED_CENTERED;
+	size = _size;
+	pos = Vec2::Zero();
+	title = _title;
+}
+
+hagame::graphics::Window::Window(Vec2 _pos, Vec2 _size, std::string _title)
+{
+	mode = WindowMode::BORDERED;
+	size = _size;
+	pos = _pos;
+	title = _title;
+}
+
+hagame::graphics::Window hagame::graphics::Window::ForMonitor(Monitor monitor)
+{
+	Rect bounds = MonitorManager::GetDisplayBounds(monitor.id);
+	return Window(bounds.pos, bounds.size);
+}
+
+void hagame::graphics::Window::create() {
+	Uint32 flags = SDL_WINDOW_OPENGL;
+	int x = 0, y = 0, w = 0, h = 0;
+
+	switch (mode) {
+	case WindowMode::BORDERED:
+		x = pos[0], y = pos[1], w = size[0], h = size[1];
+		break;
+	case WindowMode::BORDERED_CENTERED:
+		x = SDL_WINDOWPOS_CENTERED, y = SDL_WINDOWPOS_CENTERED, w = size[0], h = size[1];
+		break;
+	case WindowMode::BORDERLESS:
+		flags |= SDL_WINDOW_BORDERLESS;
+		x = pos[0], y = pos[1], w = size[0], h = size[1];
+		break;
+	case WindowMode::BORDERLESS_CENTERED:
+		flags |= SDL_WINDOW_BORDERLESS;
+		x = SDL_WINDOWPOS_CENTERED, y = SDL_WINDOWPOS_CENTERED, w = size[0], h = size[1];
+		break;
+	case WindowMode::FULLSCREEN:
+		flags |= SDL_WINDOW_FULLSCREEN;
+		break;
 	}
+
+	window = SDL_CreateWindow(title.c_str(), x, y, w, h, flags);
+
+	if (window == NULL) {
+		std::cout << "Failed to create SDL Window: " << SDL_GetError() << "\n";
+	}
+
+	initGL();
+}
+
+void hagame::graphics::Window::destroy() {
+	SDL_DestroyWindow(window);
 }
 
 void hagame::graphics::Window::clear() {
-	glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
+	glClearColor(clearColor.rgb.r, clearColor.rgb.g, clearColor.rgb.b, clearColor.rgb.a);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
 }
 
 void hagame::graphics::Window::render() {

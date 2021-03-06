@@ -1,13 +1,16 @@
+#ifndef MESH
+#define MESH
+
 #include <SDL.h>
 #include <gl/glew.h>
 #include <glm/glm.hpp>
 #include <vector>
+#include <iostream>
 #include "../Math/Vector.h"
 #include "../Utils/Aliases.h"
-#include <iostream>
-
-#ifndef MESH
-#define MESH
+#include "../Utils/File.h"
+#include "../Utils/String.h"
+#include "../Graphics/ShaderProgram.h"
 
 namespace hagame {
 	namespace graphics {
@@ -23,71 +26,141 @@ namespace hagame {
 			return out;
 		}
 
-		struct Mesh {
-			std::vector<Vec3> vertices;
-			std::vector<Vec2> textures;
-			std::vector<Vec3> normals;
-			std::vector<Vec3Int> indices;
-
-			void calculateNormals() {
-				normals.clear();
-				for (auto index : indices) {
-					Vec3 vec1 = vertices[index[1]] - vertices[index[0]];
-					Vec3 vec2 = vertices[index[2]] - vertices[index[0]];
-					Vec3 cross = hgVec3(glm::cross(glVec3(vec1), glVec3(vec2)));
-					std::cout << cross.toString() << std::endl;
-					normals.push_back(cross);
-				}
-			}
-
-			Mesh() {
-				vertices = std::vector<Vec3>();
-				textures = std::vector<Vec2>();
-				normals = std::vector<Vec3>();
-				indices = std::vector<Vec3Int>();
-			}
-
-			Mesh(std::vector<Vec3> verts, std::vector<Vec3Int> inds) {
-				vertices = verts;
-				indices = inds;
-				textures = std::vector<Vec2>();
-				calculateNormals();
-			}
-
-			Mesh(std::vector<Vec3> verts, std::vector<Vec2> texts, std::vector<Vec3Int> inds) {
-				textures = texts;
-				vertices = verts;
-				indices = inds;
-				calculateNormals();
-			}
+		struct Vertex {
+			glm::vec3 position;
+			glm::vec3 normal;
+			glm::vec2 texCoords;
 		};
 
-		struct GLMesh {
-			GLuint vertexBuffer;
-			GLuint textureBuffer;
-			GLuint normalBuffer;
-			GLuint indexBuffer;
+		class Mesh {
 
-			static GLMesh FromMesh(Mesh mesh) {
-				GLMesh glMesh; 
-				
-				glGenBuffers(1, &glMesh.vertexBuffer);
-				glBindBuffer(GL_ARRAY_BUFFER, glMesh.vertexBuffer);
-				glBufferData(GL_ARRAY_BUFFER, mesh.vertices.size() * sizeof(hagame::math::Vector<3, float>), flattenVectorArray<3, float>(mesh.vertices).data(), GL_STATIC_DRAW);
+		private:
 
-				glGenBuffers(1, &glMesh.normalBuffer);
-				glBindBuffer(GL_ARRAY_BUFFER, glMesh.normalBuffer);
-				glBufferData(GL_ARRAY_BUFFER, mesh.normals.size() * sizeof(hagame::math::Vector<3, float>), flattenVectorArray<3, float>(mesh.normals).data(), GL_STATIC_DRAW);
+			unsigned int VAO, VBO, EBO;
 
-				glGenBuffers(1, &glMesh.textureBuffer);
-				glBindBuffer(GL_ARRAY_BUFFER, glMesh.textureBuffer);
-				glBufferData(GL_ARRAY_BUFFER, mesh.textures.size() * sizeof(Vec2), flattenVectorArray<2, float>(mesh.textures).data(), GL_STATIC_DRAW);
+			void initializeForGL() {
+				glGenVertexArrays(1, &VAO);
+				glGenBuffers(1, &VBO);
+				glGenBuffers(1, &EBO);
 
-				glGenBuffers(1, &glMesh.indexBuffer);
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, glMesh.indexBuffer);
-				glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh.indices.size() * sizeof(hagame::math::Vector<3, int>), flattenVectorArray<3, int>(mesh.indices).data(), GL_STATIC_DRAW);
+				glBindVertexArray(VAO);
 
-				return glMesh;
+				glBindBuffer(GL_ARRAY_BUFFER, VBO);
+				glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
+
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+				glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
+
+				glEnableVertexAttribArray(0);
+				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+
+				glEnableVertexAttribArray(1);
+				glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
+
+				glEnableVertexAttribArray(2);
+				glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoords));
+
+				glBindVertexArray(0);
+			}
+
+		public:
+			Array<Vertex> vertices;
+			Array<unsigned int> indices;
+
+			Mesh() {
+				vertices = Array<Vertex>();
+				indices = Array<unsigned int>();
+			}
+
+			void draw(ShaderProgram* shader) {
+				shader->use();
+				glBindVertexArray(VAO);
+				glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+				glBindVertexArray(0);
+			}
+
+			Cube getBoundingCube() {
+				bool init = false;
+				Vec3 min, max;
+
+				for (auto v : vertices) {
+					if (!init) {
+						init = true;
+						min = hgVec3(v.position);
+						max = hgVec3(v.position);
+					}
+					else {
+						std::cout << glVec3ToString(v.normal) << std::endl;
+						for (int i = 0; i < 3; i++) {
+							if (v.position[i] < min[i]) {
+								min[i] = v.position[i];
+							}
+
+							if (v.position[i] > max[i]) {
+								max[i] = v.position[i];
+							}
+						}
+					}
+				}
+
+				return Cube(min, max - min);
+			}
+
+			static Mesh FromOBJ(utils::File* file) {
+				Mesh mesh;
+				Array<Vec3> positions = Array<Vec3>();
+				Array<Vec2> textures = Array<Vec2>();
+				Array<Vec3> normals = Array<Vec3>();
+
+				unsigned int idx = 0;
+
+				for (auto line : file->readLines()) {
+					auto parts = stringSplit(line, ' ');
+
+					if (parts[0] == "v") {
+						positions.push_back(Vec3({ stof(parts[1]), stof(parts[2]), stof(parts[3]) }));
+					}
+
+					if (parts[0] == "vt") {
+						textures.push_back(Vec2({ stof(parts[1]), stof(parts[2]) }));
+					}
+
+					if (parts[0] == "vn") {
+						normals.push_back(Vec3({ stof(parts[1]), stof(parts[2]), stof(parts[3]) }));
+					}
+
+					if (parts[0] == "f") {
+						if (parts.size() != 4) {
+							throw new std::exception("OBJ File must be triangulated!");
+						}
+
+						auto f1 = stringSplit(parts[1], '/');
+						auto f2 = stringSplit(parts[2], '/');
+						auto f3 = stringSplit(parts[3], '/');
+
+						Vertex v1;
+						Vertex v2;
+						Vertex v3;
+						
+						v1.position = glVec3(positions[stoi(f1[0]) - 1]);
+						v2.position = glVec3(positions[stoi(f2[0]) - 1]);
+						v3.position = glVec3(positions[stoi(f3[0]) - 1]);
+
+						v1.texCoords = glVec2(textures[stoi(f1[1]) - 1]);
+						v1.texCoords = glVec2(textures[stoi(f2[1]) - 1]);
+						v1.texCoords = glVec2(textures[stoi(f3[1]) - 1]);
+
+						v1.normal = glVec3(normals[stoi(f1[2]) - 1]);
+						v2.normal = glVec3(normals[stoi(f2[2]) - 1]);
+						v2.normal = glVec3(normals[stoi(f2[2]) - 1]);
+
+						mesh.vertices.insert(mesh.vertices.end(), { v1, v2, v3 });
+						mesh.indices.insert(mesh.indices.end(), { idx, idx + 1, idx + 2 });
+						idx += 3;
+					}
+				}
+				mesh.initializeForGL();
+				return mesh;
 			}
 		};
 	}

@@ -1,10 +1,10 @@
+#ifndef VECTOR
+#define VECTOR
+
 #include <functional>
 #include <string>
 #include <vector>
 #include <cmath>
-
-#ifndef VECTOR
-#define VECTOR
 
 namespace hagame {
 	namespace math {
@@ -24,6 +24,12 @@ namespace hagame {
 			Vector() {
 				for (int i = 0; i < size; i++) {
 					vector[i] = 0;
+				}
+			}
+			
+			Vector(T val) {
+				for (int i = 0; i < size; i++) {
+					vector[i] = val;
 				}
 			}
 
@@ -46,6 +52,19 @@ namespace hagame {
 			static Vector Zero() {
 				Vector vect;
 				return vect;
+			}
+
+			// Basic accessors
+			const T x() {
+				return vector[0];
+			}
+
+			const T y() {
+				return vector[1];
+			}
+
+			const T z() {
+				return vector[2];
 			}
 
 			// Basic functions
@@ -99,6 +118,20 @@ namespace hagame {
 				for (int i = 0; i < size; i++) {
 					copy[i] *= vect[i];
 				};
+				return copy;
+			}
+
+			template <size_t toSize>
+			Vector<toSize, T> resize() {
+				Vector<toSize, T> copy = Vector<toSize, T>();
+				for (int i = 0; i < toSize; i++) {
+					if (i <= size) {
+						copy.vector[i] = vector[i];
+					}
+					else {
+						copy.vector[i] = 0;
+					}
+				}
 				return copy;
 			}
 

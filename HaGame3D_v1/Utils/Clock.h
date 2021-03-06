@@ -1,3 +1,5 @@
+#ifndef CLOCK
+#define CLOCK
 #include <chrono>
 
 namespace hagame {
@@ -19,3 +21,5 @@ namespace hagame {
 		};
 	}
 }
+
+#endif

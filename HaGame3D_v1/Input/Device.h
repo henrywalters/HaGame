@@ -1,7 +1,7 @@
-#include "../Math/Vector.h"
-
 #ifndef DEVICE
 #define DEVICE
+
+#include "../Math/Vector.h"
 
 namespace hagame {
 	namespace input {
@@ -28,10 +28,19 @@ namespace hagame {
 		};
 
 		class Device : public DeviceState {
+		protected:
+			virtual void updateBtnState(bool& btn, bool& btnPressed, bool state) {
+				btnPressed = false;
+				if (state) {
+					if (!btn) btnPressed = true;
+					btn = true;
+				}
+				else {
+					btn = false;
+				}
+			}
 		public:
-			virtual void pollDevice() {
-				throw new std::exception("pollDevice unimplemented for hagame::input::Device");
-			};
+			virtual void pollDevice() = 0;
 		};
 	}
 }

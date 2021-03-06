@@ -17,6 +17,8 @@ namespace hagame {
 			unsigned char* data;
 
 			Texture(std::string _path);
+
+			void bind();
 		};
 	}
 }

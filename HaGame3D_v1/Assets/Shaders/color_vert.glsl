@@ -1,13 +1,10 @@
-#version 150
+#version 330 core
+layout (location = 0) in vec4 vertex;
 
-in vec3 aVertexPos;
-in vec3 aNormal;
-in vec2 aTex;
-
-uniform mat4 Model;
-uniform mat4 View;
-uniform mat4 Projection;
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
 
 void main() {
-	gl_Position = Projection * View * Model * vec4(aVertexPos, 1.0);
+	gl_Position = model * view * projection * vec4(vertex.xyz, 1.0);
 }

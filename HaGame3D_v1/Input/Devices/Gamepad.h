@@ -1,3 +1,6 @@
+#ifndef GAMEPAD
+#define GAMEPAD
+
 #include "../Device.h"
 #include "../../Math/Vector.h"
 #include "SDL.h"
@@ -15,19 +18,9 @@ namespace hagame {
 				bool active = false;
 
 				void checkButton(bool& btn, bool& btnPressed, SDL_GameControllerButton button) {
-					checkButton(btn, btnPressed, SDL_GameControllerGetButton(joystick, button));
+					updateBtnState(btn, btnPressed, SDL_GameControllerGetButton(joystick, button));
 				}
 
-				void checkButton(bool& btn, bool& btnPressed, bool state) {
-					btnPressed = false;
-					if (state) {
-						if (!btn) btnPressed = true;
-						btn = true;
-					}
-					else {
-						btn = false;
-					}
-				}
 			public:
 
 				Gamepad(int index) {
@@ -82,11 +75,13 @@ namespace hagame {
 						lTriggerRaw = SDL_GameControllerGetAxis(joystick, SDL_CONTROLLER_AXIS_TRIGGERLEFT);
 						rTriggerRaw = SDL_GameControllerGetAxis(joystick, SDL_CONTROLLER_AXIS_TRIGGERRIGHT);
 
-						checkButton(lTrigger, lTriggerPressed, lTriggerRaw >= JOYSTICK_DEADZONE);
-						checkButton(rTrigger, rTriggerPressed, rTriggerRaw >= JOYSTICK_DEADZONE);
+						updateBtnState(lTrigger, lTriggerPressed, lTriggerRaw >= JOYSTICK_DEADZONE);
+						updateBtnState(rTrigger, rTriggerPressed, rTriggerRaw >= JOYSTICK_DEADZONE);
 					}
 				}
 			};
 		}
 	}
 }
+
+#endif

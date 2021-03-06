@@ -1,19 +1,17 @@
 #include "Camera.h"
 
-hagame::graphics::Camera::Camera(Vec3UInt32 _size): size(_size) {
+hagame::graphics::Camera::Camera(Vec3 _size): size(_size) {
 	yRot = 0;
 	xRot = 0;
 	position = hagame::math::Vector<3, float>::Zero();
 	direction = hagame::math::Vector < 3, float>({ 0, 0, 1 });
 	fov = 45.0f;
-	zNear = 0.1f;
+	zNear = 0.1;
 	zFar = 100.0f;
 }
 
 glm::mat4 hagame::graphics::Camera::getOrthographicMatrix() {
-	return glm::ortho(-(800.0f / 2.0f), 800.0f / 2.0f,
-		600.0f / 2.0f, -(600.0f / 2.0f),
-		-10.0f, 10.0f);
+	return glm::ortho(0.0f, (float) size[0], (float) size[1], 0.0f, zNear, zFar);
 }
 
 glm::mat4 hagame::graphics::Camera::getProjectionMatrix() {

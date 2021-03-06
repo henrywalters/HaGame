@@ -11,7 +11,17 @@ namespace hagame {
 
 		const float SR_3 = sqrt(3) / 2.0f;
 
-		const Mesh Triangle = Mesh(
+		const Array<float> QuadVertices = {
+			0.0f, 1.0f, 0.0f, 1.0f,
+			1.0f, 0.0f, 1.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, 0.0f,
+
+			0.0f, 1.0f, 0.0f, 1.0f,
+			1.0f, 1.0f, 1.0f, 1.0f,
+			1.0f, 0.0f, 1.0f, 0.0f,
+		};
+
+		/*const Mesh Triangle = Mesh(
 			{
 				Vec3({ -SR_3,  -0.5f,  0.0f }),
 				Vec3({ 0.0f, 0.5f, 0.0f }),
@@ -98,7 +108,7 @@ namespace hagame {
 				Vec3Int({ 0, 2, 3 }),
 				Vec3Int({ 4, 5, 6 }), // Back face
 				Vec3Int({ 4, 6, 7 }), 
-			});
+			});*/
 	}
 }
 

@@ -6,6 +6,7 @@
 #include <streambuf>
 #include <filesystem>
 #include <iostream>
+#include "File.h"
 
 #ifdef WIN32
 #include <direct.h>
@@ -31,6 +32,8 @@ namespace hagame {
 			std::string GetRelativePath(std::string path);
 
 			std::string getFullPath(std::string path);
+
+			File getFile(std::string path);
 			std::string readFile(std::string path);
 			std::vector<std::string> listFiles(std::string path);
 			
