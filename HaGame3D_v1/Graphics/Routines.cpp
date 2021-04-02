@@ -1,6 +1,8 @@
 #include "Routines.h"
 #include <glm/gtx/string_cast.hpp>
 
+/*
+
 void hagame::graphics::drawMesh(Mesh mesh, ShaderProgram* shader) {
 	
 }
@@ -65,3 +67,4 @@ void hagame::graphics::drawParticle(GLuint vao, ShaderProgram* shader, Particle 
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindVertexArray(0);
 }
+*/

@@ -5,6 +5,7 @@
 
 namespace hagame {
 	namespace input {
+
 		struct DeviceState {
 			Vec2 rAxis;
 			Vec2 lAxis;

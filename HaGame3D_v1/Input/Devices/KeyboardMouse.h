@@ -11,10 +11,24 @@ namespace hagame {
 	namespace input {
 		namespace devices {
 
-			const int MAX_MOUSE_MOVE = 1000;
+			struct MouseState {
+				Vec2 position;
+				Vec2 prevPosition;
+				Vec2 delta;
+
+				bool left;
+				bool leftPressed;
+				bool middle;
+				bool middlePressed;
+				bool right;
+				bool rightPressed;
+			};
+
+			const int MAX_MOUSE_MOVE = 500;
 			class KeyboardMouse : public hagame::input::Device {
 			private:
 
+				bool relative = false;
 				bool initialized;
 				const Uint8* keyboardState;
 
@@ -29,16 +43,14 @@ namespace hagame {
 				}
 
 				void handleMouse() {
-					prevMousePos = mousePos;
-					mousePos = getMousePos();
-					mouseDelta = prevMousePos - mousePos;
+					mouse.position = getMousePos();
 				}
 
 				void init() {
 					if (!initialized) {
 						initialized = true;
-						prevMousePos = getMousePos();
-						mousePos = prevMousePos;
+						mouse.prevPosition = getMousePos();
+						mouse.position = mouse.prevPosition;
 						
 						SDL_DisplayMode dm;
 						SDL_GetCurrentDisplayMode(0, &dm);
@@ -53,13 +65,12 @@ namespace hagame {
 
 				Vec2 screenSize;
 				Vec2 screenCenter;
-				Vec2 mousePos;
-				Vec2 prevMousePos;
-				Vec2 mouseDelta;
+
+				MouseState mouse;
 
 				KeyboardMouse() {
 					initialized = false;
-					prevMousePos = Vec2::Zero();
+					mouse.prevPosition = Vec2::Zero();
 				}
 
 				bool isKeyDown(SDL_Keycode key) {
@@ -68,13 +79,79 @@ namespace hagame {
 
 				Vec2 getMousePos() {
 					int x, y;
-					SDL_GetMouseState(&x, &y);
+					if (relative) {
+						SDL_GetRelativeMouseState(&x, &y);
+					}
+					else {
+						SDL_GetMouseState(&x, &y);
+					}
 					return Vec2({ (float) x , (float) y });
+				}
+
+				void showCursor() {
+					SDL_ShowCursor(SDL_ENABLE);
+				}
+
+				void hideCursor() {
+					SDL_ShowCursor(SDL_DISABLE);
+				}
+
+				void captureMouseOn() {
+					SDL_SetRelativeMouseMode(SDL_TRUE);
+					relative = true;
+				}
+
+				void captureMouseOff() {
+					SDL_SetRelativeMouseMode(SDL_FALSE);
+					relative = false;
+				}
+
+				void handleEvent(SDL_Event event) {
+
+					switch (event.type) {
+					case SDL_MOUSEMOTION:
+						mouse.position[0] = event.motion.x;
+						mouse.position[1] = event.motion.y;
+						mouse.delta[0] = event.motion.xrel;
+						mouse.delta[1] = event.motion.yrel;
+					case SDL_MOUSEBUTTONDOWN:
+						if (event.button.button == SDL_BUTTON_MIDDLE) {
+							updateBtnState(mouse.middle, mouse.middlePressed, true);
+						}
+						else if (event.button.button == SDL_BUTTON_LEFT) {
+							updateBtnState(mouse.left, mouse.leftPressed, true);
+						}
+						else if (event.button.button == SDL_BUTTON_RIGHT) {
+							updateBtnState(mouse.right, mouse.rightPressed, true);
+						}
+						break;
+					case SDL_MOUSEBUTTONUP:
+						if (event.button.button == SDL_BUTTON_MIDDLE) {
+							updateBtnState(mouse.middle, mouse.middlePressed, false);
+						}
+						else if (event.button.button == SDL_BUTTON_LEFT) {
+							updateBtnState(mouse.left, mouse.leftPressed, false);
+						}
+						else if (event.button.button == SDL_BUTTON_RIGHT) {
+							updateBtnState(mouse.right, mouse.rightPressed, false);
+						}
+						break;
+					}
 				}
 
 				void pollDevice() {
 					init();
-					handleMouse();
+
+					//handleMouse();
+
+					SDL_Event event;
+
+					mouse.delta = Vec2::Zero();
+
+					while (SDL_PollEvent(&event)) {
+						handleEvent(event);
+					}
+
 					keyboardState = SDL_GetKeyboardState(NULL);
 					rAxis = Vec2::Zero();
 					lAxis = Vec2::Zero();
@@ -82,9 +159,13 @@ namespace hagame {
 
 					lAxis[0] = handleAxis(isKeyDown(SDLK_d), isKeyDown(SDLK_a));
 					lAxis[1] = handleAxis(isKeyDown(SDLK_s), isKeyDown(SDLK_w));
+					rAxis[0] = mouse.delta[0] / 100.0f;
+					rAxis[1] = mouse.delta[1] / 100.0f;
 
-					rAxis[0] = normalize<float>(mousePos[0], MAX_MOUSE_MOVE);
-					rAxis[1] = normalize<float>(mousePos[1], MAX_MOUSE_MOVE);
+					updateBtnState(select, selectPressed, isKeyDown(SDLK_TAB));
+					updateBtnState(start, startPressed, isKeyDown(SDLK_ESCAPE));
+					updateBtnState(home, homePressed, isKeyDown(SDLK_MODE));
+					updateBtnState(a, aPressed, isKeyDown(SDLK_SPACE));
 
 					checkKey(home, homePressed, SDLK_ESCAPE);
 				}

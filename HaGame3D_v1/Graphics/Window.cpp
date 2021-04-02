@@ -80,7 +80,7 @@ hagame::graphics::Window hagame::graphics::Window::ForMonitor(Monitor monitor)
 }
 
 void hagame::graphics::Window::create() {
-	Uint32 flags = SDL_WINDOW_OPENGL;
+	Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI;
 	int x = 0, y = 0, w = 0, h = 0;
 
 	switch (mode) {

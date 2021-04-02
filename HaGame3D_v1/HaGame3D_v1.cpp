@@ -6,14 +6,88 @@
 //#include "Demos/Breakout.hpp"
 #include "Demos/ECS.hpp"
 #include <typeinfo>
+#include "Math/Matrix.h"
+#include "Math/Quaternion.h"
 #include "Utils/Reflection.h"
+
+#include "Vendor/entt/entt.hpp"
+#include "Utils/StateManager.h"
+#include "Core/ECS/EntityManager.h"
+
+#include "Core/Scene.h"
+
+struct Entity {
+	entt::entity id;
+};
+
+struct position {
+	float x;
+	float y;
+};
+
+struct transform {
+	Vec3 pos;
+
+	void move(Vec3 delta) {
+		pos += delta;
+	}
+};
+
+struct renderable {
+	int test;
+};
+
+struct texRenderable : public renderable {};
+
+void printPos(position pos) {
+	std::cout << pos.x << ", " << pos.y << std::endl;
+}
+
+struct velocity {
+	float dx;
+	float dy;
+};
 
 int main()
 {
+	
+	hagame::utils::StateManager<position> pos = hagame::utils::StateManager<position>();
 
+	pos.add("A", { 2.0f, 3.0f });
+	pos.add("B", { 3.0f, 5.0f });
 
-	hagame::ECSDemo demo = hagame::ECSDemo();
-	demo.run();
+	pos.activate("B");
+
+	printPos(pos.active());
+
+	pos.activate("A");
+
+	printPos(pos.active());
+
+	hagame::Scene scene;
+
+	auto e1 = scene.entities.add();
+
+	auto posC = e1.addComponent<position>();
+	auto posT = e1.addComponent<transform>();
+
+	e1.addComponent<texRenderable>();
+	scene.entities.add().addComponent<renderable>();
+
+	posT->pos = Vec3({ 100, 200, 300 });
+
+	posT->move(Vec3({ 20, 0, 0 }));
+
+	printPos(*e1.getComponent<position>());
+	std::cout << e1.getComponent<transform>()->pos.toString() << std::endl;
+
+	auto view = scene.getRegistry()->view<texRenderable>();
+
+	std::cout << view.size() << std::endl;
+
+	auto ecs = hagame::ECSDemo();
+	ecs.run();
+
 	//breakout.run();
 
 	/*

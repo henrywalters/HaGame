@@ -39,6 +39,12 @@ namespace hagame {
 				}
 			}
 
+			Vector(T vect[size]) {
+				for (int i = 0; i < size; i++) {
+					vector[i] = vect[i];
+				}
+			}
+
 			// Static Helpers
 
 			static Vector Identity() {
@@ -52,6 +58,18 @@ namespace hagame {
 			static Vector Zero() {
 				Vector vect;
 				return vect;
+			}
+
+			static Vector<3, T> Right() {
+				return Vector({ 1, 0, 0 });
+			}
+
+			static Vector<3, T> Top() {
+				return Vector({ 0, 1, 0 });
+			}
+
+			static Vector<3, T> Face() {
+				return Vector({ 0, 0, 1 });
 			}
 
 			// Basic accessors
@@ -68,6 +86,19 @@ namespace hagame {
 			}
 
 			// Basic functions
+
+			// Set all elements to zero
+			void zero() {
+				for (int i = 0; i < size; i++) {
+					vector[i] = 0;
+				}
+			}
+
+			void update(std::function<T(int, T)> lambda) {
+				for (int i = 0; i < size; i++) {
+					vector[i] = lambda(i, vector[i]);
+				}
+			}
 
 			size_t getSize() {
 				return size;
@@ -111,6 +142,18 @@ namespace hagame {
 					sum += vector[i] * vect[i];
 				}
 				return sum;
+			}
+
+			Vector<3, T> cross(Vector vect) {
+				if (size != 3) {
+					throw new std::exception("Cross product only supported for 3d vectors");
+				}
+
+				return Vector<3, T>({
+					vector[1] * vect[2] - vector[2] * vect[1],
+					-(vector[0] * vect[2] - vector[2] * vect[0]),
+					vector[0] * vect[1] - vector[1] * vect[0]
+				});
 			}
 
 			Vector prod(Vector vect) {

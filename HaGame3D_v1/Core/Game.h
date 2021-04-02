@@ -4,6 +4,8 @@
 #include "../Utils/Clock.h"
 #include "../Utils/Logger.h"
 #include "../Utils/Loggers/ConsoleLogger.h"
+#include "../Utils/StateManager.h"
+#include "Scene.h"
 #include <SDL.h>
 
 namespace hagame {
@@ -11,13 +13,21 @@ namespace hagame {
 	class Game {
 	public:
 
+		utils::StateManager<Scene> scenes;
+
+		const int TICKS_PER_SECOND = 1000000;
+
 		bool running;
 		long lastTick;
+		double secondsElapsed;
+		double fps;
 		Ptr<utils::Logger> logger;
+
 
 		Game() {
 			running = false;
 			lastTick = utils::Clock::Now();
+			secondsElapsed = 0;
 			logger = std::make_shared<utils::loggers::ConsoleLogger>();
 		}
 
@@ -26,7 +36,7 @@ namespace hagame {
 		virtual void onGameUpdate(double dt) {};
 
 		void run();
-		
+
 		void log(std::string message) {
 			logger->log(message);
 		}

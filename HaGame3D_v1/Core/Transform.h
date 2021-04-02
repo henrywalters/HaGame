@@ -10,25 +10,39 @@
 
 namespace hagame {
 	class Transform {
+
+	private:
+
 	public:
 		Vec3 position;
 		Vec3 scale;
-		Vec3 rotationAxis;
-		float rotation;
+		Quat rotation;
+
+		Mat4 model;
+		bool cacheModel = true;
 
 		Transform();
 
 		void move(Vec3 offset);
 		void rotate(Vec3 axis, float degrees);
+		void rotate(Quat rot);
 		void grow(Vec3 size);
 
 		void lookAt(Vec3 point);
 
-		glm::mat4 getTranslationMatrix();
-		glm::mat4 getScaleMatrix();
-		glm::mat4 getRotationMatrix();
+		void updateModel() {
+			if (cacheModel) model = getModelMatrix();
+		}
 
-		glm::mat4 getModelMatrix();
+		Mat4 getTranslationMatrix();
+		Mat4 getScaleMatrix();
+		Mat4 getRotationMatrix();
+
+		Mat4 getModelMatrix();
+
+		Vec3 top();
+		Vec3 right();
+		Vec3 face();
 	};
 }
 

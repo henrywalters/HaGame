@@ -6,10 +6,12 @@
 #include <queue>
 #include <unordered_map>
 #include <memory>
+#include <optional>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
 #include "../Math/Vector.h"
+#include "../Math/Matrix.h"
 #include "../Math/Hypercube.h"
 
 // Standard Library aliases
@@ -65,12 +67,34 @@ using Vec2 = hagame::math::Vector<2, float>;
 using Vec2Int = hagame::math::Vector<2, int>;
 using Vec2UInt32 = hagame::math::Vector<2, uint32_t>;
 
+using Vec3Bool = hagame::math::Vector<3, bool>;
+
 using Rect = hagame::math::Hypercube<2, float>;
 using RectInt = hagame::math::Hypercube<2, int>;
 using RectUInt32 = hagame::math::Hypercube<2, uint32_t>;
 using Cube = hagame::math::Hypercube<3, float>;
 using CubeInt = hagame::math::Hypercube<3, int>;
 using CubeUInt32 = hagame::math::Hypercube<3, uint32_t>;
+
+// Vector functions
+inline Vec3 normalize(Vec3 vec) {
+	return vec.normalized();
+}
+
+inline float dot(Vec3 a, Vec3 b) {
+	return a.dot(b);
+}
+
+inline Vec3 cross(Vec3 a, Vec3 b) {
+	return a.cross(b);
+}
+
+// Matrix aliases
+using Mat4 = hagame::math::Matrix<4, 4, float>;
+
+using Mat3 = hagame::math::Matrix<3, 3, float>;
+
+using Quat = hagame::math::Quaternion<float>;
 
 inline Rect cubeToRect(Cube cube) {
 	return Rect(Vec2({ cube.pos[0], cube.pos[1] }), Vec2({ cube.size[0], cube.size[1] }));
@@ -79,7 +103,7 @@ inline Rect cubeToRect(Cube cube) {
 // Simple helpers
 
 inline std::string glVec3ToString(glm::vec3 vec3) {
-	return "[" + std::to_string(vec3.x) + ", " + std::to_string(vec3.y) + ", " + std::to_string(vec3.z) + "]";
+	return "[" + std::to_string(vec3[0]) + ", " + std::to_string(vec3[1]) + ", " + std::to_string(vec3[2]) + "]";
 }
 
 inline std::string glMat4ToString(glm::mat4 mat) {

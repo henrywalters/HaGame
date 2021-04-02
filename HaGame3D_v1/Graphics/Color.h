@@ -46,8 +46,12 @@ namespace hagame {
 
 			~Color() {}
 
-			glm::vec4 getVec4() {
-				return glm::vec4(rgb.r, rgb.g, rgb.b, rgb.a);
+			Vec3 getVec3() {
+				return Vec3({ rgb.r, rgb.g, rgb.b });
+			}
+
+			Vec4 getVec4() {
+				return Vec4({ rgb.r, rgb.g, rgb.b, rgb.a });
 			}
 
 			static Color red() {

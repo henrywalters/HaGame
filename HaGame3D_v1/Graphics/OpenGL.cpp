@@ -1,6 +1,10 @@
 #include "OpenGL.h"
 
-glm::mat4 hagame::graphics::gl::getModelMatrix(Vec3 position, Vec3 origin, Vec3 scale, float rotation) {
+/*Mat4 hagame::graphics::gl::getModelMatrix(Vec3 position, Vec3 origin, Vec3 scale, float rotation) {
+
+	Mat4 model = Mat4::Identity();
+	model = 
+
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, glVec3(position));
 
@@ -12,3 +16,4 @@ glm::mat4 hagame::graphics::gl::getModelMatrix(Vec3 position, Vec3 origin, Vec3 
 
 	return model;
 }
+*/

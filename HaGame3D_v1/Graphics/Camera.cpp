@@ -1,31 +1,33 @@
 #include "Camera.h"
 
-hagame::graphics::Camera::Camera(Vec3 _size): size(_size) {
-	yRot = 0;
-	xRot = 0;
-	position = hagame::math::Vector<3, float>::Zero();
-	direction = hagame::math::Vector < 3, float>({ 0, 0, 1 });
-	fov = 45.0f;
-	zNear = 0.1;
-	zFar = 100.0f;
+Mat4 hagame::graphics::Camera::getOrthographicMatrix() {
+	return Mat4::Orthographic(projectionSpace);
 }
 
-glm::mat4 hagame::graphics::Camera::getOrthographicMatrix() {
-	return glm::ortho(0.0f, (float) size[0], (float) size[1], 0.0f, zNear, zFar);
+Mat4 hagame::graphics::Camera::getPerspectiveMatrix() {
+	return Mat4::Perspective(projectionSpace);
 }
 
-glm::mat4 hagame::graphics::Camera::getProjectionMatrix() {
-	return glm::perspective(glm::radians(fov), (float)size[0] / (float)size[1], zNear, zFar);
-}
+Mat4 hagame::graphics::Camera::getViewMatrix() {
+	
+	// Camera's frame of view is facing up in the y axis and forward in the z axis.
+	Vec3 top = Vec3::Top();
+	Vec3 face = Vec3::Face();
 
-glm::mat4 hagame::graphics::Camera::getViewMatrix() {
-	direction = Vec3({ cos(xRot), sin(yRot), sin(xRot) + sin(yRot) });
-	auto target = position + direction;
-	return glm::lookAt(
-		glm::vec3(position[0], position[1], position[2]),
-		glm::vec3(target[0], target[1], target[2]),
-		glm::vec3(0, 1, 0)
+	Vec3 direction = rotation.rotatePoint(face);
+	Vec3 target = position + direction;
+	Vec3 up = rotation.rotatePoint(top);
+
+	std::cout << position.toString() << std::endl;
+	std::cout << target.toString() << std::endl;
+	std::cout << up.toString() << std::endl;
+
+	return Mat4::LookAt(
+		Vec3({ position[0], position[1], position[2] }),
+		Vec3({ target[0], target[1], target[2] }),
+		Vec3::Top()
 	);
+	
 }
 
 GLint hagame::graphics::Camera::getMVPUniformLocation(ShaderProgram program)

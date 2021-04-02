@@ -6,9 +6,8 @@
 #include <gl/glew.h>
 #include <SDL_opengl.h>
 #include "Shader.h"
-#include <glm/matrix.hpp>
-#include <glm/vec3.hpp>
-#include <glm/vec4.hpp>
+#include "../Utils/Aliases.h"
+#include "Material.h"
 
 namespace hagame {
 	namespace graphics {
@@ -28,12 +27,13 @@ namespace hagame {
 			GLint getAttrib(std::string var);
 			void setInt(std::string var, int val);
 			void setFloat(std::string var, float val);
-			void setVec2(std::string var, glm::vec2 vect);
-			void setVec3(std::string var, glm::vec3 vect);
-			void setVec4(std::string var, glm::vec4 vect);
-			void setMat4(std::string var, glm::mat4 mat);
+			void setVec2(std::string var, Vec2 vect);
+			void setVec3(std::string var, Vec3 vect);
+			void setVec4(std::string var, Vec4 vect);
+			void setMat4(std::string var, Mat4 mat);
+			void setMaterial(std::string var, Material mat);
 
-			void setMVP(glm::mat4 model, glm::mat4 view, glm::mat4 projection);
+			void setMVP(Mat4 model, Mat4 view, Mat4 projection);
 		};
 	}
 }

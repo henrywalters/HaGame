@@ -57,23 +57,31 @@ void hagame::graphics::ShaderProgram::setFloat(std::string var, float val)
 	glUniform1f(getUniform(var), val);
 }
 
-void hagame::graphics::ShaderProgram::setVec2(std::string var, glm::vec2 vec) {
+void hagame::graphics::ShaderProgram::setVec2(std::string var, Vec2 vec) {
 	glUniform2fv(getUniform(var), 1, &vec[0]);
 }
 
-void hagame::graphics::ShaderProgram::setVec3(std::string var, glm::vec3 vec) {
+void hagame::graphics::ShaderProgram::setVec3(std::string var, Vec3 vec) {
 	glUniform3fv(getUniform(var), 1, &vec[0]);
 }
 
-void hagame::graphics::ShaderProgram::setVec4(std::string var, glm::vec4 vec) {
+void hagame::graphics::ShaderProgram::setVec4(std::string var, Vec4 vec) {
 	glUniform4fv(getUniform(var), 1, &vec[0]);
 }
 
-void hagame::graphics::ShaderProgram::setMat4(std::string var, glm::mat4 mat) {
-	glUniformMatrix4fv(getUniform(var), 1, GL_FALSE, &mat[0][0]);
+void hagame::graphics::ShaderProgram::setMat4(std::string var, Mat4 mat) {
+	glUniformMatrix4fv(getUniform(var), 1, GL_TRUE, &mat[0]);
 }
 
-void hagame::graphics::ShaderProgram::setMVP(glm::mat4 model, glm::mat4 view, glm::mat4 projection)
+void hagame::graphics::ShaderProgram::setMaterial(std::string var, Material mat)
+{
+	setVec3(var + ".ambient", mat.ambient);
+	setVec3(var + ".diffuse", mat.diffuse);
+	setVec3(var + ".specular", mat.specular);
+	setFloat(var + ".shininess", mat.shininess);
+}
+
+void hagame::graphics::ShaderProgram::setMVP(Mat4 model, Mat4 view, Mat4 projection)
 {
 	setMat4("model", model);
 	setMat4("projection", projection);

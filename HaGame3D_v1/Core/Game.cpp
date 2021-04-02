@@ -10,15 +10,17 @@ void hagame::Game::run()
 
 	while (running) {
 		long now = hagame::utils::Clock::Now();
-		double dt = (now - lastTick) / 1000000.0;
+		double dt = (double)(now - lastTick) / TICKS_PER_SECOND;
+		secondsElapsed += dt;
+		fps = 1000 / dt;
 		lastTick = now;
 		SDL_Event e;
 
-		while (SDL_PollEvent(&e)) {
-			if (e.type == SDL_QUIT) {
-				running = false;
-			}
-		}
+		//while (SDL_PollEvent(&e)) {
+		//		if (e.type == SDL_QUIT) {
+		//		running = false;
+		//	}
+		//}
 
 		onGameUpdate(dt);
 		

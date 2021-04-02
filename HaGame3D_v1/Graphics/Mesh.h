@@ -2,8 +2,6 @@
 #define MESH
 
 #include <SDL.h>
-#include <gl/glew.h>
-#include <glm/glm.hpp>
 #include <vector>
 #include <iostream>
 #include "../Math/Vector.h"
@@ -27,9 +25,9 @@ namespace hagame {
 		}
 
 		struct Vertex {
-			glm::vec3 position;
-			glm::vec3 normal;
-			glm::vec2 texCoords;
+			Vec3 position;
+			Vec3 normal;
+			Vec2 texCoords;
 		};
 
 		class Mesh {
@@ -86,11 +84,10 @@ namespace hagame {
 				for (auto v : vertices) {
 					if (!init) {
 						init = true;
-						min = hgVec3(v.position);
-						max = hgVec3(v.position);
+						min = v.position;
+						max = v.position;
 					}
 					else {
-						std::cout << glVec3ToString(v.normal) << std::endl;
 						for (int i = 0; i < 3; i++) {
 							if (v.position[i] < min[i]) {
 								min[i] = v.position[i];
@@ -117,6 +114,8 @@ namespace hagame {
 				for (auto line : file->readLines()) {
 					auto parts = stringSplit(line, ' ');
 
+					if (parts.size() == 0) continue;
+
 					if (parts[0] == "v") {
 						positions.push_back(Vec3({ stof(parts[1]), stof(parts[2]), stof(parts[3]) }));
 					}
@@ -130,9 +129,6 @@ namespace hagame {
 					}
 
 					if (parts[0] == "f") {
-						if (parts.size() != 4) {
-							throw new std::exception("OBJ File must be triangulated!");
-						}
 
 						auto f1 = stringSplit(parts[1], '/');
 						auto f2 = stringSplit(parts[2], '/');
@@ -142,21 +138,33 @@ namespace hagame {
 						Vertex v2;
 						Vertex v3;
 						
-						v1.position = glVec3(positions[stoi(f1[0]) - 1]);
-						v2.position = glVec3(positions[stoi(f2[0]) - 1]);
-						v3.position = glVec3(positions[stoi(f3[0]) - 1]);
+						v1.position = positions[stoi(f1[0]) - 1];
+						v2.position = positions[stoi(f2[0]) - 1];
+						v3.position = positions[stoi(f3[0]) - 1];
 
-						v1.texCoords = glVec2(textures[stoi(f1[1]) - 1]);
-						v1.texCoords = glVec2(textures[stoi(f2[1]) - 1]);
-						v1.texCoords = glVec2(textures[stoi(f3[1]) - 1]);
+						v1.texCoords = textures[stoi(f1[1]) - 1];
+						v1.texCoords = textures[stoi(f2[1]) - 1];
+						v1.texCoords = textures[stoi(f3[1]) - 1];
 
-						v1.normal = glVec3(normals[stoi(f1[2]) - 1]);
-						v2.normal = glVec3(normals[stoi(f2[2]) - 1]);
-						v2.normal = glVec3(normals[stoi(f2[2]) - 1]);
+						v1.normal = normals[stoi(f1[2]) - 1];
+						v2.normal = normals[stoi(f2[2]) - 1];
+						v2.normal = normals[stoi(f2[2]) - 1];
 
 						mesh.vertices.insert(mesh.vertices.end(), { v1, v2, v3 });
 						mesh.indices.insert(mesh.indices.end(), { idx, idx + 1, idx + 2 });
 						idx += 3;
+
+						if (parts.size() == 4) {
+							auto f4 = stringSplit(parts[3], '/');
+							Vertex v4;
+							v4.position = positions[stoi(f4[0]) - 1];
+							v4.texCoords = textures[stoi(f4[1]) - 1];
+							v4.normal = normals[stoi(f4[2]) - 1];
+
+							mesh.vertices.insert(mesh.vertices.end(), { v1, v4, v3 });
+							mesh.indices.insert(mesh.indices.end(), { idx, idx + 1, idx + 2 });
+							idx += 3;
+						}
 					}
 				}
 				mesh.initializeForGL();
