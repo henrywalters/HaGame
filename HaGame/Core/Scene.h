@@ -31,8 +31,10 @@ namespace hagame {
 		}
 
 		void update(double dt) {
+			ecs.systems.beforeUpdateAll();
 			ecs.systems.updateAll(dt);
 			onSceneUpdate(dt);
+			ecs.systems.afterUpdateAll();
 		}
 
 	public:

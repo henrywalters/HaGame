@@ -17,42 +17,42 @@ namespace hagame {
 			}
 		};
 
-		class Color
+		class Color : public Vec4
 		{
 		public:
-
-			RGB rgb;
 
 			Color() {}
 
 			Color(float r, float g, float b) {
-				Color(r, g, b, 1.0);
+				vector[0] = r;
+				vector[1] = g;
+				vector[2] = b;
+				vector[3] = 1.0f;
 			}
 
 			Color(float r, float g, float b, float a) {
-				rgb.r = r;
-				rgb.g = g;
-				rgb.b = b;
-				rgb.a = a;
+				vector[0] = r;
+				vector[1] = g;
+				vector[2] = b;
+				vector[3] = a;
 			}
 
-			Color(RGB _rgb) {
-				rgb = _rgb;
+			Color(RGB rgb) {
+				vector[0] = rgb.r;
+				vector[1] = rgb.g;
+				vector[2] = rgb.b;
+				vector[3] = rgb.a;
 			}
 
 			Color(char* hex) {
-				rgb = RGB::ParseHex(hex);
+				RGB rgb = RGB::ParseHex(hex);
+				vector[0] = rgb.r;
+				vector[1] = rgb.g;
+				vector[2] = rgb.b;
+				vector[3] = rgb.a;
 			}
 
 			~Color() {}
-
-			Vec3 getVec3() {
-				return Vec3({ rgb.r, rgb.g, rgb.b });
-			}
-
-			Vec4 getVec4() {
-				return Vec4({ rgb.r, rgb.g, rgb.b, rgb.a });
-			}
 
 			static Color red() {
 				return Color(RGB{ 1.0, 0.0, 0.0, 1.0 });
@@ -72,6 +72,10 @@ namespace hagame {
 
 			static Color black() {
 				return Color(RGB{ 0.0, 0.0, 0.0, 1.0 });
+			}
+
+			static Color purple() {
+				return Color(RGB({ 1.0, 0.0, 1.0, 1.0 }));
 			}
 
 			

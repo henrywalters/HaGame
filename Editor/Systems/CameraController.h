@@ -5,6 +5,13 @@
 
 class CameraController : public hagame::ecs::System {
 public:
+
+	void onSystemBeforeUpdate() {
+		auto shader = game->resources.getShaderProgram("material");
+		shader->use();
+		shader->setVec3("viewPos", scene->activeCamera->transform.position);
+	}
+
 	void onSystemUpdate(double dt) {
 
 		if (game->input.keyboardMouse.mouse.left && game->window->inViewport(game->input.keyboardMouse.mouse.position)) {

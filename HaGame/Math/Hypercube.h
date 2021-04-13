@@ -40,6 +40,15 @@ namespace hagame {
 			Vector<dimensions, T> getCenter() {
 				return pos + (size * 0.5);
 			}
+
+			Vector<dimensions, T> min() {
+				return pos;
+			}
+
+			Vector<dimensions, T> max() {
+				return pos + size;
+			}
+
 		};
 	}
 }

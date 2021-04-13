@@ -8,6 +8,12 @@
 namespace hagame {
 	namespace math {
 
+		enum MatrixSolutionType {
+			Single,
+			None,
+			Infinite,
+		};
+
 		template <class T> inline T sq(T val) { return val * val; }
 
 		template <size_t M, size_t N, class T> 
@@ -21,14 +27,6 @@ namespace hagame {
 
 			Matrix(T value) {
 				fill(value);
-			}
-
-			Matrix(std::vector<Vector<N, T>> rows) {
-				for (int i = 0; i < M; i++) {
-					for (int j = 0; j < N; j++) {
-						mat[Matrix::FlattenIndex(i, j)] = rows[i][j];
-					}
-				}
 			}
 
 			Matrix(std::vector<T> values) {
@@ -170,6 +168,23 @@ namespace hagame {
 
 			// Class methods
 
+			template<size_t P, size_t Q>
+			Matrix<P, Q, T> resize() {
+				Matrix<P, Q, T> copy = Matrix<P, Q, T>();
+				for (int i = 0; i < P; i++) {
+					for (int j = 0; j < Q; j++) {
+						if (i <= M && j <= N) {
+							copy.set(i, j, get(i, j));
+						}
+						else {
+							copy.set(i, j, 0);
+						}
+					}
+				}
+				return copy;
+			}
+
+			// Create a shallow copy of a matrix
 			Matrix<M, N, T> copy() {
 				Matrix<M, N, T> c = Matrix<M, N, T>();
 				for (int i = 0; i < M; i++) {
@@ -178,6 +193,15 @@ namespace hagame {
 					}
 				}
 				return c;
+			}
+
+			// Shallowly assign all the values of a matrix from another
+			void assign(Matrix<M, N, T> mat) {
+				for (int i = 0; i < M; i++) {
+					for (int j = 0; j < N; j++) {
+						set(i, j, mat.get(i, j));
+					}
+				}
 			}
 
 			const static int rows() {
@@ -206,6 +230,27 @@ namespace hagame {
 				}
 			}
 
+			void swapRows(int rowA, int rowB) {
+				float tmp;
+				for (int i = 0; i < N; i++) {
+					tmp = get(rowA, i);
+					set(rowA, i, get(rowB, i));
+					set(rowB, i, tmp);
+				}
+			}
+
+			void addRowMultiple(int rowA, int rowB, T scalar) {
+				for (int i = 0; i < N; i++) {
+					set(rowA, i, get(rowA, i) + get(rowB, i) * scalar);
+				}
+			}
+
+			void multiplyRow(int row, T scalar) {
+				for (int i = 0; i < N; i++) {
+					set(row, i, get(row, i) * scalar);
+				}
+			}
+
 			void fillDiag(T value) {
 				if (!isSquare()) {
 					throw new std::exception("Can only fill diag of square matrices");
@@ -216,40 +261,30 @@ namespace hagame {
 				}
 			}
 
-			bool reduce() {
-				float pro = 0;
-				int c = 0;
+			Matrix<M, N, T> inverted() {
+				Matrix<M, N, T> orig = copy();
+				Matrix<M, N, T> eye = Matrix<M, N, T>::Identity();
 
-				int i, j, k = 0;
+				for (int i = 0; i < M; i++) {
 
-				for (i = 0; i < N; i++) {
-					if (get(i, i) == 0) {
-						c = 1;
-						while ((c + 1) < N && get(i + c, i) == 0) {
-							c++;
-						}
+					T scalar = orig.get(i, i);
+					orig.multiplyRow(i, 1 / scalar);
+					eye.multiplyRow(i, 1 / scalar);
 
-						if ((i + c) == N) {
-							return false;
-						}
-
-						for (j = i, k = 0; k <= N; k++) {
-							T tmp = get(j, k);
-							set(j, k, get(j + c, k));
-							set(j + c, k, tmp);
-						}
-					}
-
-					for (j = 0; j < N; j++) {
-						if (i != j) {
-							float pro = get(j, i) / get(i, i);
-
-							for (k = 0; k <= N; k++) {
-								set(j, k, get(j, k) - get(i, k) * pro);
-							}
+					for (int j = 0; j < N; j++) {
+						if (i != j && orig.get(j, i) != 0) {
+							T temp = orig.get(j, i);
+							orig.addRowMultiple(j, i, -temp);
+							eye.addRowMultiple(j, i, -temp);
 						}
 					}
 				}
+				
+				return eye;
+			}
+
+			void invert() {
+				assign(inverted());
 			}
 
 			std::string toString() {
@@ -329,6 +364,17 @@ namespace hagame {
 						for (int k = 0; k < B.rows(); k++) {
 							out.set(i, j, out.get(i, j) + (get(i, k) * B[Matrix::FlattenIndex(k, j)]));
 						}
+					}
+				}
+				return out;
+			}
+
+			template <size_t P>
+			Vector<P, T> operator*(const Vector<P, T>& B) {
+				Vector<P, T> out = Vector<P, T>();
+				for (int i = 0; i < M; i++) {
+					for (int j = 0; j < N; j++) {
+						out[i] += B[j] * get(i, j);
 					}
 				}
 				return out;

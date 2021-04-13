@@ -40,7 +40,7 @@ message(STATUS "LIBS: ${LIBS} ")
 
 target_link_libraries(HaGame ${LIBS})
 
-add_executable(HaGameEditor Editor/Editor.cpp "Editor/Editor.h" "Editor/Systems/CameraController.h" "Editor/Systems/Renderer.h" "Editor/Systems/MousePicker.h")
+add_executable(HaGameEditor Editor/Editor.cpp "Editor/Editor.h" "Editor/Systems/CameraController.h" "Editor/Systems/Renderer.h" "Editor/Systems/MousePicker.h" "Editor/Systems/UI.h")
 target_link_libraries(HaGameEditor ${LIBS})
 
 if (MSVC_VERSION GREATER_EQUAL "1900")

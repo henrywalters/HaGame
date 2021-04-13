@@ -19,15 +19,23 @@ namespace hagame {
 
 				glGenVertexArrays(1, &VAO);
 				glGenBuffers(1, &VBO);
-				glBindVertexArray(VAO);
 
+				glBindVertexArray(VAO);
 				glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
 				glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices.data(), GL_STATIC_DRAW);
 				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 				glEnableVertexAttribArray(0);
 
 				glBindBuffer(GL_ARRAY_BUFFER, 0);
 				glBindVertexArray(0);
+
+				glDisableVertexAttribArray(0);
+			}
+
+			void removeBuffers() {
+				glDeleteBuffers(1, &VBO);
+				glDeleteVertexArrays(1, &VAO);
 			}
 
 		public:
@@ -38,6 +46,10 @@ namespace hagame {
 
 			Line(Vec3 _p1, Vec3 _p2, Color _color) : p1(_p1), p2(_p2), color(_color) {
 				initializeForGL();
+			}
+
+			~Line() {
+				removeBuffers();
 			}
 
 			void draw(ShaderProgram* shader) {

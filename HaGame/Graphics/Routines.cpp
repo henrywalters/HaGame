@@ -2,7 +2,6 @@
 #include <glm/gtx/string_cast.hpp>
 
 /*
-
 void hagame::graphics::drawMesh(Mesh mesh, ShaderProgram* shader) {
 	
 }
@@ -68,3 +67,31 @@ void hagame::graphics::drawParticle(GLuint vao, ShaderProgram* shader, Particle 
 	glBindVertexArray(0);
 }
 */
+
+
+// Draw a line with a given shader. Assumes MVP matrix is already set.
+void hagame::graphics::drawLine(Line line, ShaderProgram* shader)
+{
+	shader->use();
+	shader->setVec3("color", line.color.resize<3>());
+	line.draw(shader);
+}
+
+// Draw a cube outline with a given shader. Assumes MVP matrix is already set.
+void hagame::graphics::drawCubeOutline(Cube cube, Color color, ShaderProgram* shader)
+{
+	drawLine(hagame::graphics::Line(cube.pos, cube.pos + cube.size.prod(Vec3::Face()), color), shader);
+	drawLine(hagame::graphics::Line(cube.pos, cube.pos + cube.size.prod(Vec3::Right()), color), shader);
+	drawLine(hagame::graphics::Line(cube.pos + cube.size.prod(Vec3::Right()), cube.pos + cube.size.prod(Vec3::Right()) + cube.size.prod(Vec3::Face()), color), shader);
+	drawLine(hagame::graphics::Line(cube.pos + cube.size.prod(Vec3::Face()), cube.pos + cube.size.prod(Vec3::Right()) + cube.size.prod(Vec3::Face()), color), shader);
+
+	drawLine(hagame::graphics::Line(cube.pos + cube.size.prod(Vec3::Top()), cube.pos + cube.size.prod(Vec3::Face()) + cube.size.prod(Vec3::Top()), color), shader);
+	drawLine(hagame::graphics::Line(cube.pos + cube.size.prod(Vec3::Top()), cube.pos + cube.size.prod(Vec3::Right()) + cube.size.prod(Vec3::Top()), color), shader);
+	drawLine(hagame::graphics::Line(cube.pos + cube.size.prod(Vec3::Right()) + cube.size.prod(Vec3::Top()), cube.pos + cube.size.prod(Vec3::Right()) + cube.size.prod(Vec3::Face()) + cube.size.prod(Vec3::Top()), color), shader);
+	drawLine(hagame::graphics::Line(cube.pos + cube.size.prod(Vec3::Face()) + cube.size.prod(Vec3::Top()), cube.pos + cube.size.prod(Vec3::Right()) + cube.size.prod(Vec3::Face()) + cube.size.prod(Vec3::Top()), color), shader);
+
+	drawLine(hagame::graphics::Line(cube.pos, cube.pos + cube.size.prod(Vec3::Top()), color), shader);
+	drawLine(hagame::graphics::Line(cube.pos + cube.size.prod(Vec3::Right()), cube.pos + cube.size.prod(Vec3::Top()) + cube.size.prod(Vec3::Right()), color), shader);
+	drawLine(hagame::graphics::Line(cube.pos + cube.size.prod(Vec3::Face()), cube.pos + cube.size.prod(Vec3::Top()) + cube.size.prod(Vec3::Face()), color), shader);
+	drawLine(hagame::graphics::Line(cube.pos + cube.size.prod(Vec3::Face()) + cube.size.prod(Vec3::Right()), cube.pos + cube.size.prod(Vec3::Top()) + cube.size.prod(Vec3::Face()) + cube.size.prod(Vec3::Right()), color), shader);
+}

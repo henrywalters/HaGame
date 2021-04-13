@@ -2,6 +2,8 @@
 #include "Systems/CameraController.h"
 #include "Systems/Renderer.h"
 #include "Systems/MousePicker.h"
+#include "Systems/UI.h"
+
 
 class HaGameEditor : public hagame::Game {
 public:
@@ -11,8 +13,6 @@ public:
 	hagame::Scene* editor;
 
 	hagame::graphics::PerspectiveCamera editorCamera = hagame::graphics::PerspectiveCamera();
-	Vec3 editorLightPos = Vec3({ 10.0f, 50.0f, 10.0f });
-	hagame::graphics::Color editorLightColor = hagame::graphics::Color::white();
 
 	hagame::graphics::ShaderProgram* materialShader;
 	hagame::graphics::ShaderProgram* colorShader;
@@ -21,7 +21,8 @@ public:
 	String version = "0.0.1";
 
 	hagame::Transform test;
-	hagame::graphics::Mesh cube;
+	hagame::graphics::Mesh* cube;
+	hagame::graphics::Mesh* sphere;
 
 	MaterialRenderer* renderer;
 
@@ -42,10 +43,12 @@ public:
 		editor->addSystem<Renderer>();
 		editor->addSystem<CameraController>();
 		editor->addSystem<MousePicker>();
+		editor->addSystem<UI>();
 
 		resources.setBasePath("../../../Assets");
 
-		cube = hagame::graphics::Mesh::FromOBJ(resources.loadFile("cube_model", "Models/Blender.obj"));
+		cube = hagame::graphics::Mesh::FromOBJ(resources.loadFile("cube_model", "Models/Cube.obj"));
+		sphere = hagame::graphics::Mesh::FromOBJ(resources.loadFile("cube_model", "Models/Sphere.obj"));
 
 		materialShader = resources.loadShaderProgram("material", "Shaders/material_vert.glsl", "Shaders/material_frag.glsl");
 		colorShader = resources.loadShaderProgram("color", "Shaders/color_vert.glsl", "Shaders/color_frag.glsl");
@@ -59,24 +62,10 @@ public:
 		renderer = test->addComponent<MaterialRenderer>();
 		renderer->transform.rotation= Quat(0, Vec3::Top());
 		renderer->transform.position = Vec3({ 0, 2, 0 });
-		renderer->mesh = cube;
+		renderer->mesh = sphere;
 		renderer->material = hagame::graphics::Material::emerald();
 		renderer->shader = materialShader;
-
-		// Setup Dear ImGui context
-		IMGUI_CHECKVERSION();
-		ImGui::CreateContext();
-		ImGuiIO& io = ImGui::GetIO(); (void)io;
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-
-		// Setup Dear ImGui style
-		ImGui::StyleColorsDark();
-		ImGui::StyleColorsClassic();
-
-		// Setup Platform/Renderer backends
-		ImGui_ImplSDL2_InitForOpenGL(window->window, window->gl);
-		ImGui_ImplOpenGL3_Init("#version 330 core");
+		renderer->displayBounds = true;
 	}
 
 	void onGameUpdate(double dt) {
@@ -85,12 +74,6 @@ public:
 		if (input.keyboardMouse.home) {
 			running = false;
 		}
-
-		materialShader->use();
-
-		materialShader->setVec3("lightPos", editorLightPos);
-		materialShader->setVec3("lightColor", editorLightColor.getVec3());
-		materialShader->setVec3("viewPos", editorCamera.transform.position);
 		
 		float gridScale = 10.0f;
 		int gridLines = 50;
@@ -100,22 +83,6 @@ public:
 			drawLine(Vec3({ i * gridScale - half, 0.0f,  -half }), Vec3({ i * gridScale - half , 0.0f, half }), hagame::graphics::Color::blue());
 			drawLine(Vec3({ -half, 0.0f, i * gridScale - half }), Vec3({ half, 0.0f, i * gridScale - half }), hagame::graphics::Color::blue());
 		}
-
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplSDL2_NewFrame(window->window);
-		ImGui::NewFrame();
-		bool showDemoWindow = true;
-		if (showDemoWindow) ImGui::ShowDemoWindow(&showDemoWindow);
-
-		{
-			ImGui::Begin("Window Properties");
-			ImGui::Text("Adjust common settings of the window");
-			ImGui::SliderFloat("FOV", &editorCamera.fov, 0.1f, PI / 2);
-			ImGui::End();
-		}
-
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	}
 
 	void drawAxis(hagame::Transform transform, float size = 1.0f) {
@@ -131,7 +98,7 @@ public:
 		hagame::graphics::Line line = hagame::graphics::Line(p1, p2, color);
 		colorShader->use();
 		colorShader->setMVP(Mat4::Identity(), editorCamera.getViewMatrix(), editorCamera.getProjMatrix());
-		colorShader->setVec3("color", color.getVec3());
+		colorShader->setVec3("color", color.resize<3>());
 		line.draw(colorShader);
 	}
 };

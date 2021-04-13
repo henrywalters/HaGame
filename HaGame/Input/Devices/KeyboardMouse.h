@@ -22,6 +22,10 @@ namespace hagame {
 				bool middlePressed = false;
 				bool right = false;
 				bool rightPressed = false;
+
+				Vec2 getRelativePosition(Rect viewport) {
+					return position - viewport.pos;
+				}
 			};
 
 			const int MAX_MOUSE_MOVE = 500;

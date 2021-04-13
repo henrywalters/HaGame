@@ -47,6 +47,7 @@ namespace hagame {
 			}
 
 			void activate(String stateName) {
+
 				if (!has(stateName)) {
 					throw new Exception("Requested state does not exist");
 				}

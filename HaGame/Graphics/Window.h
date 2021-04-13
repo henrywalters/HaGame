@@ -84,6 +84,9 @@ namespace hagame {
 			void setTitle(String title);
 
 			void setViewport(Rect viewport);
+			Rect getViewport() {
+				return _viewport;
+			}
 
 			bool inViewport(Vec2 point);
 		};

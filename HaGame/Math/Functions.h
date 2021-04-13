@@ -34,4 +34,38 @@ T getAngle(hagame::math::Vector<2, T> vector) {
 	return atan2(vector[1], vector[0]);
 }
 
+// Adjusts a box (assumed to be 3d axis-aligned, such as a Mesh Model Bounding Box) by a transform matrix and translation vector. 
+template <size_t dim, class T>
+hagame::math::Hypercube<dim, T> transformBoundingBox(hagame::math::Hypercube<dim, T> box, hagame::math::Matrix<dim, dim, T> transform, hagame::math::Vector<dim, T> translation) {
+	// Implementation based on Jim Avro's code: http://www.realtimerendering.com/resources/GraphicsGems/gems/TransBox.c
+
+	float a, b;
+	hagame::math::Vector<dim, T> aMin, aMax, bMin, bMax;
+	int i, j;
+
+	aMin = box.min().copy();
+	aMax = box.max().copy();
+
+	bMin = translation.copy();
+	bMax = bMin.copy();
+
+	for (i = 0; i < dim; i++) {
+		for (j = 0; j < dim; j++) {
+			a = transform.get(i, j) * aMin[j];
+			b = transform.get(i, j) * aMax[j];
+
+			if (a < b) {
+				bMin[i] += a;
+				bMax[i] += b;
+			}
+			else {
+				bMin[i] += b;
+				bMax[i] += a;
+			}
+		}
+	}
+
+	return hagame::math::Hypercube(bMin, bMax - bMin);
+}
+
 #endif

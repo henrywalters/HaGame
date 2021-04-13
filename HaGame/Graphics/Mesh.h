@@ -59,6 +59,18 @@ namespace hagame {
 				glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoords));
 
 				glBindVertexArray(0);
+
+				glDisableVertexAttribArray(0);
+				//glDisableVertexAttribArray(1);
+				//glDisableVertexAttribArray(2);
+
+			}
+
+			void removeBuffers() {
+				std::cout << "glDeleteBuffers\n";
+				glDeleteVertexArrays(1, &VAO);
+				glDeleteBuffers(1, &VBO);
+				glDeleteBuffers(1, &EBO);
 			}
 
 		public:
@@ -68,6 +80,27 @@ namespace hagame {
 			Mesh() {
 				vertices = Array<Vertex>();
 				indices = Array<unsigned int>();
+			}
+
+			Mesh(Array<Vec3> positions, Array<Vec2> textures, Array<Vec3> normals) {
+				if (positions.size() != textures.size() || positions.size() != normals.size()) {
+					throw new std::exception("all three arrays must be the same length to create a mesh");
+				}
+
+
+				for (int i = 0; i < positions.size(); i++) {
+					Vertex v;
+					v.position = positions[i];
+					v.normal = normals[i];
+					v.texCoords = textures[i];
+					vertices.push_back(v);
+				}
+
+				initializeForGL();
+			}
+
+			~Mesh() {
+				removeBuffers();
 			}
 
 			void draw(ShaderProgram* shader) {
@@ -103,8 +136,9 @@ namespace hagame {
 				return Cube(min, max - min);
 			}
 
-			static Mesh FromOBJ(utils::File* file) {
-				Mesh mesh;
+
+			static Mesh* FromOBJ(utils::File* file) {
+				Mesh* mesh = new Mesh();
 				Array<Vec3> positions = Array<Vec3>();
 				Array<Vec2> textures = Array<Vec2>();
 				Array<Vec3> normals = Array<Vec3>();
@@ -130,6 +164,8 @@ namespace hagame {
 
 					if (parts[0] == "f") {
 
+						std::cout << parts.size() << std::endl;
+
 						auto f1 = stringSplit(parts[1], '/');
 						auto f2 = stringSplit(parts[2], '/');
 						auto f3 = stringSplit(parts[3], '/');
@@ -150,24 +186,24 @@ namespace hagame {
 						v2.normal = normals[stoi(f2[2]) - 1];
 						v2.normal = normals[stoi(f2[2]) - 1];
 
-						mesh.vertices.insert(mesh.vertices.end(), { v1, v2, v3 });
-						mesh.indices.insert(mesh.indices.end(), { idx, idx + 1, idx + 2 });
+						mesh->vertices.insert(mesh->vertices.end(), { v1, v2, v3 });
+						mesh->indices.insert(mesh->indices.end(), { idx, idx + 1, idx + 2 });
 						idx += 3;
 
-						if (parts.size() == 4) {
-							auto f4 = stringSplit(parts[3], '/');
+						if (parts.size() == 5) {
+							auto f4 = stringSplit(parts[4], '/');
 							Vertex v4;
 							v4.position = positions[stoi(f4[0]) - 1];
 							v4.texCoords = textures[stoi(f4[1]) - 1];
 							v4.normal = normals[stoi(f4[2]) - 1];
 
-							mesh.vertices.insert(mesh.vertices.end(), { v1, v4, v3 });
-							mesh.indices.insert(mesh.indices.end(), { idx, idx + 1, idx + 2 });
+							mesh->vertices.insert(mesh->vertices.end(), { v1, v3, v4});
+							mesh->indices.insert(mesh->indices.end(), { idx, idx + 1, idx + 2 });
 							idx += 3;
 						}
 					}
 				}
-				mesh.initializeForGL();
+				mesh->initializeForGL();
 				return mesh;
 			}
 		};

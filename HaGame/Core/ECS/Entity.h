@@ -27,7 +27,7 @@ namespace hagame {
 
 			template <class T>
 			T* addComponent() {
-				return &registry->emplace<T>(entt_id);
+				return &registry->emplace_or_replace<T>(entt_id);
 			}
 
 			template <class T>

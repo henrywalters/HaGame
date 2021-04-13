@@ -88,12 +88,22 @@ namespace hagame {
 			// Basic functions
 
 			// Set all elements to zero
+
+			Vector copy() {
+				Vector copy = Vector();
+				for (int i = 0; i < size; i++) {
+					copy[i] = vector[i];
+				}
+				return copy;
+			}
+
 			void zero() {
 				for (int i = 0; i < size; i++) {
 					vector[i] = 0;
 				}
 			}
 
+			// Update all values of vector based on index and value
 			void update(std::function<T(int, T)> lambda) {
 				for (int i = 0; i < size; i++) {
 					vector[i] = lambda(i, vector[i]);
@@ -161,10 +171,20 @@ namespace hagame {
 				});
 			}
 
+			// element-wise multiplication
 			Vector prod(Vector vect) {
 				Vector copy = *this;
 				for (int i = 0; i < size; i++) {
 					copy[i] *= vect[i];
+				};
+				return copy;
+			}
+
+			// element-wise division
+			Vector div(Vector vect) {
+				Vector copy = *this;
+				for (int i = 0; i < size; i++) {
+					copy[i] /= vect[i];
 				};
 				return copy;
 			}

@@ -24,7 +24,9 @@ namespace hagame {
 			bool active = true;
 
 			virtual void onSystemStart() {}
-			virtual void onSystemUpdate(double dt) {};
+			virtual void onSystemBeforeUpdate() {}
+			virtual void onSystemUpdate(double dt) {}
+			virtual void onSystemAfterUpdate() {}
 			virtual void onSystemStop() {}
 
 			void start() {
@@ -42,6 +44,18 @@ namespace hagame {
 			void update(double dt) {
 				if (active) {
 					onSystemUpdate(dt);
+				}
+			}
+
+			void beforeUpdate() {
+				if (active) {
+					onSystemBeforeUpdate();
+				}
+			}
+
+			void afterUpdate() {
+				if (active) {
+					onSystemAfterUpdate();
 				}
 			}
 		};

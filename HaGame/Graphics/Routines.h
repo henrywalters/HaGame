@@ -6,6 +6,7 @@
 #include "Window.h"
 #include "OpenGL.h"
 #include "Primitives.h"
+#include "Line.h"
 
 namespace hagame {
 	namespace graphics {
@@ -16,6 +17,8 @@ namespace hagame {
 		void drawSprite(GLuint vao, ShaderProgram* shader, Sprite sprite);
 		void drawParticle(GLuint vao, ShaderProgram* shader, Particle particle);
 		*/
+		void drawLine(Line line, ShaderProgram* shader);
+		void drawCubeOutline(Cube cube, Color color, ShaderProgram* shader);
 	}
 }
 

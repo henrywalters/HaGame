@@ -121,9 +121,11 @@ void hagame::graphics::Window::destroy() {
 }
 
 void hagame::graphics::Window::clear() {
-	glClearColor(clearColor.rgb.r, clearColor.rgb.g, clearColor.rgb.b, clearColor.rgb.a);
+	glClearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 }
 
 void hagame::graphics::Window::render() {

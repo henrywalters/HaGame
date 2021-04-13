@@ -4,6 +4,9 @@ void hagame::Game::run()
 {
 	
 	onGameStart();
+
+	if (scenes.hasActive()) scenes.active()->activate();
+
 	running = true;
 
 	while (running) {
@@ -20,6 +23,8 @@ void hagame::Game::run()
 		}
 		window->render();
 	}
+
+	if (scenes.hasActive()) scenes.active()->deactivate();
 
 	onGameEnd();
 }
