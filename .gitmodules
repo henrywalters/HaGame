@@ -1,3 +1,6 @@
 [submodule "HaGame/Vendor/imgui"]
 	path = HaGame/Vendor/imgui
 	url = git@github.com:ocornut/imgui.git
+[submodule "HaGame/Vendor/soloud"]
+	path = HaGame/Vendor/soloud
+	url = https://github.com/jarikomppa/soloud
