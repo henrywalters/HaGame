@@ -10,6 +10,8 @@
 #include "Math/Hypercube.h"
 #include "Math/Functions.h"
 #include "Math/Quaternion.h"
+#include "Math/Sample.h"
+#include "Math/Perlin.h"
 
 #include "Graphics/OpenGL.cpp"
 #include "Graphics/Monitors.h"
@@ -25,6 +27,7 @@
 #include "Graphics/Particle.h"
 #include "Graphics/Routines.cpp"
 #include "Graphics/Line.h"
+#include "Graphics/Plane.h"
 
 #include "Input/Device.h"
 #include "Input/Devices/Gamepad.h"
@@ -33,8 +36,10 @@
 #include "Utils/File.cpp"
 #include "Utils/FileSystem.cpp"
 #include "Utils/Clock.h"
+#include "Utils/Timer.h"
 #include "Utils/Aliases.h"
 #include "Utils/String.cpp"
+#include "Utils/Random.h"
 
 #include "Physics/RigidBody.h"
 
@@ -61,5 +66,6 @@
 #include "Vendor/entt/entt.hpp"
 
 #include "Vendor/stb/stb_image.cpp"
+
 
 // TODO: Reference additional headers your program requires here.

@@ -6,6 +6,10 @@
 class CameraController : public hagame::ecs::System {
 public:
 
+	String getSystemName() {
+		return "Camera Controller System";
+	}
+
 	void onSystemBeforeUpdate() {
 		auto shader = game->resources.getShaderProgram("material");
 		shader->use();
@@ -24,7 +28,8 @@ public:
 			scene->activeCamera->transform.rotate(Quat(game->input.keyboardMouse.rAxis[0] * dt, Vec3::Top()));
 		}
 
-		scene->activeCamera->transform.move(scene->activeCamera->transform.face() * game->input.keyboardMouse.lAxis[1] * dt);
+		scene->activeCamera->transform.move(scene->activeCamera->transform.face() * game->input.keyboardMouse.lAxis[1] * dt * -100);
+		scene->activeCamera->transform.move(scene->activeCamera->transform.right() * game->input.keyboardMouse.lAxis[0] * dt * -50);
 	}
 };
 

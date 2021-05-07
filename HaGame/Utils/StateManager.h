@@ -38,6 +38,16 @@ namespace hagame {
 				return state.get();
 			}
 
+			template <class T>
+			StateType* add(String stateName) {
+				Ptr<StateType> state = std::make_unique<T>();
+				_states.insert(std::make_pair(stateName, state));
+				if (!hasActive()) {
+					activate(stateName);
+				}
+				return state.get();
+			}
+
 			bool has(String stateName) {
 				return _states.find(stateName) != _states.end();
 			}

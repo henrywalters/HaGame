@@ -1,4 +1,3 @@
-#define DEBUG_MODE true
 #include "../HaGame.h"
 
 namespace hagame {

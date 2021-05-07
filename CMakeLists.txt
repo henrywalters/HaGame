@@ -33,7 +33,7 @@ message(STATUS "SDL2_LIB = ${SDL2_LIBS}")
 
 include_directories(${SDL2_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIR} ${GLM_INCLUDE_DIRS})
 
-add_executable(HaGame HaGame/HaGame.cpp "HaGame/Graphics/Color.h"  "HaGame/Input/Device.h" "HaGame/Input/Devices/Gamepad.h" "HaGame/Graphics/Window.cpp" "HaGame/Graphics/Shader.cpp" "HaGame/Utils/FileSystem.cpp" "HaGame/Graphics/ShaderProgram.cpp" "HaGame/Utils/Clock.h" "HaGame/Graphics/Mesh.h" "HaGame/Utils/Aliases.h" "HaGame/Graphics/Routines.h" "HaGame/Graphics/Routines.cpp" "HaGame/Graphics/Camera.h"  "HaGame/Core/Transform.h" "HaGame/Core/Transform.cpp" "HaGame/Graphics/Primitives.h" "HaGame/Graphics/Texture.h" "HaGame/Vendor/stb/stb_image.cpp" "HaGame/Graphics/Texture.cpp" "HaGame/Math/Functions.h" "HaGame/Input/Devices/KeyboardMouse.h" "HaGame/Graphics/Monitors.h"  "HaGame/Math/Hypercube.h" "HaGame/Graphics/Sprite.h"  "HaGame/Graphics/Particle.h" "HaGame/Core/ResourceManager.h" "HaGame/Core/ResourceManager.cpp" "HaGame/Core/Game.h" "HaGame/Core/Game.cpp" "HaGame/Demos/Breakout.hpp"   "HaGame/Graphics/OpenGL.h" "HaGame/Graphics/OpenGL.cpp" "HaGame/Utils/String.h" "HaGame/Utils/File.h" "HaGame/Utils/File.cpp" "HaGame/Utils/String.cpp" "HaGame/Physics/Collisions.h" "HaGame/Physics/Collisions.cpp" "HaGame/Demos/ECS.hpp" "HaGame/Utils/ObjectManager.h" "HaGame/Utils/Reflection.h" "HaGame/Core/ECS/Entity.h" "HaGame/Core/ECS/Component.h" "HaGame/Core/ECS/System.h" "HaGame/Utils/Logger.h" "HaGame/Utils/Loggers/ConsoleLogger.h" "HaGame/Utils/Loggers/FileLogger.h" "HaGame/Math/Quaternion.h" "HaGame/Math/Matrix.h"  "HaGame/Graphics/Material.h" "HaGame/Graphics/Line.h" "HaGame/Physics/RigidBody.h" "HaGame/Vendor/entt/entt.hpp" "HaGame/Utils/StateManager.h" "HaGame/Core/Scene.h" "HaGame/Core/ECS/EntityManager.h" "HaGame/Input/InputManager.h" "HaGame/Graphics/PerspectiveCamera.hpp" "HaGame/Core/ECS/ECS.h" "HaGame/Core/ECS/SystemManager.h")
+add_executable(HaGame HaGame/HaGame.cpp "HaGame/Graphics/Color.h"  "HaGame/Input/Device.h" "HaGame/Input/Devices/Gamepad.h" "HaGame/Graphics/Window.cpp" "HaGame/Graphics/Shader.cpp" "HaGame/Utils/FileSystem.cpp" "HaGame/Graphics/ShaderProgram.cpp" "HaGame/Utils/Clock.h" "HaGame/Graphics/Mesh.h" "HaGame/Utils/Aliases.h" "HaGame/Graphics/Routines.h" "HaGame/Graphics/Routines.cpp" "HaGame/Graphics/Camera.h"  "HaGame/Core/Transform.h" "HaGame/Core/Transform.cpp" "HaGame/Graphics/Primitives.h" "HaGame/Graphics/Texture.h" "HaGame/Vendor/stb/stb_image.cpp" "HaGame/Graphics/Texture.cpp" "HaGame/Math/Functions.h" "HaGame/Input/Devices/KeyboardMouse.h" "HaGame/Graphics/Monitors.h"  "HaGame/Math/Hypercube.h" "HaGame/Graphics/Sprite.h"  "HaGame/Graphics/Particle.h" "HaGame/Core/ResourceManager.h" "HaGame/Core/ResourceManager.cpp" "HaGame/Core/Game.h" "HaGame/Core/Game.cpp" "HaGame/Demos/Breakout.hpp"   "HaGame/Graphics/OpenGL.h" "HaGame/Graphics/OpenGL.cpp" "HaGame/Utils/String.h" "HaGame/Utils/File.h" "HaGame/Utils/File.cpp" "HaGame/Utils/String.cpp" "HaGame/Physics/Collisions.h" "HaGame/Physics/Collisions.cpp" "HaGame/Demos/ECS.hpp" "HaGame/Utils/ObjectManager.h" "HaGame/Utils/Reflection.h" "HaGame/Core/ECS/Entity.h" "HaGame/Core/ECS/Component.h" "HaGame/Core/ECS/System.h" "HaGame/Utils/Logger.h" "HaGame/Utils/Loggers/ConsoleLogger.h" "HaGame/Utils/Loggers/FileLogger.h" "HaGame/Math/Quaternion.h" "HaGame/Math/Matrix.h"  "HaGame/Graphics/Material.h" "HaGame/Graphics/Line.h" "HaGame/Physics/Components/RigidBody.h" "HaGame/Vendor/entt/entt.hpp" "HaGame/Utils/StateManager.h" "HaGame/Core/Scene.h" "HaGame/Core/ECS/EntityManager.h" "HaGame/Input/InputManager.h" "HaGame/Graphics/PerspectiveCamera.hpp" "HaGame/Core/ECS/ECS.h" "HaGame/Core/ECS/SystemManager.h" "HaGame/Graphics/Image.h" "HaGame/Utils/Timer.h" "HaGame/Graphics/Plane.h" "HaGame/Math/Perlin.h" "HaGame/Utils/Random.h"  )
 
 set(LIBS ${SDL2_LIBS} ${OPENGL_LIBRARIES} ${GLEW_LIBS} )
 message(STATUS "LIBS: ${LIBS} ")
@@ -43,12 +43,16 @@ target_link_libraries(HaGame ${LIBS})
 add_executable(HaGameEditor Editor/Editor.cpp "Editor/Editor.h" "Editor/Systems/CameraController.h" "Editor/Systems/Renderer.h" "Editor/Systems/MousePicker.h" "Editor/Systems/UI.h")
 target_link_libraries(HaGameEditor ${LIBS})
 
+add_executable(Demos Demos/Demo.cpp "Demos/Demo.cpp" "Demos/FPS/FPS.hpp" "Demos/Demo.h")
+target_link_libraries(Demos ${LIBS})
+
 if (MSVC_VERSION GREATER_EQUAL "1900")
     include(CheckCXXCompilerFlag)
     CHECK_CXX_COMPILER_FLAG("/std:c++latest" _cpp_latest_flag_supported)
     if (_cpp_latest_flag_supported)
         target_compile_options(HaGame PRIVATE "/std:c++latest")
         target_compile_options(HaGameEditor PRIVATE "/std:c++latest")
+        target_compile_options(Demos PRIVATE "/std:c++latest")
     endif()
 endif()
 

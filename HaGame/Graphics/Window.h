@@ -36,10 +36,16 @@ namespace hagame {
 			FULLSCREEN,
 		};
 
+		enum class WindowRenderMode {
+			Wireframe,
+			Filled,
+		};
+
 		class Window {
 		private:
 			void initGL();
 			Rect _viewport;
+			WindowRenderMode renderMode;
 			
 
 		public:
@@ -80,6 +86,15 @@ namespace hagame {
 
 			// Render the display buffer to window
 			void render();
+
+			// Only render wireframes of all objects
+			void turnOnWireframeMode();
+
+			// Render everything normally
+			void turnOnFilledMode();
+
+			// Toggle between wireframe and filled
+			void toggleRenderMode();
 
 			void setTitle(String title);
 

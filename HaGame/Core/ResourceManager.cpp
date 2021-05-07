@@ -9,6 +9,11 @@ void hagame::ResourceManager::setBasePath(String basePath)
 	fs.basePath = basePath;
 }
 
+hagame::utils::FileSystem* hagame::ResourceManager::getFileSystem()
+{
+	return &fs;
+}
+
 hagame::utils::File* hagame::ResourceManager::loadFile(String fileName, String rawFileName)
 {
 	auto file = std::make_shared<hagame::utils::File>(fs.getFile(rawFileName));
@@ -63,4 +68,36 @@ hagame::graphics::Texture* hagame::ResourceManager::getTexture(String textureNam
 	}
 
 	return textures[textureName].get();
+}
+
+hagame::graphics::Image* hagame::ResourceManager::loadImage(String imageName, String path, hagame::graphics::ImageType type)
+{
+	Ptr<hagame::graphics::Image> image = std::make_shared<hagame::graphics::Image>(fs.getFullPath(path), type);
+	images[imageName] = image;
+	return images[imageName].get();
+}
+
+hagame::graphics::Image* hagame::ResourceManager::getImage(String imageName)
+{
+	if (!hasKey(images, imageName)) {
+		throw new Exception("Image does not exist");
+	}
+
+	return images[imageName].get();
+}
+
+hagame::graphics::Mesh* hagame::ResourceManager::loadMesh(String meshName, String path)
+{
+	Ptr<hagame::graphics::Mesh> mesh = std::make_shared<hagame::graphics::Mesh>(&fs.getFile(path));
+	meshes[meshName] = mesh;
+	return meshes[meshName].get();
+}
+
+hagame::graphics::Mesh* hagame::ResourceManager::getMesh(String meshName)
+{
+	if (!hasKey(meshes, meshName)) {
+		throw new Exception("Mesh does not exist");
+	}
+
+	return meshes[meshName].get();
 }

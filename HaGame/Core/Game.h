@@ -14,11 +14,9 @@
 namespace hagame {
 	// Base game class that wraps a simple game loop
 	class Game {
-
-		utils::StateManager<Scene> scenes;
-
 	public:
 
+		utils::StateManager<Scene> scenes;
 		ResourceManager resources;
 		input::InputManager input;
 		graphics::Window* window;
@@ -51,6 +49,7 @@ namespace hagame {
 
 		Scene* addScene(String sceneName) {
 			Scene* scene = scenes.add(sceneName);
+			scene->name = sceneName;
 			scene->game = this;
 			return scene;
 		}

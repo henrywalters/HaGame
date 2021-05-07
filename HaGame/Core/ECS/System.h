@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <string>
 #include "../../Vendor/entt/entt.hpp"
+#include "../../Utils/Timer.h"
+#include "../../Utils/Aliases.h"
 
 namespace hagame {
 
@@ -18,11 +20,15 @@ namespace hagame {
 		protected:
 			Game* game;
 			Scene* scene;
+			String name;
 			entt::basic_registry<uint32_t>* registry;
+			utils::Timer timer;
+
 		public:
 
 			bool active = true;
 
+			virtual String getSystemName() = 0;
 			virtual void onSystemStart() {}
 			virtual void onSystemBeforeUpdate() {}
 			virtual void onSystemUpdate(double dt) {}
@@ -31,7 +37,9 @@ namespace hagame {
 
 			void start() {
 				if (active) {
+					timer.reset();
 					onSystemStart();
+					DEBUG_LOG_VAR(timer.elapsed());
 				}
 			}
 

@@ -132,6 +132,25 @@ void hagame::graphics::Window::render() {
 	SDL_GL_SwapWindow(window);
 }
 
+void hagame::graphics::Window::turnOnWireframeMode()
+{
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	renderMode = WindowRenderMode::Wireframe;
+}
+
+void hagame::graphics::Window::turnOnFilledMode() {
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	renderMode = WindowRenderMode::Filled;
+}
+
+void hagame::graphics::Window::toggleRenderMode() {
+	if (renderMode == WindowRenderMode::Wireframe) {
+		turnOnFilledMode();
+	} else {
+		turnOnWireframeMode();
+	}
+}
+
 void hagame::graphics::Window::setTitle(String title)
 {
 	SDL_SetWindowTitle(window, title.c_str());

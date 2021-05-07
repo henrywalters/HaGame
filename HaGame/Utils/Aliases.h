@@ -14,6 +14,18 @@
 #include "../Math/Matrix.h"
 #include "../Math/Hypercube.h"
 
+#ifndef DEBUG_MODE
+#define DEBUG_MODE false
+#endif 
+
+#ifndef DEBUG_LOG_VAR
+#define DEBUG_LOG_VAR(x) std::cout << #x " = " << x << std::endl;
+#endif
+
+#ifndef DEBUG_LOG
+#define DEBUG_LOG(key, value) std::cout << key << " = " << value << std::endl;
+#endif
+
 // Standard Library aliases
 using String = std::string;
 using Exception = std::exception;

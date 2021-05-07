@@ -13,6 +13,11 @@ struct MaterialRenderer {
 class Renderer : public hagame::ecs::System {
 
 public:
+
+	String getSystemName() {
+		return "Renderer System";
+	}
+
 	void onSystemUpdate(double dt) {
 		auto view = registry->view<MaterialRenderer>();
 
@@ -23,6 +28,7 @@ public:
 			auto& r = view.get<MaterialRenderer>(entity);
 			r.shader->use();
 			r.shader->setMVP(r.transform.getModelMatrix(), viewMat, projMat);
+			r.shader->setVec3("color", Vec3({ 0.0, 1.0, 1.0 }));
 			r.shader->setMaterial("material", r.material);
 			r.mesh->draw(r.shader);
 

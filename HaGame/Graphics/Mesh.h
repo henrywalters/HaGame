@@ -82,6 +82,12 @@ namespace hagame {
 				indices = Array<unsigned int>();
 			}
 
+			Mesh(hagame::utils::File* file) {
+				vertices = Array<Vertex>();
+				indices = Array<unsigned int>();
+				loadOBJ(file);
+			}
+
 			Mesh(Array<Vec3> positions, Array<Vec2> textures, Array<Vec3> normals) {
 				if (positions.size() != textures.size() || positions.size() != normals.size()) {
 					throw new std::exception("all three arrays must be the same length to create a mesh");
@@ -94,8 +100,13 @@ namespace hagame {
 					v.normal = normals[i];
 					v.texCoords = textures[i];
 					vertices.push_back(v);
+					indices.push_back(i);
 				}
 
+				initializeForGL();
+			}
+
+			Mesh(Array<Vertex> _vertices, Array<unsigned int> _indices): vertices(_vertices), indices(_indices) {
 				initializeForGL();
 			}
 
@@ -137,8 +148,7 @@ namespace hagame {
 			}
 
 
-			static Mesh* FromOBJ(utils::File* file) {
-				Mesh* mesh = new Mesh();
+			void loadOBJ(utils::File* file) {
 				Array<Vec3> positions = Array<Vec3>();
 				Array<Vec2> textures = Array<Vec2>();
 				Array<Vec3> normals = Array<Vec3>();
@@ -186,8 +196,8 @@ namespace hagame {
 						v2.normal = normals[stoi(f2[2]) - 1];
 						v2.normal = normals[stoi(f2[2]) - 1];
 
-						mesh->vertices.insert(mesh->vertices.end(), { v1, v2, v3 });
-						mesh->indices.insert(mesh->indices.end(), { idx, idx + 1, idx + 2 });
+						vertices.insert(vertices.end(), { v1, v2, v3 });
+						indices.insert(indices.end(), { idx, idx + 1, idx + 2 });
 						idx += 3;
 
 						if (parts.size() == 5) {
@@ -197,14 +207,13 @@ namespace hagame {
 							v4.texCoords = textures[stoi(f4[1]) - 1];
 							v4.normal = normals[stoi(f4[2]) - 1];
 
-							mesh->vertices.insert(mesh->vertices.end(), { v1, v3, v4});
-							mesh->indices.insert(mesh->indices.end(), { idx, idx + 1, idx + 2 });
+							vertices.insert(vertices.end(), { v1, v3, v4});
+							indices.insert(indices.end(), { idx, idx + 1, idx + 2 });
 							idx += 3;
 						}
 					}
 				}
-				mesh->initializeForGL();
-				return mesh;
+				initializeForGL();
 			}
 		};
 	}

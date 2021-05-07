@@ -5,7 +5,11 @@
 
 class MousePicker: public hagame::ecs::System {
 
-	bool drawRay = true;
+	bool drawRay = false;
+
+	String getSystemName() {
+		return "Mouse picking system";
+	}
 
 	void onSystemUpdate(double dt) {
 

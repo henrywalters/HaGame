@@ -10,6 +10,10 @@ public:
 	Vec3 editorLightPos = Vec3({ 15.0f, 15.0f, 15.0f });
 	hagame::graphics::Color editorLightColor = hagame::graphics::Color::white();
 
+	String getSystemName() {
+		return "UI System";
+	}
+
 	void onSystemStart() {
 		std::cout << "Starting UI System\n";
 		// Setup Dear ImGui context

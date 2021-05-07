@@ -64,12 +64,24 @@ namespace hagame {
 				return Vector({ 1, 0, 0 });
 			}
 
+			static Vector<3, T> Left() {
+				return Vector({ -1, 0, 0 });
+			}
+
 			static Vector<3, T> Top() {
 				return Vector({ 0, 1, 0 });
 			}
 
+			static Vector<3, T> Bottom() {
+				return Vector({ 0, -1, 0 });
+			}
+
 			static Vector<3, T> Face() {
 				return Vector({ 0, 0, 1 });
+			}
+
+			static Vector<3, T> Back() {
+				return Vector({ 0, 0, -1 });
 			}
 
 			// Basic accessors
@@ -186,6 +198,16 @@ namespace hagame {
 				for (int i = 0; i < size; i++) {
 					copy[i] /= vect[i];
 				};
+				return copy;
+			}
+
+			// Cast vector from type T to V
+			template <class V>
+			Vector<size, V> cast() {
+				Vector<size, V> copy = Vector<size, V>();
+				for (int i = 0; i < size; i++) {
+					copy[i] = static_cast<V>(vector[i]);
+				}
 				return copy;
 			}
 

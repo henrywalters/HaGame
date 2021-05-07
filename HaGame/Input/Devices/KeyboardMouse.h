@@ -144,6 +144,7 @@ namespace hagame {
 							updateBtnState(mouse.right, mouse.rightPressed, false);
 						}
 						break;
+
 					}
 				}
 
@@ -163,10 +164,7 @@ namespace hagame {
 
 					updateBtnState(select, selectPressed, isKeyDown(SDLK_TAB));
 					updateBtnState(start, startPressed, isKeyDown(SDLK_ESCAPE));
-					updateBtnState(home, homePressed, isKeyDown(SDLK_MODE));
 					updateBtnState(a, aPressed, isKeyDown(SDLK_SPACE));
-
-					checkKey(home, homePressed, SDLK_ESCAPE);
 				}
 			};
 		}
