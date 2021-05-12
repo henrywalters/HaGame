@@ -10,7 +10,7 @@
 namespace hagame {
 	class ResourceManager {
 	private:
-		hagame::utils::FileSystem fs;
+		Ptr<hagame::utils::FileSystem> fs;
 
 		Map<String, Ptr<hagame::graphics::ShaderProgram>> shaderPrograms;
 		Map<String, Ptr<hagame::graphics::Texture>> textures;
@@ -44,6 +44,10 @@ namespace hagame {
 
 		// Create a mesh from an OBJ file
 		hagame::graphics::Mesh* loadMesh(String meshName, String path);
+
+		// Create a mesh from it's vertices and indicies (typically a primitive will exist!)
+		hagame::graphics::Mesh* loadMesh(String meshName, hagame::graphics::MeshDefinition definition);
+
 		hagame::graphics::Mesh* getMesh(String meshName);
 	};
 }

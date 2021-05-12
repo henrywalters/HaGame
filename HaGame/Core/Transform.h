@@ -26,6 +26,7 @@ namespace hagame {
 		void move(Vec3 offset);
 		void rotate(Vec3 axis, float degrees);
 		void rotate(Quat rot);
+		void rotateAbout(Vec3 point, Quat rot);
 		void grow(Vec3 size);
 
 		void lookAt(Vec3 point);

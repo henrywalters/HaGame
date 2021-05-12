@@ -119,7 +119,7 @@ namespace hagame {
 						mouse.delta[0] = event.motion.xrel;
 						mouse.delta[1] = event.motion.yrel;
 
-						rAxis[0] = mouse.delta[0] / 10.0f;
+						rAxis[0] = -mouse.delta[0] / 10.0f;
 						rAxis[1] = mouse.delta[1] / 10.0f;
 						break;
 					case SDL_MOUSEBUTTONDOWN:
@@ -158,8 +158,8 @@ namespace hagame {
 					lAxis = Vec2::Zero();
 					dPad = Vec2::Zero();
 
-					lAxis[0] = handleAxis(isKeyDown(SDLK_d), isKeyDown(SDLK_a));
-					lAxis[1] = handleAxis(isKeyDown(SDLK_s), isKeyDown(SDLK_w));
+					lAxis[0] = handleAxis(isKeyDown(SDLK_a), isKeyDown(SDLK_d));
+					lAxis[1] = handleAxis(isKeyDown(SDLK_w), isKeyDown(SDLK_s));
 					
 
 					updateBtnState(select, selectPressed, isKeyDown(SDLK_TAB));

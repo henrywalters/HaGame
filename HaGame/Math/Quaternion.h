@@ -32,6 +32,20 @@ namespace hagame {
 				vector[3] = k;
 			}
 
+			Quaternion(T roll, T pitch, T yaw) {
+				T cy = cos(yaw * 0.5);
+				T sy = sin(yaw * 0.5);
+				T cp = cos(pitch * 0.5);
+				T sp = sin(pitch * 0.5);
+				T cr = cos(roll * 0.5);
+				T sr = sin(roll * 0.5);
+
+				vector[0] = cr * cp * cy + sr * sp * sy;
+				vector[1] = sr * cp * cy - cr * sp * sy;
+				vector[2] = cr * sp * cy + sr * cp * sy;
+				vector[3] = cr * cp * sy - sr * sp * cy;
+			}
+
 			Quaternion operator*(const Quaternion& quat) {
 				return Quaternion(
 					vector[0] * quat[0] - vector[1] * quat[1] - vector[2] * quat[2] - vector[3] * quat[3],

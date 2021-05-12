@@ -30,6 +30,11 @@ namespace hagame {
 			Vec2 texCoords;
 		};
 
+		struct MeshDefinition {
+			Array<Vertex> vertices;
+			Array<unsigned int> indices;
+		};
+
 		class Mesh {
 
 		private:
@@ -88,25 +93,11 @@ namespace hagame {
 				loadOBJ(file);
 			}
 
-			Mesh(Array<Vec3> positions, Array<Vec2> textures, Array<Vec3> normals) {
-				if (positions.size() != textures.size() || positions.size() != normals.size()) {
-					throw new std::exception("all three arrays must be the same length to create a mesh");
-				}
-
-
-				for (int i = 0; i < positions.size(); i++) {
-					Vertex v;
-					v.position = positions[i];
-					v.normal = normals[i];
-					v.texCoords = textures[i];
-					vertices.push_back(v);
-					indices.push_back(i);
-				}
-
+			Mesh(Array<Vertex> _vertices, Array<unsigned int> _indices): vertices(_vertices), indices(_indices) {
 				initializeForGL();
 			}
 
-			Mesh(Array<Vertex> _vertices, Array<unsigned int> _indices): vertices(_vertices), indices(_indices) {
+			Mesh(MeshDefinition definition) : vertices(definition.vertices), indices(definition.indices) {
 				initializeForGL();
 			}
 

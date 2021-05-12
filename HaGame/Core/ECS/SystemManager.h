@@ -66,16 +66,16 @@ namespace hagame {
 				forAll([](ecs::System* system) { system->stop(); });
 			}
 
-			void beforeUpdateAll() {
-				forAll([](ecs::System* system) { system->beforeUpdate(); });
+			void beforeUpdateAll(double dt) {
+				forAll([dt](ecs::System* system) { system->beforeUpdate(dt); });
 			}
 
 			void updateAll(double dt) {
 				forAll([dt](ecs::System* system) { system->update(dt); });
 			}
 
-			void afterUpdateAll() {
-				forAll([](ecs::System* system) { system->afterUpdate(); });
+			void afterUpdateAll(double dt) {
+				forAll([dt](ecs::System* system) { system->afterUpdate(dt); });
 			}
 		};
 	}

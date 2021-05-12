@@ -14,11 +14,13 @@ namespace hagame {
 
 	namespace ecs {
 
+		class Entity;
+
 		class System {
 		private:
 			friend class SystemManager;
 		protected:
-			Game* game;
+			hagame::Game* game;
 			Scene* scene;
 			String name;
 			entt::basic_registry<uint32_t>* registry;
@@ -30,10 +32,24 @@ namespace hagame {
 
 			virtual String getSystemName() = 0;
 			virtual void onSystemStart() {}
-			virtual void onSystemBeforeUpdate() {}
+			virtual void onSystemBeforeUpdate(double dt) {}
 			virtual void onSystemUpdate(double dt) {}
-			virtual void onSystemAfterUpdate() {}
+			virtual void onSystemAfterUpdate(double dt) {}
 			virtual void onSystemStop() {}
+
+			template <class T>
+			void forEach(std::function<void(T*)> lambda) {
+				for (auto entity : registry->view<T>()) {
+					lambda(&registry->get<T>(entity));
+				}
+			}
+
+			template <class T>
+			void forEach(std::function<void(T*, Entity*)> lambda) {
+				for (auto entity : registry->view<T>()) {
+					lambda(&registry->get<T>(entity), scene->ecs.entities.getByEnttId(entity));
+				}
+			}
 
 			void start() {
 				if (active) {
@@ -55,15 +71,15 @@ namespace hagame {
 				}
 			}
 
-			void beforeUpdate() {
+			void beforeUpdate(double dt) {
 				if (active) {
-					onSystemBeforeUpdate();
+					onSystemBeforeUpdate(dt);
 				}
 			}
 
-			void afterUpdate() {
+			void afterUpdate(double dt) {
 				if (active) {
-					onSystemAfterUpdate();
+					onSystemAfterUpdate(dt);
 				}
 			}
 		};

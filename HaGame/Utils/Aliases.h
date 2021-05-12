@@ -61,6 +61,7 @@ template <class T>
 using Queue = std::deque<T>;
 
 // Math aliases
+const float EPSILON = 0.01f;
 const float PI = 3.141592f;
 const float DEG_TO_RAD = PI / 180.0f;
 const float RAD_TO_DEG = 180.0f / PI;

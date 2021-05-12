@@ -13,5 +13,10 @@ int main() {
 
 	demo.run();
 
+	Quat quat = Quat(0.2, PI / 2, 0.4);
+	std::cout << quat.toString() << std::endl;
+	Vec3 euler = quat.eulerAngles();
+	std::cout << euler.toString() << std::endl;
+
 	return 0;
 }

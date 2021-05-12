@@ -32,9 +32,6 @@ namespace hagame {
 			StateType* add(String stateName) {
 				Ptr<StateType> state = std::make_unique<StateType>();
 				_states.insert(std::make_pair(stateName, state));
-				if (!hasActive()) {
-					activate(stateName);
-				}
 				return state.get();
 			}
 
@@ -42,9 +39,6 @@ namespace hagame {
 			StateType* add(String stateName) {
 				Ptr<StateType> state = std::make_unique<T>();
 				_states.insert(std::make_pair(stateName, state));
-				if (!hasActive()) {
-					activate(stateName);
-				}
 				return state.get();
 			}
 
@@ -54,6 +48,15 @@ namespace hagame {
 
 			bool hasActive() {
 				return _active.has_value();
+			}
+
+			// Sets the active state but does not trigger the onActivate function
+			void setActive(String stateName) {
+				if (!has(stateName)) {
+					throw new Exception("Requested state does not exist");
+				}
+
+				_active = _states[stateName];
 			}
 
 			void activate(String stateName) {

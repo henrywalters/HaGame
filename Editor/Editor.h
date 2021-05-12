@@ -117,7 +117,7 @@ public:
 
 	hagame::utils::FileSystem fs = hagame::utils::FileSystem("D:/Development/BadAppleFrames");
 
-	hagame::graphics::Plane<1000, 1000> plane = hagame::graphics::Plane<1000, 1000>(Vec2({ 500, 500 }));
+	hagame::graphics::Plane<3000, 3000> plane = hagame::graphics::Plane<3000, 3000>(Vec2({ 300, 300 }));
 
 	HaGameEditor(hagame::graphics::Window* window) : hagame::Game(window) {}
 
@@ -142,17 +142,17 @@ public:
 		// editor->addSystem<UI>();
 		// editor->addSystem<BadAppleSystem>();
 
-		resources.setBasePath("../../../Assets");
+		resources->setBasePath("../../../Assets");
 
 
-		cube = resources.loadMesh("cube_mesh", "Models/Cube.obj");
-		sphere = resources.loadMesh("sphere_mesh", "Models/Sphere.obj");
+		cube = resources->loadMesh("cube_mesh", "Models/Cube.obj");
+		sphere = resources->loadMesh("sphere_mesh", "Models/Sphere.obj");
 
-		materialShader = resources.loadShaderProgram("material", "Shaders/material_vert.glsl", "Shaders/material_frag.glsl");
+		materialShader = resources->loadShaderProgram("material", "Shaders/material_vert.glsl", "Shaders/material_frag.glsl");
 		materialShader->use();
 		materialShader->setVec3("lightPos", lightPos);
 		materialShader->setVec3("lightColor", lightColor.resize<3>());
-		colorShader = resources.loadShaderProgram("color", "Shaders/color_vert.glsl", "Shaders/color_frag.glsl");
+		colorShader = resources->loadShaderProgram("color", "Shaders/color_vert.glsl", "Shaders/color_frag.glsl");
 
 		editorCamera.aspectRatio = viewportSize[0] / viewportSize[1];
 		editorCamera.transform.position = Vec3({ -5.0f, 50.0f, -5.0f });
@@ -173,15 +173,15 @@ public:
 
 		for (int i = 0; i < plane.divisions[0]; i++) {
 			for (int j = 0; j < plane.divisions[1]; j++) {
-				plane.points[i][j][1] = perlin.compute(Vec2({ plane.points[i][j][0], plane.points[i][j][2] }));
+				plane.points[i][j][1] = sin(i / 10) * 10 + cos(j / 10) * 10; //perlin.compute(Vec2({ plane.points[i][j][0], plane.points[i][j][2] })) * 5;
 				//std::cout << plane.points[i][j][1];
 			}
 		}
 
 		auto floor = editor->addEntity();
 		auto floorRenderer = floor->addComponent<MaterialRenderer>();
-		floorRenderer->transform.rotation = Quat(0, Vec3::Top());
-		floorRenderer->transform.position = Vec3({ 0, 2, 0 });
+		floor->transform.rotation = Quat(0, Vec3::Top());
+		floor->transform.position = Vec3({ 0, 2, 0 });
 		floorRenderer->mesh = plane.generateMesh();
 		floorRenderer->material = hagame::graphics::Material::obsidian();
 		floorRenderer->shader = materialShader;

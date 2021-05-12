@@ -13,11 +13,10 @@ namespace hagame {
 	class Game;
 
 	class Scene {
+	protected:
 		friend class Game;
 
-		Game* game;
-		String name;
-		utils::Timer timer;
+		
 
 		virtual void onSceneActivate() {}
 		virtual void onSceneUpdate(double dt) {}
@@ -39,14 +38,18 @@ namespace hagame {
 
 		void update(double dt) {
 			timer.reset();
-			ecs.systems.beforeUpdateAll();
+			ecs.systems.beforeUpdateAll(dt);
 			ecs.systems.updateAll(dt);
 			onSceneUpdate(dt);
-			ecs.systems.afterUpdateAll();
+			ecs.systems.afterUpdateAll(dt);
 			//DEBUG_LOG("Scene update", timer.elapsed());
 		}
 
 	public:
+		Game* game;
+		String name;
+		utils::Timer timer;
+
 		ecs::ECS ecs;
 		graphics::Camera* activeCamera;
 

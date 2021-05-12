@@ -28,6 +28,9 @@
 #include "Graphics/Routines.cpp"
 #include "Graphics/Line.h"
 #include "Graphics/Plane.h"
+#include "Graphics/Components/MeshRenderer.h"
+#include "Graphics/Systems/RenderSystem.h"
+#include "Graphics/Systems/CameraSystem.h"
 
 #include "Input/Device.h"
 #include "Input/Devices/Gamepad.h"
@@ -41,7 +44,12 @@
 #include "Utils/String.cpp"
 #include "Utils/Random.h"
 
-#include "Physics/RigidBody.h"
+#include "Physics/Components/RigidBody.h"
+#include "Physics/Components/SimpleMovement.h"
+#include "Physics/Components/RotationMovement.h"
+#include "Physics/Systems/PhysicsSystem.h"
+#include "Physics/Systems/MovementSystem.h"
+
 
 #include "Core/Game.cpp"
 #include "Core/ResourceManager.cpp"

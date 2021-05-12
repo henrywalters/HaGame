@@ -48,6 +48,37 @@ T lerpClamp(T a, T b, T t) {
 	return (b - a) * t + a;
 }
 
+// Return the sign (-1, 0, 1) of a number
+template <class T>
+T sign(T a) {
+	if (a > 0) {
+		return 1;
+	}
+	else if (a < 0) {
+		return -1;
+	}
+	else {
+		return 0;
+	}
+}
+
+// Return the sign (-1, 0, 1) of a vector
+template <class T, size_t N>
+T sign(hagame::math::Vector<N, T> vector) {
+
+	T a = vector.magnitude();
+
+	if (a > 0) {
+		return 1;
+	}
+	else if (a < 0) {
+		return -1;
+	}
+	else {
+		return 0;
+	}
+}
+
 // Adjusts a box (assumed to be 3d axis-aligned, such as a Mesh Model Bounding Box) by a transform matrix and translation vector. 
 template <size_t dim, class T>
 hagame::math::Hypercube<dim, T> transformBoundingBox(hagame::math::Hypercube<dim, T> box, hagame::math::Matrix<dim, dim, T> transform, hagame::math::Vector<dim, T> translation) {

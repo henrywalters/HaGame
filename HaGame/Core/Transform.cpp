@@ -14,7 +14,7 @@ void hagame::Transform::move(Vec3 offset)
 }
 
 void hagame::Transform::rotate(Vec3 axis, float degrees) {
-	rotation += Quat(degrees, axis);
+	rotation = rotation * Quat(degrees, axis);
 	updateModel();
 }
 

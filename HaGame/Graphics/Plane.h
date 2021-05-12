@@ -64,10 +64,10 @@ namespace hagame {
 						v3.normal = normal;
 						v4.normal = normal;
 
-						v1.texCoords = Vec2({ a[0], a[2] });
-						v2.texCoords = Vec2({ b[0], b[2] });
-						v3.texCoords = Vec2({ c[0], c[2] });
-						v4.texCoords = Vec2({ d[0], d[2] });
+						v1.texCoords = Vec2({ 0, 0 });
+						v2.texCoords = Vec2({ 1, 0 });
+						v3.texCoords = Vec2({ 1, 1 });
+						v4.texCoords = Vec2({ 0, 1 });
 
 						vertices.insert(vertices.end(), { v1, v4, v2, v2, v4, v3 });
 						indices.insert(indices.end(), { idx, idx + 1, idx + 2, idx + 3, idx + 4, idx + 5 });

@@ -11,7 +11,7 @@ public:
 	}
 
 	void onSystemBeforeUpdate() {
-		auto shader = game->resources.getShaderProgram("material");
+		auto shader = game->resources->getShaderProgram("material");
 		shader->use();
 		shader->setVec3("viewPos", scene->activeCamera->transform.position);
 	}

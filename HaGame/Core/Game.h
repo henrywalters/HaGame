@@ -17,7 +17,7 @@ namespace hagame {
 	public:
 
 		utils::StateManager<Scene> scenes;
-		ResourceManager resources;
+		Ptr<ResourceManager> resources;
 		input::InputManager input;
 		graphics::Window* window;
 
@@ -32,7 +32,7 @@ namespace hagame {
 		Game(graphics::Window* _window) : 
 			scenes(utils::StateManager<Scene>([this](Scene* scene) { scene->activate(); }, [this](Scene* scene) { scene->deactivate(); })), 
 			window(_window),
-			resources(ResourceManager(""))
+			resources(std::make_shared<ResourceManager>(""))
 		{
 			running = false;
 			lastTick = utils::Clock::Now();
@@ -49,6 +49,14 @@ namespace hagame {
 
 		Scene* addScene(String sceneName) {
 			Scene* scene = scenes.add(sceneName);
+			scene->name = sceneName;
+			scene->game = this;
+			return scene;
+		}
+
+		template <class T>
+		Scene* addScene(String sceneName) {
+			Scene* scene = scenes.add<T>(sceneName);
 			scene->name = sceneName;
 			scene->game = this;
 			return scene;

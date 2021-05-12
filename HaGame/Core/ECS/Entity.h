@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <string>
 #include "../../Vendor/entt/entt.hpp"
+#include "../Transform.h"
 
 namespace hagame {
 	namespace ecs {
@@ -11,6 +12,7 @@ namespace hagame {
 		private:
 
 			friend class EntityManager;
+		public:
 
 			entt::basic_registry<uint32_t>* registry;
 
@@ -19,11 +21,9 @@ namespace hagame {
 			}
 
 			const uint32_t entt_id;
-			
-		public:
-
 			const uint32_t id;
 			std::string name;
+			hagame::Transform transform;
 
 			template <class T>
 			T* addComponent() {

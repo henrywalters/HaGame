@@ -7,12 +7,21 @@ public:
 	hagame::utils::Timer timer;
 	hagame::math::Sample<double, 60> fpsSample;
 
-	Demo(hagame::graphics::Window* window) : Game(window) {}
+	Demo(hagame::graphics::Window* window) : Game(window) {
+		
+	}
 
 	void onGameStart() {
+
+		input.keyboardMouse.captureMouseOn();
+
 		window->setTitle("HaGame Demo");
 
-		scenes.add<FPS>("fps");
+		addScene<FPS>("fps");
+
+		scenes.setActive("fps");
+
+		resources->setBasePath("../../../Assets");
 
 		fpsSample.onFull = [this]() {
 			window->setTitle("HaGame Demo | " + std::to_string(fpsSample.average()) + " (" + std::to_string(fpsSample.stddev()) + "mu)");
@@ -25,8 +34,12 @@ public:
 	void onGameUpdate(double dt) {
 		fpsSample.insert(fps / 1000000);
 
-		if (input.keyboardMouse.start) {
+		if (input.keyboardMouse.isKeyDown(SDLK_DELETE)) {
 			running = false;
+		}
+
+		if (input.keyboardMouse.startPressed) {
+			window->toggleRenderMode();
 		}
 	}
 
