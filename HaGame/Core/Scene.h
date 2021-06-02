@@ -5,6 +5,7 @@
 #include "../Utils/Timer.h"
 #include "../Utils/StateManager.h"
 #include "../Graphics/Camera.h"
+#include "../Graphics/Components/CameraComponent.h"
 #include "ECS/System.h"
 #include "ECS/ECS.h"
 
@@ -13,10 +14,26 @@ namespace hagame {
 	class Game;
 
 	class Scene {
+	private:
+		void setActiveCamera() {
+
+			hagame::ecs::Entity* cameraEntity;
+			
+			for (auto entity : ecs.getRegistry()->view<graphics::CameraComponent>()) {
+				auto cam = &ecs.getRegistry()->get<graphics::CameraComponent>(entity);
+				if (cam->active) {
+					activeCamera = cam->camera;
+					cameraEntity = ecs.entities.getByEnttId(entity);
+					break;
+				}
+			}
+
+			viewMat = activeCamera->getViewMatrix(cameraEntity->transform.get());
+			projMat = activeCamera->getProjMatrix();
+		}
+
 	protected:
 		friend class Game;
-
-		
 
 		virtual void onSceneActivate() {}
 		virtual void onSceneUpdate(double dt) {}
@@ -38,6 +55,7 @@ namespace hagame {
 
 		void update(double dt) {
 			timer.reset();
+			setActiveCamera();
 			ecs.systems.beforeUpdateAll(dt);
 			ecs.systems.updateAll(dt);
 			onSceneUpdate(dt);
@@ -52,10 +70,16 @@ namespace hagame {
 
 		ecs::ECS ecs;
 		graphics::Camera* activeCamera;
+		Mat4 viewMat;
+		Mat4 projMat;
 
 		template<class T>
 		ecs::System* addSystem() {
 			return ecs.systems.add<T>(game, this);
+		}
+
+		ecs::Entity* addChild(ecs::Entity* parent) {
+			return ecs.entities.add(parent);
 		}
 
 		ecs::Entity* addEntity() {

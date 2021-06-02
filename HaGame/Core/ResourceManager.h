@@ -4,6 +4,7 @@
 #include "../Utils/Aliases.h"
 #include "../Graphics/ShaderProgram.h"
 #include "../Graphics/Texture.h"
+#include "../Graphics/Cubemap.h"
 #include "../Graphics/Image.h"
 #include "../Graphics/Mesh.h"
 
@@ -14,9 +15,14 @@ namespace hagame {
 
 		Map<String, Ptr<hagame::graphics::ShaderProgram>> shaderPrograms;
 		Map<String, Ptr<hagame::graphics::Texture>> textures;
+		Map<String, Ptr<hagame::graphics::Cubemap>> cubemaps;
 		Map<String, Ptr<hagame::graphics::Image>> images;
 		Map<String, Ptr<hagame::graphics::Mesh>> meshes;
 		Map<String, Ptr<hagame::utils::File>> files;
+
+		// Perform preprocessing steps on a shaders source code. For now, this just means resolving #include statements
+		String processShaderFile(hagame::utils::File file);
+
 
 	public:
 		ResourceManager(String basePath);
@@ -39,6 +45,9 @@ namespace hagame {
 		hagame::graphics::Texture* loadTexture(String textureName, String path);
 		hagame::graphics::Texture* getTexture(String textureName);
 
+		hagame::graphics::Cubemap* loadCubemap(String cubemapName, String paths[6]);
+		hagame::graphics::Cubemap* getCubemap(String cubemapName);
+
 		hagame::graphics::Image* loadImage(String imageName, String path, hagame::graphics::ImageType type);
 		hagame::graphics::Image* getImage(String imageName);
 
@@ -47,6 +56,9 @@ namespace hagame {
 
 		// Create a mesh from it's vertices and indicies (typically a primitive will exist!)
 		hagame::graphics::Mesh* loadMesh(String meshName, hagame::graphics::MeshDefinition definition);
+
+		// Create a mesh from a combination of many meshes. This will cull shared faces.
+		hagame::graphics::Mesh* loadMesh(String meshName, Array<hagame::graphics::ConcatMeshDefinition> definitions);
 
 		hagame::graphics::Mesh* getMesh(String meshName);
 	};

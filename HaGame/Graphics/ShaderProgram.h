@@ -8,6 +8,7 @@
 #include "Shader.h"
 #include "../Utils/Aliases.h"
 #include "Material.h"
+#include "Light.h"
 
 namespace hagame {
 	namespace graphics {
@@ -32,8 +33,12 @@ namespace hagame {
 			void setVec4(std::string var, Vec4 vect);
 			void setMat4(std::string var, Mat4 mat);
 			void setMaterial(std::string var, Material mat);
+			void setLight(std::string var, Vec3 pos, Light light);
+			void setLight(std::string var, DirLight light);
+			void setLight(std::string var, Vec3 pos, PointLight light);
 
 			void setMVP(Mat4 model, Mat4 view, Mat4 projection);
+			void setVP(Mat4 view, Mat4 projection);
 		};
 	}
 }

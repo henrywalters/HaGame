@@ -220,6 +220,42 @@ namespace hagame {
 				mat[Matrix::FlattenIndex(row, col)] = value;
 			}
 
+			const void forEach(std::function<void(int, int)> lambda) {
+				for (int i = 0; i < M; i++) {
+					for (int j = 0; j < N; j++) {
+						lambda(j, i);
+					}
+				}
+			}
+
+			const Vector<N, T> getCol(int col) {
+				Vector<N, T> out;
+				for (int i = 0; i < N; i++) {
+					out[i] = get(i, col);
+				}
+				return out;
+			}
+
+			const Vector<M, T> getRow(int row) {
+				Vector<M, T> out;
+				for (int i = 0; i < M; i++) {
+					out[i] = get(row, i);
+				}
+				return out;
+			}
+
+			void setCol(int col, Vector<N, T> values) {
+				for (int i = 0; i < N; i++) {
+					set(i, col, values[i]);
+				}
+			}
+
+			void setRow(int row, Vector<M, T> values) {
+				for (int i = 0; i < M; i++) {
+					set(row, i, values[i]);
+				}
+			}
+
 			bool isSquare() {
 				return M == N;
 			}

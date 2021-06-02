@@ -24,10 +24,19 @@ namespace hagame {
 			Entity* add() {
 				Ptr<Entity> entity = std::make_shared<Entity>(registry->create(), entities.size());
 				entity->registry = registry;
+				entity->transform = std::make_shared<hagame::Transform>();
+				entity->transform->entity = entity.get();
 				entities.push_back(entity);
 				enttMap[entity->entt_id] = entity;
 				idMap[entity->id] = entity;
 				return entity.get();
+			}
+
+			Entity* add(Entity* parent) {
+				Entity* entity = add();
+				entity->parent = parent;
+				parent->children.push_back(entity);
+				return entity;
 			}
 
 			Entity* get(uint32_t id) {

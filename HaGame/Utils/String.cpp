@@ -1,5 +1,13 @@
 #include "String.h"
 
+bool stringContains(String str, char delim) {
+	for (int i = 0; i < str.length(); i++) {
+		if (str[i] == delim)
+			return true;
+	}
+	return false;
+}
+
 Array<String> stringSplit(String str, char delim)
 {
 	Array<String> parts = {};

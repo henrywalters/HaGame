@@ -4,6 +4,7 @@
 #include "../Utils/Aliases.h"
 #include "Color.h"
 #include "ShaderProgram.h"
+#include "../Math/Line.h"
 
 namespace hagame {
 	namespace graphics {
@@ -45,6 +46,10 @@ namespace hagame {
 			Color color;
 
 			Line(Vec3 _p1, Vec3 _p2, Color _color) : p1(_p1), p2(_p2), color(_color) {
+				initializeForGL();
+			}
+
+			Line(math::Line line, Color _color): p1(line.a), p2(line.b), color(_color) {
 				initializeForGL();
 			}
 

@@ -45,6 +45,31 @@ std::vector<std::string> hagame::utils::FileSystem::listFiles(std::string path) 
 	return files;
 }
 
+void hagame::utils::FileSystem::forEachFile(std::string path, std::function<void(std::string filePath)> lambda)
+{
+	for (std::string file : listFiles(path)) {
+		lambda(file);
+	}
+}
+
+void hagame::utils::FileSystem::forEachFile(std::string path, std::function<void(std::string filePath, std::string fileName)> lambda)
+{
+	for (std::string file : listFiles(path)) {
+		auto parts = stringSplit(file, file.find('\\') == String::npos ? '/' : '\\');
+		auto name = stringSplit(parts[parts.size() - 1], '.')[0];
+		lambda(file, name);
+	}
+}
+
+void hagame::utils::FileSystem::forEachFile(std::string path, std::function<void(std::string filePath, std::string fileName, std::string extension)> lambda)
+{
+	for (std::string file : listFiles(path)) {
+		auto parts = stringSplit(file, file.find('\\') == String::npos ? '/' : '\\');
+		auto fileNameParts = stringSplit(parts[parts.size() - 1], '.');
+		lambda(file, fileNameParts[0], fileNameParts[1]);
+	}
+}
+
 bool hagame::utils::FileSystem::isFile(std::string path) {
 	const std::filesystem::path fsPath(getFullPath(path));
 	return std::filesystem::is_regular_file(fsPath);

@@ -43,7 +43,7 @@ template <class T>
 std::string printArray(Array<T> arr) {
 	std::string out = "[\n";
 	for (int i = 0; i < arr.size(); i++) {
-		out += "\t" + arr[i] + ",\n";
+		out += "\t" + std::to_string(arr[i]) + ",\n";
 	}
 	out += "]";
 	return out;
@@ -90,14 +90,23 @@ using CubeInt = hagame::math::Hypercube<3, int>;
 using CubeUInt32 = hagame::math::Hypercube<3, uint32_t>;
 
 // Vector functions
+
+// The normalized version of vec
 inline Vec3 normalize(Vec3 vec) {
 	return vec.normalized();
 }
 
+// Returns the dot product of a and b
 inline float dot(Vec3 a, Vec3 b) {
 	return a.dot(b);
 }
 
+// Returns dot(a, a)
+inline float dot2(Vec3 a) {
+	return a.dot(a);
+}
+
+// Returns the cross product of a and b
 inline Vec3 cross(Vec3 a, Vec3 b) {
 	return a.cross(b);
 }

@@ -98,8 +98,7 @@ namespace hagame {
 			}
 
 			Vector<3, T> rotatePoint(Vector<3, T> point) {
-				Quaternion rot = (*this * point) * conjugate();
-				return rot.imaginary();
+				return ((*this * point) * conjugate()).imaginary();
 			}
 
 			Vector<3, T> eulerAngles() {

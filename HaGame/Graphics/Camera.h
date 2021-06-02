@@ -15,10 +15,10 @@ namespace hagame {
 		class Camera {
 		public:
 
-			Transform transform;
-
-			virtual Mat4 getViewMatrix() = 0;
+			virtual Mat4 getViewMatrix(hagame::Transform* transform) = 0;
 			virtual Mat4 getProjMatrix() = 0;
+
+			Camera() {}
 
 			GLint getMVPUniformLocation(ShaderProgram program) {
 				return glGetUniformLocation(program.id, "MVP");

@@ -24,8 +24,8 @@ namespace hagame {
 
 					auto params = sm->inputFn();
 
-					Vec3 forwardDir = entity->transform.face();
-					Vec3 strafeDir = entity->transform.right();
+					Vec3 forwardDir = entity->transform->face();
+					Vec3 strafeDir = entity->transform->right();
 
 					Vec3 forwardMove = forwardDir * params.movement[1];
 					Vec3 strafeMove = strafeDir * params.movement[0];
@@ -41,12 +41,17 @@ namespace hagame {
 						rb->applyForce(velNormal * -1 * sm->frictionForce * dt);
 						rb->applyForce(velNormal * -1 * sm->dragForce * rb->vel.magnitude() * dt);
 					}
+					else {
+						if (params.movement.magnitude() == 0) {
+							rb->vel = Vec3::Zero();
+						}
+					}
 				});
 			}
 
 			void handleRotationMovement(double dt) {
 				forEach<RotationMovement>([this, dt](RotationMovement* rm, hagame::ecs::Entity* entity) {
-					entity->transform.rotate(Quat(rm->speed * dt, rm->axis));
+					entity->transform->rotate(Quat(rm->speed * dt, rm->axis));
 				});
 			}
 

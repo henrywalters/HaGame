@@ -13,8 +13,6 @@ public:
 
 	void onGameStart() {
 
-		input.keyboardMouse.captureMouseOn();
-
 		window->setTitle("HaGame Demo");
 
 		addScene<FPS>("fps");

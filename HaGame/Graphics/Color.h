@@ -30,6 +30,13 @@ namespace hagame {
 				vector[3] = 1.0f;
 			}
 
+			Color(int r, int g, int b, float a) {
+				vector[0] = (float)r / 255.0;
+				vector[1] = (float)g / 255.0;
+				vector[2] = (float)b / 255.0;
+				vector[3] = a;
+			}
+
 			Color(int r, int g, int b, int a) {
 				vector[0] = (float) r / 255.0;
 				vector[1] = (float) g / 255.0;

@@ -5,6 +5,8 @@
 #include "../Utils/Logger.h"
 #include "../Utils/Loggers/ConsoleLogger.h"
 #include "../Utils/StateManager.h"
+#include "../Utils/Random.h"
+#include "../Physics/Collisions.h"
 #include "../Input/InputManager.h"
 #include "../Graphics/Window.h"
 #include "ResourceManager.h"
@@ -20,6 +22,8 @@ namespace hagame {
 		Ptr<ResourceManager> resources;
 		input::InputManager input;
 		graphics::Window* window;
+		hagame::utils::Random random;
+		physics::Collisions collisions;
 
 		const int TICKS_PER_SECOND = 1000000;
 

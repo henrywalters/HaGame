@@ -81,9 +81,42 @@ void hagame::graphics::ShaderProgram::setMaterial(std::string var, Material mat)
 	setFloat(var + ".shininess", mat.shininess);
 }
 
+void hagame::graphics::ShaderProgram::setLight(std::string var, Vec3 pos, Light light)
+{
+	setVec3(var + ".ambient", light.ambient);
+	setVec3(var + ".diffuse", light.diffuse);
+	setVec3(var + ".specular", light.specular);
+	setVec3(var + ".position", pos);
+}
+
+void hagame::graphics::ShaderProgram::setLight(std::string var, DirLight light)
+{
+	setVec3(var + ".ambient", light.ambient);
+	setVec3(var + ".diffuse", light.diffuse);
+	setVec3(var + ".specular", light.specular);
+	setVec3(var + ".direction", light.direction);
+}
+
+void hagame::graphics::ShaderProgram::setLight(std::string var, Vec3 pos, PointLight light)
+{
+	setVec3(var + ".ambient", light.ambient);
+	setVec3(var + ".diffuse", light.diffuse);
+	setVec3(var + ".specular", light.specular);
+	setVec3(var + ".position", pos);
+	setFloat(var + ".constant", light.constant);
+	setFloat(var + ".linear", light.linear);
+	setFloat(var + ".quadratic", light.quadratic);
+}
+
 void hagame::graphics::ShaderProgram::setMVP(Mat4 model, Mat4 view, Mat4 projection)
 {
 	setMat4("model", model);
 	setMat4("projection", projection);
 	setMat4("view", view);
+}
+
+void hagame::graphics::ShaderProgram::setVP(Mat4 view, Mat4 projection)
+{
+	setMat4("view", view);
+	setMat4("projection", projection);
 }

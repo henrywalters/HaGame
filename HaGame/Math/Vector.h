@@ -171,6 +171,16 @@ namespace hagame {
 				return sum;
 			}
 
+			// Return the vector such that V.prod(V.inverse()) = V.Identity();
+			Vector inverse() {
+				Vector copy = *this;
+				for (int i = 0; i < size; i++) {
+					copy[i] = 1 / vect[i];
+				};
+				return copy;
+			}
+
+
 			Vector<3, T> cross(Vector vect) {
 				if (size != 3) {
 					throw new std::exception("Cross product only supported for 3d vectors");
@@ -212,14 +222,14 @@ namespace hagame {
 			}
 
 			template <size_t toSize>
-			Vector<toSize, T> resize() {
+			Vector<toSize, T> resize(T defaultValue = 0.0) {
 				Vector<toSize, T> copy = Vector<toSize, T>();
 				for (int i = 0; i < toSize; i++) {
-					if (i <= size) {
+					if (i < size) {
 						copy.vector[i] = vector[i];
 					}
 					else {
-						copy.vector[i] = 0;
+						copy.vector[i] = defaultValue;
 					}
 				}
 				return copy;
@@ -228,10 +238,16 @@ namespace hagame {
 			// Operator Overloads
 
 			T operator[](int i) const {
+				if (i >= size) {
+					throw new std::exception("Index out of bounds");
+				}
 				return vector[i];
 			}
 
 			T& operator[](int i) {
+				if (i >= size) {
+					throw new std::exception("Index out of bounds");
+				}
 				return vector[i];
 			}
 

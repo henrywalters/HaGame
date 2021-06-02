@@ -8,6 +8,15 @@ void hagame::graphics::Window::initGL() {
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32);
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
+
+	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
 
 	glewExperimental = GL_TRUE;
 
@@ -30,13 +39,8 @@ void hagame::graphics::Window::initGL() {
 		throw new std::exception("Failed to set VSync");
 	}
 
-	GLenum error = GL_NO_ERROR;
-	//Check for error
-	error = glGetError();
-	if (error != GL_NO_ERROR)
-	{
-		printf("Error initializing OpenGL! %s\n", gluErrorString(error));
-	}
+	glEnable(GL_DEBUG_OUTPUT);
+	glDebugMessageCallback(glErrorHandler, 0);
 }
 
 hagame::graphics::Window::Window()
@@ -122,10 +126,17 @@ void hagame::graphics::Window::destroy() {
 
 void hagame::graphics::Window::clear() {
 	glClearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	glEnable(GL_STENCIL_TEST);
+	glEnable(GL_ALPHA_TEST);
+	glEnable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
+	glEnable(GL_MULTISAMPLE);
+	//glEnable(GL_CULL_FACE);
+	glFrontFace(GL_CCW);
+	//glCullFace(GL_BACK);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDepthFunc(GL_LEQUAL);
 }
 
 void hagame::graphics::Window::render() {

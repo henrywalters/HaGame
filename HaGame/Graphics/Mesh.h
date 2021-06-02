@@ -8,7 +8,9 @@
 #include "../Utils/Aliases.h"
 #include "../Utils/File.h"
 #include "../Utils/String.h"
+#include "../Utils/SpacialMap.h"
 #include "../Graphics/ShaderProgram.h"
+#include "../Math/Triangle.h"
 
 namespace hagame {
 	namespace graphics {
@@ -30,9 +32,19 @@ namespace hagame {
 			Vec2 texCoords;
 		};
 
+		struct Face {
+			Vertex vertices[3];
+			int index;
+		};
+
 		struct MeshDefinition {
 			Array<Vertex> vertices;
 			Array<unsigned int> indices;
+		};
+
+		struct ConcatMeshDefinition {
+			MeshDefinition mesh;
+			Mat4 model;
 		};
 
 		class Mesh {
@@ -101,8 +113,92 @@ namespace hagame {
 				initializeForGL();
 			}
 
+			Mesh(Array<ConcatMeshDefinition> meshDefs) {
+				auto faces = Array<Ptr<Face>>();
+				vertices = Array<Vertex>();
+				indices = Array<unsigned int>();
+				unsigned int index = 0;
+
+				auto pointMap = hagame::utils::SpacialMap<Face, float>(Vec3({ 0.1, 0.1, 0.1}));
+
+				for (auto meshDef : meshDefs) {
+					for (int i = 0; i < meshDef.mesh.indices.size() / 3; i++) {
+
+						int i1 = meshDef.mesh.indices[(i * 3)];
+						int i2 = meshDef.mesh.indices[(i * 3) + 1];
+						int i3 = meshDef.mesh.indices[(i * 3) + 2];
+
+						Vertex v1 = meshDef.mesh.vertices[i1];
+						v1.position = (meshDef.model * v1.position.resize<4>(1.0f)).resize<3>();
+						Vertex v2 = meshDef.mesh.vertices[i2];
+						v2.position = (meshDef.model * v2.position.resize<4>(1.0f)).resize<3>();
+						Vertex v3 = meshDef.mesh.vertices[i3];
+						v3.position = (meshDef.model * v3.position.resize<4>(1.0f)).resize<3>();
+
+						Ptr<Face> face = std::make_shared<Face>();
+						face->vertices[0] = v1;
+						face->vertices[1] = v2;
+						face->vertices[2] = v3;
+						face->index = i;
+						pointMap.insert(v1.position, face.get());
+						pointMap.insert(v2.position, face.get());
+						pointMap.insert(v3.position, face.get());
+						faces.push_back(face);
+
+						//vertices.insert(vertices.end(), { v1, v2, v3 });
+						//indices.insert(indices.end(), { index, index + 1, index + 2 });
+						//index += 3;
+					}
+				}
+
+				std::cout << "Original mesh size: " << faces.size() << " triangles\n";
+				int culled = 0;
+
+				for (int i = 0; i < faces.size(); i++) {
+
+					bool showFace = true;
+
+					auto faceTri = hagame::math::Triangle(faces[i]->vertices[0].position, faces[i]->vertices[1].position, faces[i]->vertices[2].position);
+
+					for (int j = 0; j < 3; j++) {
+						for (auto face : pointMap.get(faces[i]->vertices[j].position)) {
+							auto otherTri = hagame::math::Triangle(face->vertices[0].position, face->vertices[1].position, face->vertices[2].position);
+							
+							if (faces[i]->index != face->index && faces[i]->vertices[0].normal == face->vertices[0].normal * -1) {
+								if (faceTri == otherTri) {
+									showFace = false;
+									culled++;
+									break;
+								}
+							}
+						}
+
+						if (!showFace)
+							break;
+					}
+
+					if (showFace) {
+						vertices.insert(vertices.end(), { faces[i]->vertices[0], faces[i]->vertices[1], faces[i]->vertices[2] });
+						indices.insert(indices.end(), { index, index + 1, index + 2 });
+						index += 3;
+					}
+					
+				}
+
+				std::cout << "\nRemoved " << culled << ".\n";
+
+				initializeForGL();
+			}
+
 			~Mesh() {
 				removeBuffers();
+			}
+
+			MeshDefinition getDefinition() {
+				return MeshDefinition{
+					vertices,
+					indices
+				};
 			}
 
 			void draw(ShaderProgram* shader) {
@@ -165,8 +261,6 @@ namespace hagame {
 
 					if (parts[0] == "f") {
 
-						std::cout << parts.size() << std::endl;
-
 						auto f1 = stringSplit(parts[1], '/');
 						auto f2 = stringSplit(parts[2], '/');
 						auto f3 = stringSplit(parts[3], '/');
@@ -180,12 +274,12 @@ namespace hagame {
 						v3.position = positions[stoi(f3[0]) - 1];
 
 						v1.texCoords = textures[stoi(f1[1]) - 1];
-						v1.texCoords = textures[stoi(f2[1]) - 1];
-						v1.texCoords = textures[stoi(f3[1]) - 1];
+						v2.texCoords = textures[stoi(f2[1]) - 1];
+						v3.texCoords = textures[stoi(f3[1]) - 1];
 
 						v1.normal = normals[stoi(f1[2]) - 1];
 						v2.normal = normals[stoi(f2[2]) - 1];
-						v2.normal = normals[stoi(f2[2]) - 1];
+						v3.normal = normals[stoi(f2[2]) - 1];
 
 						vertices.insert(vertices.end(), { v1, v2, v3 });
 						indices.insert(indices.end(), { idx, idx + 1, idx + 2 });

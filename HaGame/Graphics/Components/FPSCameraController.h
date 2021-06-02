@@ -15,10 +15,12 @@ namespace hagame {
 		struct FPSCameraController {
 			float pitch = 0;
 			float yaw = 0;
+			float roll = 0;
 			float minPitch = -PI / 2 + EPSILON;
 			float maxPitch = PI / 2 - EPSILON;
 			float ySensitivity = 2.0f;
 			float xSensitivity = 2.0f;
+			float zSensitivity = 2.0f;
 			Camera* camera;
 			std::function<FPSCameraControllerParams(void)> inputFn;
 		};

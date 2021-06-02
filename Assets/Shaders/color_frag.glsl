@@ -1,9 +1,9 @@
 #version 330 core
 
-uniform vec4 color;
+in vec4 Color;
 out vec4 LFragment;
 
 
 void main() {
-	LFragment = color;
+	LFragment = Color;
 }

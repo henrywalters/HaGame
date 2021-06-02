@@ -4,6 +4,16 @@
 #include "../Utils/Aliases.h"
 
 template <class T>
+T max(T a, T b) {
+	return a > b ? a : b;
+}
+
+template <class T>
+T min(T a, T b) {
+	return a < b: a ? b;
+}
+
+template <class T>
 T clamp(T val, T min, T max) {
 	if (val >= max) return max;
 	else if (val <= min) return min;
@@ -79,6 +89,26 @@ T sign(hagame::math::Vector<N, T> vector) {
 	}
 }
 
+// Compute the barycentric coordinates (u, v, w) for point p with respect to triangle T (ABC)
+template <class T>
+hagame::math::Vector<3, T> computeBarycentric(hagame::math::Vector<3, T> a, hagame::math::Vector<3, T> b, hagame::math::Vector<3, T> c, hagame::math::Vector<3, T> p) {
+	hagame::math::Vector<3, T> v0 = b - a, v1 = c - a, v2 = p - a;
+
+	float d00 = dot(v0, v0);
+	float d01 = dot(v0, v1);
+	float d11 = dot(v1, v1);
+	float d20 = dot(v2, v0);
+	float d21 = dot(v2, v1);
+
+	float denom = d00 * d11 - d01 * d01;
+
+	float v = (d11 * d20 - d01 * d21) / denom;
+	float w = (d00 * d21 - d01 * d20) / denom;
+	float u = 1.0f - v - w;
+
+	return hagame::math::Vector<3, T>({u, v, w});
+}
+
 // Adjusts a box (assumed to be 3d axis-aligned, such as a Mesh Model Bounding Box) by a transform matrix and translation vector. 
 template <size_t dim, class T>
 hagame::math::Hypercube<dim, T> transformBoundingBox(hagame::math::Hypercube<dim, T> box, hagame::math::Matrix<dim, dim, T> transform, hagame::math::Vector<dim, T> translation) {
@@ -111,6 +141,90 @@ hagame::math::Hypercube<dim, T> transformBoundingBox(hagame::math::Hypercube<dim
 	}
 
 	return hagame::math::Hypercube(bMin, bMax - bMin);
+}
+
+// Calculate the cells, in an abstract grid, that will be intersected by a line
+Array<Vec3> calcCellsThatIntersectLine(Vec3 cellSize, Vec3 origin, Vec3 direction) {
+	// Based on this paper: http://www.cse.yorku.ca/~amana/research/grid.pdf
+
+	int MAX_ITERATIONS = 100;
+	int iterations = 0;
+
+	Vec3Int offset = Vec3Int({
+		(int)(origin[0] / cellSize[0]),
+		(int)(origin[1] / cellSize[1]),
+		(int)(origin[2] / cellSize[2]),
+	});
+
+	Vec3Int targetIdx = Vec3Int({
+		(int)((origin[0] + direction[0]) / cellSize[0]) - offset[0],
+		(int)((origin[1] + direction[1]) / cellSize[1]) - offset[1],
+		(int)((origin[2] + direction[2]) / cellSize[2]) - offset[2],
+	});
+
+	Array<Vec3> cells = Array<Vec3>();
+	Vec3Int pos;
+	Vec3 step = Vec3::Identity();
+	Vec3 tMax;
+	Vec3 tDelta;
+
+	Vec3Bool flip = Vec3Bool({ direction[0] < 0.0, direction[1] < 0.0, direction[2] < 0.0 });
+
+	for (int i = 0; i < 3; i++) {
+		if (flip[i])
+			targetIdx[i] *= -1;
+		tMax[i] = direction[i] != 0 ? cellSize[i] / abs(direction[i]) : 0.0;
+	}
+	tDelta = tMax.copy();
+
+	cells.push_back(Vec3({
+			((flip[0] ? -1 * pos[0] : pos[0]) + offset[0]) * cellSize[0],
+			((flip[1] ? -1 * pos[1] : pos[1]) + offset[1]) * cellSize[1],
+			((flip[2] ? -1 * pos[2] : pos[2]) + offset[2]) * cellSize[2]
+	}));
+
+	std::cout << origin.toString() << std::endl;
+	std::cout << direction.toString() << std::endl;
+	std::cout << tMax.toString() << std::endl;
+	std::cout << targetIdx.toString() << std::endl;
+
+	while (pos != targetIdx && iterations < MAX_ITERATIONS) {
+
+		std::cout << pos.toString() << std::endl;
+
+		if (tMax[0] < tMax[1]) {
+			if (tMax[0] < tMax[2]) {
+				pos[0] += step[0];
+				tMax[0] += tDelta[0];
+			}
+			else {
+				pos[2] += step[2];
+				tMax[2] += tDelta[2];
+			}
+		}
+		else {
+			if (tMax[1] < tMax[2]) {
+				pos[1] += step[1];
+				tMax[1] += tDelta[1];
+			}
+			else {
+				pos[2] += step[2];
+				tMax[2] += tDelta[2];
+			}
+		}
+		
+		cells.push_back(Vec3({
+			((flip[0] ? -1 * pos[0] : pos[0]) + offset[0]) * cellSize[0],
+			((flip[1] ? -1 * pos[1] : pos[1]) + offset[1]) * cellSize[1],
+			((flip[2] ? -1 * pos[2] : pos[2]) + offset[2])* cellSize[2]
+		}));
+
+		iterations++;
+
+	}
+	
+	return cells;
+
 }
 
 #endif

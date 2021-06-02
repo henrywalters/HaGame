@@ -7,6 +7,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "../Utils/Aliases.h"
 #include "../Math/Functions.h"
+#include "ECS/Entity.h"
 
 namespace hagame {
 	class Transform {
@@ -21,7 +22,13 @@ namespace hagame {
 		Mat4 model;
 		bool cacheModel = true;
 
+		ecs::Entity* entity;
+
 		Transform();
+
+		void setPosition(Vec3 pos);
+		void setRotation(Quat rot);
+		void setScale(Vec3 size);
 
 		void move(Vec3 offset);
 		void rotate(Vec3 axis, float degrees);

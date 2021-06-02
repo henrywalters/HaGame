@@ -4,19 +4,19 @@
 
 int main() {
 
+	bool testing = false;
 
-	hagame::Game::initializeSDL();
-	auto window = hagame::graphics::Window(hagame::graphics::MonitorManager::GetMonitor(0).displayBounds.size - Vec2({ 100, 100 }), "HaGame Demo");
-	window.create();
+	if (!testing) {
+		hagame::Game::initializeSDL();
+		auto window = hagame::graphics::Window(hagame::graphics::MonitorManager::GetMonitor(0).displayBounds.size - Vec2({ 100, 100 }), "HaGame Demo");
+		window.create();
 
-	Demo demo = Demo(&window);
+		Demo demo = Demo(&window);
 
-	demo.run();
+		demo.run();
+	}
 
-	Quat quat = Quat(0.2, PI / 2, 0.4);
-	std::cout << quat.toString() << std::endl;
-	Vec3 euler = quat.eulerAngles();
-	std::cout << euler.toString() << std::endl;
+	//calcCellsThatIntersectLine(Vec3(5.0f), Vec3({ 28.120258, 0.000000, 21.894592 }), Vec3({ 7.155539, 0.000000, 1.159720 }));
 
 	return 0;
 }

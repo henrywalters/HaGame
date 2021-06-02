@@ -110,6 +110,15 @@ namespace hagame {
 					relative = false;
 				}
 
+				void toggleMouseCapture() {
+					if (relative) {
+						captureMouseOff();
+					}
+					else {
+						captureMouseOn();
+					}
+				}
+
 				void handleEvent(SDL_Event event) {
 
 					switch (event.type) {

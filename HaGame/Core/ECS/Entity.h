@@ -4,26 +4,33 @@
 #include <cstdint>
 #include <string>
 #include "../../Vendor/entt/entt.hpp"
-#include "../Transform.h"
 
 namespace hagame {
-	namespace ecs {
-		class Entity {
-		private:
 
-			friend class EntityManager;
+	class Transform;
+
+	namespace ecs {
+
+		class EntityManager;
+	
+		class Entity {
+
 		public:
 
 			entt::basic_registry<uint32_t>* registry;
+
+			Entity* parent;
+			Array<Entity*> children;
 
 			Entity(uint32_t _entt_id, uint32_t _id) : id(_id), entt_id(_entt_id) {
 				name = "Entity_" + _id;
 			}
 
-			const uint32_t entt_id;
-			const uint32_t id;
+			Ptr<Transform> transform;
+
+			uint32_t entt_id;
+			uint32_t id;
 			std::string name;
-			hagame::Transform transform;
 
 			template <class T>
 			T* addComponent() {

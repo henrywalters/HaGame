@@ -5,6 +5,8 @@
 
 #include <iostream>
 
+#include "Utils/Memory.h"
+
 #include "Math/Vector.h"
 #include "Math/Matrix.h"
 #include "Math/Hypercube.h"
@@ -12,6 +14,12 @@
 #include "Math/Quaternion.h"
 #include "Math/Sample.h"
 #include "Math/Perlin.h"
+#include "Math/Triangle.h"
+#include "Math/Line.h"
+#include "Math/LineSegment.h"
+#include "Math/Ray.h"
+#include "Math/Plane.h"
+#include "Math/Sphere.h"
 
 #include "Graphics/OpenGL.cpp"
 #include "Graphics/Monitors.h"
@@ -28,9 +36,15 @@
 #include "Graphics/Routines.cpp"
 #include "Graphics/Line.h"
 #include "Graphics/Plane.h"
+#include "Graphics/Components/AxisRenderer.h"
+#include "Graphics/Components/BoundingBoxRenderer.h"
+#include "Graphics/Components/RigidBodyRenderer.h"
 #include "Graphics/Components/MeshRenderer.h"
+#include "Graphics/Components/CameraComponent.h"
+#include "Graphics/Components/LightComponent.h"
 #include "Graphics/Systems/RenderSystem.h"
 #include "Graphics/Systems/CameraSystem.h"
+#include "Graphics/Systems/LightingSystem.h"
 
 #include "Input/Device.h"
 #include "Input/Devices/Gamepad.h"
@@ -47,8 +61,10 @@
 #include "Physics/Components/RigidBody.h"
 #include "Physics/Components/SimpleMovement.h"
 #include "Physics/Components/RotationMovement.h"
+#include "Physics/Components/Collider.h"
 #include "Physics/Systems/PhysicsSystem.h"
 #include "Physics/Systems/MovementSystem.h"
+#include "Physics/Systems/CollisionSystem.h"
 
 
 #include "Core/Game.cpp"

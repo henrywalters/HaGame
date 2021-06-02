@@ -73,7 +73,7 @@ void hagame::graphics::drawParticle(GLuint vao, ShaderProgram* shader, Particle 
 void hagame::graphics::drawLine(Line line, ShaderProgram* shader)
 {
 	shader->use();
-	shader->setVec3("color", line.color.resize<3>());
+	shader->setVec4("color", line.color);
 	line.draw(shader);
 }
 

@@ -15,7 +15,9 @@ namespace hagame {
 			hagame::graphics::Color color;
 			hagame::graphics::Mesh* mesh;
 			hagame::graphics::Texture* texture;
-			bool displayBounds = false;
+			hagame::graphics::Texture* normalMap;
+			hagame::graphics::Texture* opacityTexture;
+			hagame::graphics::Texture* specularTexture;
 		};
 	}
 }

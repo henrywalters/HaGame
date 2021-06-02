@@ -7,10 +7,55 @@ hagame::Transform::Transform() {
 	updateModel();
 }
 
+void hagame::Transform::setPosition(Vec3 pos)
+{
+	auto delta = (position - pos) * -1;
+	position = pos;
+	updateModel();
+	if (entity) {
+		for (auto child : entity->children) {
+			child->transform->move(delta);
+		}
+	}
+}
+
+void hagame::Transform::setRotation(Quat rot)
+{
+	Quat delta = rot * rotation.inverse();
+	rotation = rot;
+	updateModel();
+	if (entity) {
+		for (auto child : entity->children) {
+			child->transform->position = delta.rotatePoint(child->transform->position - position) + position;
+			child->transform->rotate(delta);
+
+		}
+	}
+	
+}
+
+void hagame::Transform::setScale(Vec3 size)
+{
+	Vec3 offset = size.div(scale);
+	scale = size;
+	updateModel();
+	if (entity) {
+		for (auto child : entity->children) {
+			child->transform->grow(offset);
+		}
+	}
+}
+
 void hagame::Transform::move(Vec3 offset)
 {
 	position += offset;
 	updateModel();
+	if (entity) {
+		for (auto child : entity->children) {
+			child->transform->move(offset);
+		}
+	}
+	
 }
 
 void hagame::Transform::rotate(Vec3 axis, float degrees) {
@@ -21,7 +66,15 @@ void hagame::Transform::rotate(Vec3 axis, float degrees) {
 void hagame::Transform::rotate(Quat rot) {
 	rotation = rotation * rot;
 	updateModel();
+	if (entity) {
+		for (auto child : entity->children) {
+			child->transform->position = rot.rotatePoint(child->transform->position - position) + position;
+			child->transform->rotate(rot);
+		}
+	}
+	
 }
+
 
 void hagame::Transform::grow(Vec3 size) {
 	scale += size;

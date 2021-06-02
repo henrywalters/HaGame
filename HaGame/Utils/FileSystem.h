@@ -7,6 +7,7 @@
 #include <filesystem>
 #include <iostream>
 #include "File.h"
+#include "String.h"
 
 #ifdef WIN32
 #include <direct.h>
@@ -36,6 +37,10 @@ namespace hagame {
 			File getFile(std::string path);
 			std::string readFile(std::string path);
 			std::vector<std::string> listFiles(std::string path);
+
+			void forEachFile(std::string path, std::function<void(std::string filePath)> lambda);
+			void forEachFile(std::string path, std::function<void(std::string filePath, std::string fileName)> lambda);
+			void forEachFile(std::string path, std::function<void(std::string filePath, std::string fileName, std::string extension)> lambda);
 			
 			bool isFile(std::string path);
 			bool isDir(std::string path);
