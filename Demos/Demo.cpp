@@ -2,9 +2,13 @@
 #define WITH_SDL2
 #include "Demo.h"
 
+void testFn() {
+	calcCellsThatIntersectLine(Vec3(5.0f), Vec3({ 28.120258, 0.000000, 21.894592 }), Vec3({ 7.155539, 0.000000, 1.159720 }));
+}
+
 int main() {
 
-	bool testing = false;
+	bool testing = true;
 
 	if (!testing) {
 		hagame::Game::initializeSDL();
@@ -16,7 +20,10 @@ int main() {
 		demo.run();
 	}
 
-	//calcCellsThatIntersectLine(Vec3(5.0f), Vec3({ 28.120258, 0.000000, 21.894592 }), Vec3({ 7.155539, 0.000000, 1.159720 }));
+	//auto summary = hagame::utils::testFunctionSpeed<float, 10000>(testFn);
+	//std::cout << summary.toString() << std::endl;
+
+	calcCellsThatIntersectLine(Vec3(5.0f), Vec3({ 28.120258, 0.000000, 21.894592 }), Vec3({ 7.155539, 0.000000, 1.159720 }));
 
 	return 0;
 }

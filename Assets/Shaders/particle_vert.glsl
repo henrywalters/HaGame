@@ -10,16 +10,16 @@ out vec4 ParticleColor;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
-uniform float start;
+uniform float current;
 uniform float gravity;
 
 vec3 calcOffset() {
-	float t = aCreated - start;
-	return vec3(0.0) + (aVel * t) + (0.5 * gravity * t * t);
+	float t = current - aCreated;
+	return (aVel * t) + (0.5 * gravity * t * t);
 }
 
 void main() {
 	float scale = 10.0f;
 	ParticleColor = aColor;
-	gl_Position = projection * view * model * vec4(aPos, 1.0);
+	gl_Position = projection * view * model * vec4(calcOffset() + aPos, 1.0);
 }

@@ -26,6 +26,8 @@
 #define DEBUG_LOG(key, value) std::cout << key << " = " << value << std::endl;
 #endif
 
+typedef void (*voidfunc_t)();
+
 // Standard Library aliases
 using String = std::string;
 using Exception = std::exception;

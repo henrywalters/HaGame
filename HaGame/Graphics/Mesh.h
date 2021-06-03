@@ -8,7 +8,7 @@
 #include "../Utils/Aliases.h"
 #include "../Utils/File.h"
 #include "../Utils/String.h"
-#include "../Utils/SpacialMap.h"
+#include "../Utils/SpatialMap.h"
 #include "../Graphics/ShaderProgram.h"
 #include "../Math/Triangle.h"
 
@@ -119,7 +119,7 @@ namespace hagame {
 				indices = Array<unsigned int>();
 				unsigned int index = 0;
 
-				auto pointMap = hagame::utils::SpacialMap<Face, float>(Vec3({ 0.1, 0.1, 0.1}));
+				auto pointMap = hagame::utils::SpatialMap<Face, float>(Vec3({ 0.1, 0.1, 0.1}));
 
 				for (auto meshDef : meshDefs) {
 					for (int i = 0; i < meshDef.mesh.indices.size() / 3; i++) {

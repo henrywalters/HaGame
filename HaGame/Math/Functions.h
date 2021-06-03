@@ -190,8 +190,6 @@ Array<Vec3> calcCellsThatIntersectLine(Vec3 cellSize, Vec3 origin, Vec3 directio
 
 	while (pos != targetIdx && iterations < MAX_ITERATIONS) {
 
-		std::cout << pos.toString() << std::endl;
-
 		if (tMax[0] < tMax[1]) {
 			if (tMax[0] < tMax[2]) {
 				pos[0] += step[0];

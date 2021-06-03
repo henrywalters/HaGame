@@ -9,15 +9,16 @@ struct Particle {
 struct ParticleEmitter {
 	float particleLifeDur = 3.0f;
 	int particlesPerEmittion = 1;
-	float particleSpeed = 50.0f;
+	float particleSpeed = 1.0f;
 	float delay = 1.0f;
 	float timeSinceLastEmit = 0.0f;
 	float gravity = 15.0f;
 	hagame::graphics::Color particleColor = hagame::graphics::Color::blue();
 	// hagame::graphics::Mesh* particleMesh;
 	hagame::graphics::ShaderProgram* particleShader;
-	float angularWidth = PI / 8;
+	float angularWidth = 0; // PI / 8;
 	Queue<Particle> particles = Queue<Particle>();
+	Array<float> data = Array<float>();
 };
 
 struct EmitterBuffers {
@@ -36,7 +37,7 @@ public:
 	hagame::math::Sample<long, 100> s2;
 	hagame::math::Sample<long, 100> s3;
 
-	Map<uint32_t, EmitterBuffers> emitterBuffers;
+	Map<uint32_t, Ptr<EmitterBuffers>> emitterBuffers;
 
 	String getSystemName() {
 		return "ParticleSystem";
@@ -61,36 +62,38 @@ public:
 			s3.clear();
 		};
 
-		emitterBuffers = Map<uint32_t, EmitterBuffers>();
+		emitterBuffers = Map<uint32_t, Ptr<EmitterBuffers>>();
 
 		forEach<ParticleEmitter>([this](ParticleEmitter* emitter, hagame::ecs::Entity* entity) {
-			EmitterBuffers buffers;
+			auto buffers = std::make_shared<EmitterBuffers>();
 
 			emitter->particleShader->use();
 
-			glGenBuffers(1, &buffers.instanceVBO);
-			glGenVertexArrays(1, &buffers.quadVAO);
-			glGenBuffers(1, &buffers.quadVBO);
+			glGenBuffers(1, &buffers->instanceVBO);
 
-			std::cout << "Creating instance buffer size: " << (sizeof(Particle)) * MAX_PARTICLE_SIZE << std::endl;
+			glCheckError();
 
-			glBindBuffer(GL_ARRAY_BUFFER, buffers.instanceVBO);
-			glBufferData(GL_ARRAY_BUFFER, (sizeof(Particle)) * MAX_PARTICLE_SIZE, NULL, GL_DYNAMIC_DRAW);
+			glBindBuffer(GL_ARRAY_BUFFER, buffers->instanceVBO);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(Particle) * MAX_PARTICLE_SIZE, NULL, GL_DYNAMIC_DRAW);
+
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-			glBindBuffer(GL_ARRAY_BUFFER, buffers.instanceVBO);
-			glBufferData(GL_ARRAY_BUFFER, (sizeof(Particle)) * MAX_PARTICLE_SIZE, NULL, GL_STATIC_DRAW);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glGenVertexArrays(1, &buffers->quadVAO);
+			glGenBuffers(1, &buffers->quadVBO);
 
-			glBindVertexArray(buffers.quadVAO);
-			glBindBuffer(GL_ARRAY_BUFFER, buffers.quadVBO);
+			glBindVertexArray(buffers->quadVAO);
+			glBindBuffer(GL_ARRAY_BUFFER, buffers->quadVBO);
 			glBufferData(GL_ARRAY_BUFFER, sizeof(float) * hagame::graphics::QuadVertices.size(), &hagame::graphics::QuadVertices[0], GL_STATIC_DRAW);
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
 			emitterBuffers.insert(std::make_pair(entity->id, buffers));
 		});
 	}
 
 	void onSystemUpdate(double dt) {
+
+		glCheckError();
 
 		forEach<ParticleEmitter>([dt, this](ParticleEmitter* emitter, hagame::ecs::Entity* entity) {
 
@@ -119,6 +122,13 @@ public:
 					particle.color = emitter->particleColor;
 					particle.created = game->secondsElapsed;
 					emitter->particles.push_back(particle);
+
+					emitter->data.insert(emitter->data.end(), {
+						particle.velocity[0], particle.velocity[1], particle.velocity[2],
+						1.0, 0.0, 1.0, 1.0,
+						//particle.color[0], particle.color[0], particle.color[0], particle.color[0],
+						(float) game->secondsElapsed,
+					});
 				}
 			}
 
@@ -135,7 +145,7 @@ public:
 					Particle head = emitter->particles.front();
 					
 					if (head.created - startTime > emitter->particleLifeDur) {
-						emitter->particles.pop_front();
+						// emitter->particles.pop_front();
 						// delete head.get();
 					}
 					else {
@@ -174,42 +184,42 @@ public:
 
 			emitter->particleShader->use();
 			emitter->particleShader->setFloat("gravity", emitter->gravity);
-			emitter->particleShader->setFloat("start", startTime);
+			emitter->particleShader->setFloat("current", game->secondsElapsed);
 			emitter->particleShader->setMVP(entity->transform->getModelMatrix(), scene->viewMat, scene->projMat);
 
-			std::cout << "Binding to buffer: " << emitterBuffers[entity->id].instanceVBO << std::endl;
+			/*std::cout << emitter->data.size() << std::endl;
 
-			std::cout << "Particle size: " << emitter->particles.size() * sizeof(Particle) << std::endl;
+			for (int i = 0; i < emitter->data.size() / 8; i++) {
+				std::cout << "Elapsed: " << game->secondsElapsed << "\n";
+				std::cout << "Created: " << emitter->data[i * 8 + 7] << "\n";
+				std::cout << "T = " << (game->secondsElapsed - emitter->data[i * 8 + 7]) << "\n";
+			}*/
 
-			for (auto particle : emitter->particles) {
-				std::cout << particle.velocity.toString() << std::endl;
-			}
+			glBindBuffer(GL_ARRAY_BUFFER, emitterBuffers[entity->id]->instanceVBO);
+			//glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Particle) * emitter->particles.size(), &emitter->particles[0]);
+			glBufferSubData(GL_ARRAY_BUFFER, 0, 8 * sizeof(float) * emitter->data.size(), &emitter->data[0]);
 
-			glBindBuffer(GL_ARRAY_BUFFER, emitterBuffers[entity->id].instanceVBO);
-			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Particle) * emitter->particles.size(), &emitter->particles[0]);
-			
-			glBindVertexArray(emitterBuffers[entity->id].quadVAO);
-			glBindBuffer(GL_ARRAY_BUFFER, emitterBuffers[entity->id].quadVBO);
-			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vec3), (void*) 0);
-
-			glBindBuffer(GL_ARRAY_BUFFER, emitterBuffers[entity->id].instanceVBO);
+			glCheckError();
 
 			glEnableVertexAttribArray(1);
-			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Particle), (void*)offsetof(Particle, velocity));
+			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Particle), (void*) 0);
 			glVertexAttribDivisor(1, 1);
 
 			glEnableVertexAttribArray(2);
-			glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(Particle), (void*) offsetof(Particle, color));
+			glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(Particle), (void*) (3 * sizeof(float)));
 			glVertexAttribDivisor(2, 1);
 
 			glEnableVertexAttribArray(3);
-			glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(Particle), (void*) offsetof(Particle, created));
+			glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(Particle), (void*) (7 * sizeof(float)));
 			glVertexAttribDivisor(3, 1);
 			
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-			glDrawArraysInstanced(GL_TRIANGLES, 0, 6, 6 * emitter->particles.size());
+			glBindVertexArray(emitterBuffers[entity->id]->quadVAO);
+			//glDrawArraysInstanced(GL_TRIANGLES, 0, 6, 6 * emitter->particles.size());
+			glDrawArraysInstanced(GL_TRIANGLES, 0, 6, 6 * emitter->data.size());
 
+			glCheckError();
 		});
 	}
 };
@@ -320,7 +330,7 @@ public:
 		addSystem<hagame::physics::CollisionSystem>();
 		addSystem<hagame::graphics::CameraSystem>();
 		addSystem<hagame::graphics::LightingSystem>();
-		addSystem<ParticleSystem>();
+		//addSystem<ParticleSystem>();
 	}
 
 	void addGameObjects() {
@@ -333,6 +343,7 @@ public:
 		fRenderer->shader = game->resources->getShaderProgram("texture");
 		fRenderer->opacityTexture = game->resources->getTexture("chainwall_opacity");
 		fRenderer->texture = game->resources->getTexture("wood_floor");
+		
 
 		player = addEntity();
 		// player->addComponent<hagame::graphics::RigidBodyRenderer>()->shader = game->resources->getShaderProgram("color");
@@ -402,8 +413,9 @@ public:
 		pEmitter->transform->setPosition(Vec3({ 1.5, 0, 0 }));
 		auto emitter = pEmitter->addComponent<ParticleEmitter>();
 		emitter->particleShader = game->resources->getShaderProgram("particle");
-		pEmitter->transform->rotate(Quat(-PI / 8, Vec3::Face()));
-
+		emitter->particleColor = hagame::graphics::Color::green();
+		// pEmitter->transform->rotate(Quat(-PI / 8, Vec3::Face()));
+		
 		auto pEmitter2 = addEntity();
 		pEmitter2->transform->setPosition(Vec3({ 3, 0, 0 }));
 		auto emitter2 = pEmitter2->addComponent<ParticleEmitter>();
@@ -414,14 +426,15 @@ public:
 		emitter2->gravity = 0.1;
 		emitter2->particleLifeDur = 5.0f;
 		emitter2->angularWidth = PI / 16;
-
+		/*
+		
 		auto pEmitter3 = addEntity();
 		pEmitter3->transform->setPosition(Vec3({ 4.5, 0, 0 }));
 		auto emitter3 = pEmitter3->addComponent<ParticleEmitter>();
 		emitter3->particleShader = game->resources->getShaderProgram("particle");
 		emitter3->particleColor = hagame::graphics::Color::green();
 		pEmitter3->transform->rotate(Quat(PI / 8, Vec3::Face()));
-
+		*/
 		gun->transform->setPosition(player->transform->face() * 2 + Vec3({ -0.6, -1, 0 }));
 
 		/*auto pRenderer = player->addComponent<hagame::graphics::MeshRenderer>();
@@ -571,11 +584,12 @@ public:
 		// walls->specularTexture = game->resources->getTexture("crate_specular");
 		renderer->normalMap = game->resources->getTexture("stone_normal");
 
-		auto skybox = addEntity()
+		/*auto skybox = addEntity()
 			->addComponent<hagame::graphics::SkyboxRenderer>();
 
 		skybox->cubemap = game->resources->getCubemap("skybox_1");
 		skybox->shader = game->resources->getShaderProgram("skybox");
+		*/
 	}
 
 	void onSceneActivate() {

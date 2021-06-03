@@ -6,6 +6,19 @@
 namespace hagame {
 	namespace math {
 
+		template <class T>
+		struct StatisticalSummary {
+			int N;
+			T average;
+			T stddev;
+			T max;
+			T min;
+
+			String toString() {
+				return "Sample size = " + std::to_string(N) + "\nAverage = " + std::to_string(average) + "\nStdDev = " + std::to_string(stddev) + "\nMin = " + std::to_string(min) + "\nMax = " + std::to_string(max);
+			}
+		};
+
 		// Provides a set with a fixed size (N) of type T and functions for common mathematical formulas. The onFull callback is triggered when the set is full.
 		template<class T, size_t N>
 		class Sample {
@@ -33,6 +46,32 @@ namespace hagame {
 				set.clear();
 			}
 
+			T max() {
+				if (size == 0)
+					return 0;
+				T m = set[0];
+
+				for (int i = 1; i < size; i++) {
+					if (set[i] > m)
+						m = set[i];
+				}
+
+				return m;
+			}
+
+			T min() {
+				if (size == 0)
+					return 0;
+				T m = set[0];
+
+				for (int i = 1; i < size; i++) {
+					if (set[i] < m)
+						m = set[i];
+				}
+
+				return m;
+			}
+
 			T sum() {
 				T s = 0;
 				for (T el : set) {
@@ -42,7 +81,7 @@ namespace hagame {
 			}
 
 			T average() {
-				return sum() / N;
+				return sum() / size;
 			}
 
 			T stddev() {
@@ -52,7 +91,17 @@ namespace hagame {
 					T x = el - avg;
 					s += x * x;
 				}
-				return sqrt((s * s) / N);
+				return sqrt(s / size);
+			}
+
+			StatisticalSummary<T> summary() {
+				StatisticalSummary<T> res;
+				res.N = size;
+				res.average = average();
+				res.stddev = stddev();
+				res.min = min();
+				res.max = max();
+				return res;
 			}
 		};
 	}

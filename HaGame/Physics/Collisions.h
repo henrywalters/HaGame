@@ -2,7 +2,7 @@
 #define COLLISIONS
 #include "../Utils/Aliases.h"
 #include "../Core/Game.h"
-#include "../Utils/SpacialMap.h"
+#include "../Utils/SpatialMap.h"
 #include "../Core/ECS/Entity.h"
 #include "../Math/AABB.h"
 #include "./Components/Collider.h"
@@ -16,9 +16,9 @@ namespace hagame {
 
 		class Collisions {
 		public:
-			utils::SpacialMap<ecs::Entity, float> entityMap;
+			utils::SpatialMap<ecs::Entity, float> entityMap;
 
-			Collisions() : entityMap(utils::SpacialMap<ecs::Entity, float>(CHUNK_SIZE)) {}
+			Collisions() : entityMap(utils::SpatialMap<ecs::Entity, float>(CHUNK_SIZE)) {}
 
 			Array<ecs::Entity*> queryAABB(math::AABB aabb) {
 				Array<ecs::Entity*> entities;

@@ -57,6 +57,7 @@
 #include "Utils/Aliases.h"
 #include "Utils/String.cpp"
 #include "Utils/Random.h"
+#include "Utils/Testing.h"
 
 #include "Physics/Components/RigidBody.h"
 #include "Physics/Components/SimpleMovement.h"
