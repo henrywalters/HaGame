@@ -22,6 +22,7 @@ namespace hagame {
 
 			Array<ecs::Entity*> queryAABB(math::AABB aabb) {
 				Array<ecs::Entity*> entities;
+				std::cout << "Checking: " << entityMap.get(aabb.center).size() << std::endl;
 				for (auto other : entityMap.get(aabb.center)) {
 					auto otherCollider = other->getComponent<Collider>();
 					if (otherCollider->aabb.isIntersecting(aabb)) {

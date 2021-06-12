@@ -32,6 +32,15 @@ hagame::utils::File hagame::utils::FileSystem::getFile(std::string path)
 	return File(basePath, path);
 }
 
+hagame::utils::File hagame::utils::FileSystem::getGlobalFile(std::string path)
+{
+	if (!isGlobalFile(path)) {
+		throw new std::exception("Global File does not exist");
+	}
+
+	return File("", path);
+}
+
 std::string hagame::utils::FileSystem::readFile(std::string path) {
 	std::ifstream stream(getFullPath(path));
 	return std::string(std::istreambuf_iterator<char>(stream), std::istreambuf_iterator<char>());
@@ -68,6 +77,12 @@ void hagame::utils::FileSystem::forEachFile(std::string path, std::function<void
 		auto fileNameParts = stringSplit(parts[parts.size() - 1], '.');
 		lambda(file, fileNameParts[0], fileNameParts[1]);
 	}
+}
+
+bool hagame::utils::FileSystem::isGlobalFile(std::string path)
+{
+	const std::filesystem::path fsPath(path);
+	return std::filesystem::is_regular_file(fsPath);
 }
 
 bool hagame::utils::FileSystem::isFile(std::string path) {

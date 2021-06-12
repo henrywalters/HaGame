@@ -190,6 +190,8 @@ Array<Vec3> calcCellsThatIntersectLine(Vec3 cellSize, Vec3 origin, Vec3 directio
 
 	while (pos != targetIdx && iterations < MAX_ITERATIONS) {
 
+		std::cout << pos.toString() << std::endl;
+
 		if (tMax[0] < tMax[1]) {
 			if (tMax[0] < tMax[2]) {
 				pos[0] += step[0];
@@ -223,6 +225,12 @@ Array<Vec3> calcCellsThatIntersectLine(Vec3 cellSize, Vec3 origin, Vec3 directio
 	
 	return cells;
 
+}
+
+template <size_t N, class T>
+hagame::math::Vector<N, T> bezier(hagame::math::Vector<N, T> p1, hagame::math::Vector<N, T> p2, hagame::math::Vector<N, T> p3, T t) {
+	T tInverse = 1 - t;
+	return (tInverse * tInverse * p1) + (tInverse * t * p2) + (t * p3);
 }
 
 #endif

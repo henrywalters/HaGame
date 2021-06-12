@@ -22,15 +22,15 @@ namespace hagame {
 			Entity* parent;
 			Array<Entity*> children;
 
-			Entity(uint32_t _entt_id, uint32_t _id) : id(_id), entt_id(_entt_id) {
-				name = "Entity_" + _id;
-			}
-
 			Ptr<Transform> transform;
 
 			uint32_t entt_id;
 			uint32_t id;
 			std::string name;
+
+			Entity(uint32_t _entt_id, uint32_t _id) : id(_id), entt_id(_entt_id) {
+				name = "Entity_" + _id;
+			}
 
 			template <class T>
 			T* addComponent() {

@@ -228,7 +228,7 @@ namespace hagame {
 				}
 			}
 
-			const Vector<N, T> getCol(int col) {
+			Vector<N, T> getCol(int col) {
 				Vector<N, T> out;
 				for (int i = 0; i < N; i++) {
 					out[i] = get(i, col);
@@ -236,7 +236,7 @@ namespace hagame {
 				return out;
 			}
 
-			const Vector<M, T> getRow(int row) {
+			Vector<M, T> getRow(int row) {
 				Vector<M, T> out;
 				for (int i = 0; i < M; i++) {
 					out[i] = get(row, i);

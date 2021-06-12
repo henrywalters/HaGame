@@ -5,7 +5,7 @@
 #include "Monitors.h"
 
 void hagame::graphics::Window::initGL() {
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32);
@@ -35,12 +35,14 @@ void hagame::graphics::Window::initGL() {
 
 	glewGetErrorString(glewError);
 
-	if (SDL_GL_SetSwapInterval(1) < 0) {
-		throw new std::exception("Failed to set VSync");
-	}
+	//if (SDL_GL_SetSwapInterval(-1) < 0) {
+	//	throw new std::exception("Failed to set VSync");
+	//}
 
 	glEnable(GL_DEBUG_OUTPUT);
 	glDebugMessageCallback(glErrorHandler, 0);
+
+	hagame::graphics::textBuffer.initializeForGL();
 }
 
 hagame::graphics::Window::Window()

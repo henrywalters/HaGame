@@ -15,14 +15,14 @@ namespace hagame {
 
 		// The SimpleMovement component provides a force based movement system
 		struct SimpleMovement {
-			float strafeForce = 2000.0f;
-			float walkForce = 1500.0f;
-			float runForce = 2000.0f;
+			float strafeForce = 800.0f;
+			float walkForce = 1000.0f;
+			float runForce = 1200.0f;
 			float frictionForce = 50.0f;
 			float dragForce = 200.0f;
-			float maxStrafeSpeed = 5.0f;
-			float maxWalkSpeed = 4.0f;
-			float maxRunSpeed = 7.5f;
+			float maxStrafeSpeed = 3.0f;
+			float maxWalkSpeed = 2.0f;
+			float maxRunSpeed = 5.5f;
 
 			bool canRun = true;
 			bool isRunning = false;

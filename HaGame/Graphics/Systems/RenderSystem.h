@@ -10,6 +10,8 @@
 #include "../../Physics/Components/RigidBody.h"
 #include "../Components/BoundingBoxRenderer.h"
 #include "../Components/SkyboxRenderer.h"
+#include "../Components/TextRenderer.h"
+#include "../Components/Text3dRenderer.h"
 #include <cstddef>
 
 namespace hagame {
@@ -93,6 +95,12 @@ namespace hagame {
 					glActiveTexture(GL_TEXTURE0 + 0);
 					r->cubemap->bind();
 					cube->draw(r->shader);
+				});
+
+				forEach<Text3dRenderer>([this](Text3dRenderer* r, hagame::ecs::Entity* entity) {
+					r->shader->use();
+					r->shader->setMVP(entity->transform->getModelMatrix() * Mat4::Scale(Vec3(r->font->getScale())), scene->viewMat, scene->projMat);
+					drawText(r->shader, r->font, r->message, r->color, Vec3::Zero(), r->maxLength);
 				});
 			}
 		};

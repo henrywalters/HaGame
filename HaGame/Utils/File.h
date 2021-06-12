@@ -5,6 +5,7 @@
 #include <streambuf>
 #include "Aliases.h"
 #include "String.h"
+#include "Buffer.h"
 
 namespace hagame {
 	namespace utils {
@@ -21,6 +22,8 @@ namespace hagame {
 			void writeLines(Array<String> lines);
 			void append(String lines);
 			void appendLines(Array<String> lines);
+			FILE* getRaw(const char* mode);
+			Buffer getBuffer();
 		};
 	}
 }

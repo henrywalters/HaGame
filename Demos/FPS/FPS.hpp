@@ -1,4 +1,4 @@
-#include "../../HaGame/HaGame.h"
+﻿#include "../../HaGame/HaGame.h"
 
 struct Particle {
 	Vec3 velocity;
@@ -236,7 +236,7 @@ private:
 		renderer->shader = game->resources->getShaderProgram(shader);
 		renderer->opacityTexture = game->resources->getTexture("white");
 		renderer->material = mat;
-		entity->addComponent<hagame::physics::Collider>()->dynamic = false;
+		// entity->addComponent<hagame::physics::Collider>()->dynamic = false;
 		/*auto bbR = entity->addComponent<hagame::graphics::BoundingBoxRenderer>();
 		bbR->boundingBox = renderer->mesh->getBoundingCube();
 		bbR->shader = game->resources->getShaderProgram("color");
@@ -277,6 +277,8 @@ public:
 		game->resources->loadShaderProgram("texture", "Shaders/texture_vert.glsl", "Shaders/texture_frag.glsl");
 		game->resources->loadShaderProgram("skybox", "Shaders/skybox_vert.glsl", "Shaders/skybox_frag.glsl");
 		game->resources->loadShaderProgram("particle", "Shaders/particle_vert.glsl", "Shaders/particle_frag.glsl");
+		game->resources->loadShaderProgram("text", "Shaders/text_vert.glsl", "Shaders/text_frag.glsl");
+		game->resources->loadShaderProgram("text3d", "Shaders/text3d_vert.glsl", "Shaders/text_frag.glsl");
 		game->resources->loadTexture("crate_specular", "Textures/crate_specular.jpg");
 		game->resources->loadMesh("crystals", "Models/CrystalsFromAdrian.obj");
 		game->resources->loadMesh("taurus", "Models/Sphere.obj");
@@ -295,6 +297,7 @@ public:
 		game->resources->loadMesh("kayak_rack", "Models/KayakRack.obj");
 		game->resources->loadMesh("quad", hagame::graphics::QuadMesh);
 		game->resources->loadTexture("wood_floor", "Textures/wood_floor.png");
+		game->resources->loadFont("roboto", "Fonts/Roboto/Roboto-Regular.ttf", 32);
 
 		String cubemapPaths[6] = {
 			"Textures/skybox/right.jpg",
@@ -335,6 +338,8 @@ public:
 
 	void addGameObjects() {
 
+
+
 		auto floor = addEntity();
 		// floor->transform->rotation = Quat(0, Vec3::Top());
 		auto fRenderer = floor->addComponent<hagame::graphics::MeshRenderer>();
@@ -370,11 +375,11 @@ public:
 		pColl->dynamic = true;
 		pColl->shader = game->resources->getShaderProgram("color");
 
-		/*auto pBB = player->addComponent<hagame::graphics::BoundingBoxRenderer>();
+		auto pBB = player->addComponent<hagame::graphics::BoundingBoxRenderer>();
 		pBB->boundingBox = game->resources->getMesh("cube")->getBoundingCube();
 		pBB->color = RED;
 		pBB->shader = game->resources->getShaderProgram("color");
-		*/
+		
 
 		auto pRenderer = player->addComponent<hagame::graphics::MeshRenderer>();
 		pRenderer->color = BLUE;
@@ -382,6 +387,7 @@ public:
 		pRenderer->texture = game->resources->getTexture("gun");
 		pRenderer->material = hagame::graphics::Material::blackPlastic();
 		pRenderer->shader = game->resources->getShaderProgram("texture");
+		
 
 		gun = addChild(player);
 		gun->transform->rotation = Quat(0, Vec3::Top());
@@ -394,11 +400,11 @@ public:
 		// auto gRotate = gun1->addComponent<hagame::physics::RotationMovement>();
 
 		camera = addChild(player);
-		camera->transform->position = Vec3({ -1, 2, -2 });
+		camera->transform->position = Vec3({ -1, 2, -1 });
 		auto camComponent = camera->addComponent<hagame::graphics::CameraComponent>();
 		camComponent->active = true;
 		camComponent->camera = pCamera.get();
-		
+
 		auto camController = player->addComponent<hagame::graphics::FPSCameraController>();
 		camController->camera = pCamera.get();
 		camController->inputFn = [this]() {
@@ -407,7 +413,9 @@ public:
 			params.zoomed = game->input.keyboardMouse.mouse.right;
 			return params;
 		};
-		
+
+		//player->transform->move(Vec3::Top());
+
 
 		auto pEmitter = addEntity();
 		pEmitter->transform->setPosition(Vec3({ 1.5, 0, 0 }));
@@ -590,6 +598,14 @@ public:
 		skybox->cubemap = game->resources->getCubemap("skybox_1");
 		skybox->shader = game->resources->getShaderProgram("skybox");
 		*/
+
+		auto textContainer = addEntity();
+		textContainer->addComponent<hagame::physics::RotationMovement>();
+		auto text = textContainer->addComponent<hagame::graphics::Text3dRenderer>();
+		text->message = "Hello World";
+		text->shader = game->resources->getShaderProgram("text3d");
+		text->font = game->resources->getFont("roboto");
+		text->maxLength = 0.5f;
 	}
 
 	void onSceneActivate() {
@@ -608,6 +624,34 @@ public:
 		if (game->input.keyboardMouse.aPressed) {
 			game->input.keyboardMouse.toggleMouseCapture();
 		}
+		game->resources->getShaderProgram("text3d")->use();
+		game->resources->getShaderProgram("text3d")->setMVP(Mat4::Translation(Vec3({ BlockSize[2] - 0.1f, 0, 0 })) * Mat4::Scale(Vec3(game->resources->getFont("roboto")->getScale())), viewMat, projMat);
+		//game->resources->getShaderProgram("text3d")->setMat4("projection", Mat4::Orthographic(0, game->window->size[0], 0, game->window->size[1], 0, 1));
+		//auto message = hagame::graphics::Text(game->resources->getFont("roboto"), "fps: " + std::to_string(game->fps / 1000000), Vec2({30, 30}));
+		//message.message = "The quick brown fox jumps over the lazy dog. 1234567890";
+		//message.draw(game->resources->getShaderProgram("text3d"));
+		/*
+		game->resources->getShaderProgram("text")->use();
+		game->resources->getShaderProgram("text")->setMat4("projection", Mat4::Orthographic(0, game->window->size[0], 0, game->window->size[1], 0, 1));
+		message = hagame::graphics::Text(game->resources->getFont("roboto"), "fps: " + std::to_string(game->fps / 1000000), Vec2({ 15, game->window->size[1] - 100 }), BLUE);
+		message.message = "DT: " + std::to_string(dt);
+		message.draw(game->resources->getShaderProgram("text"));
+
+		message = hagame::graphics::Text(game->resources->getFont("roboto"), "Player: " + player->transform->position.toString(), Vec2({ 15, game->window->size[1] - 50 }) , BLUE);
+		message.draw(game->resources->getShaderProgram("text"));
+		*/
+		game->resources->getShaderProgram("text")->use();
+		game->resources->getShaderProgram("text")->setMat4("projection", Mat4::Orthographic(0, game->window->size[0], 0, game->window->size[1], 0, 1));
+
+		hagame::graphics::drawText(
+			game->resources->getShaderProgram("text"),
+			game->resources->getFont("roboto"),
+			"Player: " + player->transform->position.toString(),
+			BLUE,
+			Vec3({ 15, game->window->size[1] - 25, 0 }),
+			0.5f
+		);
+
 
 		light->transform->position = Vec3({ 30.0f, (float) sin(game->secondsElapsed / 100.0f) * 10.0f, (float) cos(game->secondsElapsed / 100.0f) * 10.0f });
 

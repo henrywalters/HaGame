@@ -44,3 +44,24 @@ void hagame::utils::File::appendLines(Array<String> lines)
 	}
 	stream.close();
 }
+
+FILE* hagame::utils::File::getRaw(const char* mode) {
+	return fopen((dir + "/" + name).c_str(), mode);
+}
+
+hagame::utils::Buffer hagame::utils::File::getBuffer()
+{
+	Buffer buffer;
+
+	FILE* file = getRaw("rb");
+	fseek(file, 0, SEEK_END);
+	buffer.size = ftell(file);
+	fseek(file, 0, SEEK_SET);
+
+	buffer.data = (unsigned char*) malloc(buffer.size);
+
+	fread(buffer.data, buffer.size, 1, file);
+	fclose(file);
+
+	return buffer;
+}

@@ -18,38 +18,47 @@ namespace hagame {
 		void setActiveCamera() {
 
 			hagame::ecs::Entity* cameraEntity;
+			bool foundCamera = false;
 			
 			for (auto entity : ecs.getRegistry()->view<graphics::CameraComponent>()) {
 				auto cam = &ecs.getRegistry()->get<graphics::CameraComponent>(entity);
 				if (cam->active) {
 					activeCamera = cam->camera;
 					cameraEntity = ecs.entities.getByEnttId(entity);
+					foundCamera = true;
 					break;
 				}
 			}
 
-			viewMat = activeCamera->getViewMatrix(cameraEntity->transform.get());
-			projMat = activeCamera->getProjMatrix();
+			if (foundCamera) {
+				viewMat = activeCamera->getViewMatrix(cameraEntity->transform.get());
+				projMat = activeCamera->getProjMatrix();
+			}
+			
 		}
 
 	protected:
 		friend class Game;
 
+		virtual void onSceneBeforeActivate() {}
 		virtual void onSceneActivate() {}
+		virtual void onSceneAfterActivate() {}
 		virtual void onSceneUpdate(double dt) {}
 		virtual void onSceneDeactivate() {}
 
 		void activate() {
 			timer.reset();
+			onSceneBeforeActivate();
 			onSceneActivate();
 			ecs.systems.startAll();
+			onSceneAfterActivate();
 			//DEBUG_LOG("Scene start", timer.elapsed());
 		}
 
 		void deactivate() {
 			timer.reset();
-			onSceneDeactivate();
 			ecs.systems.stopAll();
+			onSceneDeactivate();
 			//DEBUG_LOG("Scene end", timer.elapsed());
 		}
 
@@ -72,6 +81,7 @@ namespace hagame {
 		graphics::Camera* activeCamera;
 		Mat4 viewMat;
 		Mat4 projMat;
+		Mat4 uiProjMat;
 
 		template<class T>
 		ecs::System* addSystem() {

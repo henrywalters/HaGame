@@ -12,12 +12,12 @@ namespace hagame {
 		const float SR_3 = sqrt(3) / 2.0f;
 
 		const Array<float> QuadVertices = {
-			0.0f, 0.0f, 0.0f,
-			0.0f, 1.0f, 0.0f,
-			1.0f, 1.0f, 0.0f,
-			0.0f, 0.0f, 0.0f,
-			1.0f, 1.0f, 0.0f,
-			1.0f, 0.0f, 0.0f,
+			-0.5f, -0.5f, 0.0f, 1.0f,
+			-0.5f, 0.5f, 0.0f, 0.0f,
+			0.5f, 0.5f, 1.0f, 0.0f,
+			-0.5f, -0.5f, 0.0f, 1.0f,
+			0.5f, 0.5f, 1.0f, 0.0f,
+			0.5f, -0.5f, 1.0f, 1.0f
 		};
 
 		const MeshDefinition QuadMesh = MeshDefinition{ 

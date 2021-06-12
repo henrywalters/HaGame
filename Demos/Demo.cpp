@@ -8,7 +8,7 @@ void testFn() {
 
 int main() {
 
-	bool testing = true;
+	bool testing = false;
 
 	if (!testing) {
 		hagame::Game::initializeSDL();
@@ -20,10 +20,21 @@ int main() {
 		demo.run();
 	}
 
+	/*auto fs = hagame::utils::FileSystem("../../../Assets");
+	auto fontFile = fs.getFile("Fonts/arial.ttf");
+
+	auto font = hagame::graphics::Font(fontFile, 24);
+	auto fontMap = font.loadCharacterMap();
+
+	for (int i = 0; i < 128; i++) {
+		std::cout << fontMap[i].toString() << std::endl;
+	}
+
 	//auto summary = hagame::utils::testFunctionSpeed<float, 10000>(testFn);
 	//std::cout << summary.toString() << std::endl;
 
-	calcCellsThatIntersectLine(Vec3(5.0f), Vec3({ 28.120258, 0.000000, 21.894592 }), Vec3({ 7.155539, 0.000000, 1.159720 }));
+	//calcCellsThatIntersectLine(Vec3(5.0f), Vec3({ 28.120258, 0.000000, 21.894592 }), Vec3({ 7.155539, 0.000000, 1.159720 }));
 
 	return 0;
+	*/
 }

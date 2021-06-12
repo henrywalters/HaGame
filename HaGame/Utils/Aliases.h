@@ -41,6 +41,10 @@ using UniqPtr = std::unique_ptr<T>;
 template <class T>
 using Array = std::vector<T>;
 
+#ifndef toStr
+#define toStr(value) std::to_string(value)
+#endif
+
 template <class T>
 std::string printArray(Array<T> arr) {
 	std::string out = "[\n";

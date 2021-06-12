@@ -77,6 +77,16 @@ void hagame::graphics::drawLine(Line line, ShaderProgram* shader)
 	line.draw(shader);
 }
 
+void hagame::graphics::drawRect(Rect rect, Color color, ShaderProgram* shader)
+{
+	Vec3 pos = rect.pos.resize<3>();
+	Vec3 size = rect.size.resize<3>();
+	drawLine(hagame::graphics::Line(pos, pos + size.prod(Vec3::Right()), color), shader);
+	drawLine(hagame::graphics::Line(pos, pos + size.prod(Vec3::Top()), color), shader);
+	drawLine(hagame::graphics::Line(pos + size.prod(Vec3::Top()), pos + size, color), shader);
+	drawLine(hagame::graphics::Line(pos + size.prod(Vec3::Right()), pos + size, color), shader);
+}
+
 // Draw a cube outline with a given shader. Assumes MVP matrix is already set.
 void hagame::graphics::drawCubeOutline(Cube cube, Color color, ShaderProgram* shader)
 {
@@ -94,4 +104,11 @@ void hagame::graphics::drawCubeOutline(Cube cube, Color color, ShaderProgram* sh
 	drawLine(hagame::graphics::Line(cube.pos + cube.size.prod(Vec3::Right()), cube.pos + cube.size.prod(Vec3::Top()) + cube.size.prod(Vec3::Right()), color), shader);
 	drawLine(hagame::graphics::Line(cube.pos + cube.size.prod(Vec3::Face()), cube.pos + cube.size.prod(Vec3::Top()) + cube.size.prod(Vec3::Face()), color), shader);
 	drawLine(hagame::graphics::Line(cube.pos + cube.size.prod(Vec3::Face()) + cube.size.prod(Vec3::Right()), cube.pos + cube.size.prod(Vec3::Top()) + cube.size.prod(Vec3::Face()) + cube.size.prod(Vec3::Right()), color), shader);
+}
+
+void hagame::graphics::drawText(ShaderProgram* shader, Font* font, String message, Color color, Vec3 pos, float maxLength)
+{
+	shader->use();
+	shader->setVec4("textColor", color);
+	textBuffer.draw(font, message, pos, maxLength);
 }

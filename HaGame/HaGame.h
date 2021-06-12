@@ -30,6 +30,8 @@
 #include "Graphics/Camera.h"
 #include "Graphics/PerspectiveCamera.hpp"
 #include "Graphics/Primitives.h"
+#include "Graphics/Font.h"
+#include "Graphics/Text.h"
 #include "Graphics/Texture.cpp"
 #include "Graphics/Sprite.h"
 #include "Graphics/Particle.h"
@@ -77,6 +79,11 @@
 #include "Core/ECS/Component.h"
 #include "Core/Scene.h"
 
+#include "Vendor/entt/entt.hpp"
+
+#include "Vendor/stb/stb_image.cpp"
+// #include "Vendor/stb/stb_truetype.cpp"
+
 #include "Vendor/imgui/imgui.h"
 #include "Vendor/imgui/imgui.cpp"
 #include "Vendor/imgui/imgui_draw.cpp"
@@ -88,9 +95,6 @@
 #include "Vendor/imgui/backends/imgui_impl_opengl3.h"
 #include "Vendor/imgui/backends/imgui_impl_opengl3.cpp"
 
-#include "Vendor/entt/entt.hpp"
-
-#include "Vendor/stb/stb_image.cpp"
 
 
 // TODO: Reference additional headers your program requires here.

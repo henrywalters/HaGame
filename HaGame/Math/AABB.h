@@ -2,6 +2,7 @@
 #define AABB_H
 
 #include "../Utils/Aliases.h"
+#include "OBB.h"
 
 namespace hagame {
 	namespace math {
@@ -44,6 +45,13 @@ namespace hagame {
 
 			String toString() {
 				return "Center: " + center.toString() + " Radius: " + radius.toString();
+			}
+
+			OBB getOBB() {
+				OBB obb;
+				obb.center = center;
+				obb.radius = radius;
+				return obb;
 			}
 		};
 	}

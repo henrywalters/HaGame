@@ -27,6 +27,10 @@ namespace hagame {
 			Color color;
 			float zIndex;
 
+			Sprite(): texture(NULL), rect(Rect::Zero()), rotation(0.0f), color(Color::white()), zIndex(0) {
+				initializeForGL();
+			}
+
 			Sprite(Texture* _texture, Rect _rect = Rect::Zero(), float _rot = 0, Color _color = Color(1.0f, 1.0f, 1.0f, 1.0f), float _zIndex = 0.0f) : 
 				texture(_texture), 
 				rect(_rect),
@@ -40,6 +44,7 @@ namespace hagame {
 
 			void draw(ShaderProgram* shader) {
 				shader->use();
+				shader->setVec4("color", color);
 				glActiveTexture(GL_TEXTURE0);
 				texture->bind();
 				glBindVertexArray(VAO);

@@ -35,6 +35,7 @@ namespace hagame {
 			std::string getFullPath(std::string path);
 
 			File getFile(std::string path);
+			File getGlobalFile(std::string path);
 			std::string readFile(std::string path);
 			std::vector<std::string> listFiles(std::string path);
 
@@ -42,6 +43,7 @@ namespace hagame {
 			void forEachFile(std::string path, std::function<void(std::string filePath, std::string fileName)> lambda);
 			void forEachFile(std::string path, std::function<void(std::string filePath, std::string fileName, std::string extension)> lambda);
 			
+			bool isGlobalFile(std::string path);
 			bool isFile(std::string path);
 			bool isDir(std::string path);
 		};

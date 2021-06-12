@@ -40,6 +40,18 @@ namespace hagame {
 					}
 				});
 			}
+
+			void onSystemAfterUpdate(double dt) {
+				forEach<Collider>([this, dt](Collider* c, ecs::Entity* entity) {
+					if (c->active) {
+						if (c->display && c->shader) {
+							c->shader->setMVP(Mat4::Identity(), scene->viewMat, scene->projMat);
+							c->shader->setVec4("color", hagame::graphics::Color(54, 134, 255));
+							hagame::graphics::drawCubeOutline(c->aabb.getCube(), hagame::graphics::Color::green(), c->shader);
+						}
+					}
+				});
+			}
 		};
 	}
 }

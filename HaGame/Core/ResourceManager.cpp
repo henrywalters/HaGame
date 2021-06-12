@@ -162,3 +162,30 @@ hagame::graphics::Mesh* hagame::ResourceManager::getMesh(String meshName)
 
 	return meshes[meshName].get();
 }
+
+hagame::graphics::Font* hagame::ResourceManager::loadFont(String fontName, String filePath, int fontSize) {
+	Ptr<hagame::graphics::Font> font = std::make_shared<hagame::graphics::Font>(fs->getFile(filePath), fontSize);
+	fonts[fontName] = font;
+	return fonts[fontName].get();
+}
+
+hagame::graphics::Font* hagame::ResourceManager::loadWindowsFont(String fontName, int fontSize)
+{
+	Ptr<hagame::graphics::Font> font = std::make_shared<hagame::graphics::Font>(fs->getGlobalFile("C:/Windows/Fonts/" + fontName + ".ttf"), fontSize);
+	fonts[fontName] = font;
+	return fonts[fontName].get();
+}
+
+hagame::graphics::Font* hagame::ResourceManager::loadWindowsFont(String fontName, String fontType, int fontSize)
+{
+	Ptr<hagame::graphics::Font> font = std::make_shared<hagame::graphics::Font>(fs->getGlobalFile("C:\\Windows\\Fonts\\" + fontName + "\\" + fontType + ".ttf"), fontSize);
+	fonts[fontName] = font;
+	return fonts[fontName].get();
+}
+
+hagame::graphics::Font* hagame::ResourceManager::getFont(String fontName) {
+	if (!hasKey(fonts, fontName)) {
+		throw new Exception("Font does not exist");
+	}
+	return fonts[fontName].get();
+}

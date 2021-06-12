@@ -18,9 +18,9 @@ namespace hagame {
 			float roll = 0;
 			float minPitch = -PI / 2 + EPSILON;
 			float maxPitch = PI / 2 - EPSILON;
-			float ySensitivity = 2.0f;
-			float xSensitivity = 2.0f;
-			float zSensitivity = 2.0f;
+			float ySensitivity = 4.0f;
+			float xSensitivity = 4.0f;
+			float zSensitivity = 4.0f;
 			Camera* camera;
 			std::function<FPSCameraControllerParams(void)> inputFn;
 		};

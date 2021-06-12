@@ -7,6 +7,7 @@
 #include "../Graphics/Cubemap.h"
 #include "../Graphics/Image.h"
 #include "../Graphics/Mesh.h"
+#include "../Graphics/Font.h"
 
 namespace hagame {
 	class ResourceManager {
@@ -19,6 +20,7 @@ namespace hagame {
 		Map<String, Ptr<hagame::graphics::Image>> images;
 		Map<String, Ptr<hagame::graphics::Mesh>> meshes;
 		Map<String, Ptr<hagame::utils::File>> files;
+		Map<String, Ptr<hagame::graphics::Font>> fonts;
 
 		// Perform preprocessing steps on a shaders source code. For now, this just means resolving #include statements
 		String processShaderFile(hagame::utils::File file);
@@ -61,6 +63,13 @@ namespace hagame {
 		hagame::graphics::Mesh* loadMesh(String meshName, Array<hagame::graphics::ConcatMeshDefinition> definitions);
 
 		hagame::graphics::Mesh* getMesh(String meshName);
+
+		hagame::graphics::Font* loadFont(String fontName, String filePath, int fontSize = 24);
+		hagame::graphics::Font* loadWindowsFont(String fontName, int fontSize = 24);
+		hagame::graphics::Font* loadWindowsFont(String fontName, String fontType = "Regular", int fontSize = 24);
+
+
+		hagame::graphics::Font* getFont(String fontName);
 	};
 }
 

@@ -1,5 +1,6 @@
 #include "../HaGame/HaGame.h"
 #include "FPS/FPS.hpp"
+#include "MiniJam/OneRoom.hpp"
 
 class Demo : public hagame::Game {
 public:
@@ -16,8 +17,10 @@ public:
 		window->setTitle("HaGame Demo");
 
 		addScene<FPS>("fps");
+		addScene<MiniJamOneRoom>("minijam");
 
-		scenes.setActive("fps");
+		//scenes.setActive("fps");
+		scenes.setActive("minijam");
 
 		resources->setBasePath("../../../Assets");
 
