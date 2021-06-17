@@ -49,8 +49,11 @@ namespace hagame {
 		Mat4 getModelMatrix();
 
 		Vec3 top();
+		Vec3 bottom();
 		Vec3 right();
+		Vec3 left();
 		Vec3 face();
+		Vec3 back();
 	};
 }
 

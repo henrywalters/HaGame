@@ -1,5 +1,5 @@
-#ifndef MOVEMENT_SYSTEM_H
-#define MOVEMENT_SYSTEM_H
+#ifndef HAGAME_MOVEMENT_SYSTEM_H
+#define HAGAME_MOVEMENT_SYSTEM_H
 
 #include "../../Core/ECS/System.h"
 #include "../../Core/ECS/Entity.h"

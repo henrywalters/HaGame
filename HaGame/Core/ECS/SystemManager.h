@@ -30,9 +30,9 @@ namespace hagame {
 			}
 
 			template <class T>
-			System* add(Game* game) {
+			T* add(Game* game) {
 				static_assert(std::is_base_of<System, T>::value, "Must be an instance of System");
-				Ptr<System> system = std::make_shared<T>();
+				Ptr<T> system = std::make_shared<T>();
 				system->registry = registry;
 				system->game = game;
 				system->window = &Game::window;
@@ -42,14 +42,23 @@ namespace hagame {
 			}
 
 			template <class T>
-			System* add(Game* game, Scene* scene) {
+			T* add(Game* game, Scene* scene) {
 				static_assert(std::is_base_of<System, T>::value, "Must be an instance of System");
-				Ptr<System> system = std::make_unique<T>();
+				Ptr<T> system = std::make_unique<T>();
 				system->registry = registry;
 				system->game = game;
 				system->scene = scene;
 				systems.push_back(system);
 				return system.get();
+			}
+
+			template <class T>
+			T* get(Game* game, Scene* scene) {
+				for (auto system : systems) {
+					if (typeid(T) == typeid(*system))
+						return (T*) system.get();
+				}
+				throw new std::exception("System does not exist in this scene");
 			}
 
 			void forAll(std::function<void(System*)> lambda) {

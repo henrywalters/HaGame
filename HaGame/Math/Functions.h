@@ -233,4 +233,27 @@ hagame::math::Vector<N, T> bezier(hagame::math::Vector<N, T> p1, hagame::math::V
 	return (tInverse * tInverse * p1) + (tInverse * t * p2) + (t * p3);
 }
 
+// Checks if the lines AB and PQ intersect. If so, t and intersection are set relative to AB.
+bool linesIntersect(Vec2 a, Vec2 b, Vec2 p, Vec2 q, float& t) {
+	Vec2 s1 = b - a;
+	Vec2 s2 = q - p;
+
+	float denom = -s2[0] * s1[1] + s1[0] * s2[1];
+	
+	// Colinear or parallel so fuck it
+	if (denom < 0.01) {
+		return false;
+	}
+
+	float s = (-s1[1] * (a[0] - p[0]) + s1[0] * (a[1] - p[1])) / denom;
+	t = (s2[0] * (a[1] - p[1]) - s2[1] * (a[0] - p[0])) / denom;
+
+	if (s >= 0 && s <= 1 && t >= 0 && t <= 1) {
+		return true;
+	}
+	else {
+		return 0;
+	}
+}
+
 #endif

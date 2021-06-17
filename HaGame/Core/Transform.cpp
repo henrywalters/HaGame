@@ -111,12 +111,27 @@ Vec3 hagame::Transform::top()
 	return rotation.rotatePoint(Vec3::Top());
 }
 
+Vec3 hagame::Transform::bottom()
+{
+	return rotation.rotatePoint(Vec3::Bottom());
+}
+
 Vec3 hagame::Transform::right()
 {
 	return rotation.rotatePoint(Vec3::Right());
 }
 
+Vec3 hagame::Transform::left ()
+{
+	return rotation.rotatePoint(Vec3::Left());
+}
+
 Vec3 hagame::Transform::face()
 {
 	return rotation.rotatePoint(Vec3::Face());
+}
+
+Vec3 hagame::Transform::back()
+{
+	return rotation.rotatePoint(Vec3::Back());
 }

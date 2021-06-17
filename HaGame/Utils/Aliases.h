@@ -13,6 +13,7 @@
 #include "../Math/Vector.h"
 #include "../Math/Matrix.h"
 #include "../Math/Hypercube.h"
+#include "../Math/NSphere.h"
 
 #ifndef DEBUG_MODE
 #define DEBUG_MODE false
@@ -67,7 +68,7 @@ template <class T>
 using Queue = std::deque<T>;
 
 // Math aliases
-const float EPSILON = 0.01f;
+const float EPSILON = 0.1f;
 const float PI = 3.141592f;
 const float DEG_TO_RAD = PI / 180.0f;
 const float RAD_TO_DEG = 180.0f / PI;
@@ -94,6 +95,9 @@ using RectUInt32 = hagame::math::Hypercube<2, uint32_t>;
 using Cube = hagame::math::Hypercube<3, float>;
 using CubeInt = hagame::math::Hypercube<3, int>;
 using CubeUInt32 = hagame::math::Hypercube<3, uint32_t>;
+
+using Circle = hagame::math::NSphere<2, float>;
+using Sphere = hagame::math::NSphere<3, float>;
 
 // Vector functions
 

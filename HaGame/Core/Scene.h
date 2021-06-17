@@ -84,8 +84,13 @@ namespace hagame {
 		Mat4 uiProjMat;
 
 		template<class T>
-		ecs::System* addSystem() {
+		T* addSystem() {
 			return ecs.systems.add<T>(game, this);
+		}
+
+		template<class T>
+		T* getSystem() {
+			return ecs.systems.get<T>(game, this);
 		}
 
 		ecs::Entity* addChild(ecs::Entity* parent) {

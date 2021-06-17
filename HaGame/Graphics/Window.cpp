@@ -129,8 +129,8 @@ void hagame::graphics::Window::destroy() {
 void hagame::graphics::Window::clear() {
 	glClearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	glEnable(GL_STENCIL_TEST);
-	glEnable(GL_ALPHA_TEST);
+	// glEnable(GL_STENCIL_TEST);
+	//glEnable(GL_ALPHA_TEST);
 	glEnable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_MULTISAMPLE);

@@ -12,6 +12,7 @@
 #include "../Components/SkyboxRenderer.h"
 #include "../Components/TextRenderer.h"
 #include "../Components/Text3dRenderer.h"
+#include "../Components/SpriteRenderer.h"
 #include <cstddef>
 
 namespace hagame {
@@ -101,6 +102,16 @@ namespace hagame {
 					r->shader->use();
 					r->shader->setMVP(entity->transform->getModelMatrix() * Mat4::Scale(Vec3(r->font->getScale())), scene->viewMat, scene->projMat);
 					drawText(r->shader, r->font, r->message, r->color, Vec3::Zero(), r->maxLength);
+				});
+
+				forEach<SpriteRenderer>([this](SpriteRenderer* r, hagame::ecs::Entity* entity) {
+					r->shader->use();
+					r->shader->setMVP(
+						Mat4::Translation(entity->transform->position + r->sprite.rect.pos.resize<3>()) * Mat4::Rotation(entity->transform->rotation) * Mat4::Scale(r->sprite.rect.size.resize<3>()),
+						Mat4::Identity(),
+						r->projection
+					);
+					r->sprite.draw(r->shader);
 				});
 			}
 		};

@@ -167,7 +167,7 @@ namespace hagame {
 					lAxis = Vec2::Zero();
 					dPad = Vec2::Zero();
 
-					lAxis[0] = handleAxis(isKeyDown(SDLK_a), isKeyDown(SDLK_d));
+					lAxis[0] = handleAxis(isKeyDown(SDLK_d), isKeyDown(SDLK_a));
 					lAxis[1] = handleAxis(isKeyDown(SDLK_w), isKeyDown(SDLK_s));
 					
 

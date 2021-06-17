@@ -46,7 +46,7 @@ struct DynamicStroke {
 		glGenBuffers(1, &VBO);
 		glBindVertexArray(VAO);
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(Vec2) * MAX_QUAD_COUNT, NULL, GL_STREAM_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(Vec2) * MAX_QUAD_COUNT, NULL, GL_DYNAMIC_DRAW);
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vec2), 0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -136,7 +136,9 @@ public:
 	bool drawing = false;
 	//Ptr<Stroke> currentStroke;
 	Ptr<DynamicStroke> currentStroke;
-	float strokeSize = 3.0f;
+	float strokeSize = 2.0f;
+
+	Ptr<hagame::graphics::PixelGrid> pixels;
 
 	String getSystemName() {
 		return "DrawingSystem";
@@ -146,6 +148,8 @@ public:
 		strokes = Array<Ptr<Stroke>>();
 		drawing = game->input.keyboardMouse.mouse.left;
 		currentStroke = std::make_shared<DynamicStroke>(strokeSize);
+		std::cout << (game->window->size.resize<2>() * 0.1).cast<int>().toString() << "\n";
+		pixels = std::make_shared<hagame::graphics::PixelGrid>((game->window->size.resize<2>() * 0.1).cast<int>(), game->window->size, hagame::graphics::Color::blue());
 	}
 
 	void handleStrokes() {
@@ -153,7 +157,6 @@ public:
 		mousePos[1] = game->window->size[1] - mousePos[1];
 
 		if (game->input.keyboardMouse.mouse.left && !drawing) {
-			//currentStroke->clear();
 			drawing = true;
 		}
 
@@ -177,11 +180,9 @@ public:
 				if (mousePos[i] < currentStroke->boundingBox.pos[i]) {
 					currentStroke->boundingBox.size[i] += currentStroke->boundingBox.pos[i] - mousePos[i];
 					currentStroke->boundingBox.pos[i] = mousePos[i];
-					std::cout << "Less than bottom\n";
 				}
 					
 				if (mousePos[i] > currentStroke->boundingBox.pos[i] + currentStroke->boundingBox.size[i]) {
-					std::cout << "Greater than top\n";
 					currentStroke->boundingBox.size[i] = mousePos[i] - currentStroke->boundingBox.pos[i];
 				}
 					
@@ -204,9 +205,9 @@ public:
 		
 		
 		for (auto stroke : strokes) {
-			shader->use();
-			shader->setMVP(Mat4::Identity(), Mat4::Identity(), orth);
-			hagame::graphics::drawRect(stroke->boundingBox, hagame::graphics::Color::blue(), shader);
+			//shader->use();
+			//shader->setMVP(Mat4::Identity(), Mat4::Identity(), orth);
+			//hagame::graphics::drawRect(stroke->boundingBox, hagame::graphics::Color::blue(), shader);
 			drawingShader->use();
 			drawingShader->setMat4("projection", orth);
 			drawingShader->setVec4("color", hagame::graphics::Color::green());
@@ -217,6 +218,10 @@ public:
 	void onSystemUpdate(double dt) {
 		handleStrokes();
 		drawStrokes();
+		auto orth = Mat4::Orthographic(0, game->window->size[0], 0, game->window->size[1], 0, 1);
+		game->resources->getShaderProgram("pixel")->use();
+		game->resources->getShaderProgram("pixel")->setMat4("projection", orth);
+		pixels->draw(game->resources->getShaderProgram("pixel"));
 	}
 };
 

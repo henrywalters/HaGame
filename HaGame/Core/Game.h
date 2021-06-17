@@ -25,7 +25,7 @@ namespace hagame {
 		hagame::utils::Random random;
 		physics::Collisions collisions;
 
-		const int TICKS_PER_SECOND = 1000000;
+		const long TICKS_PER_SECOND = 1000000;
 
 		bool running;
 		long lastTick;

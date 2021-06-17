@@ -25,9 +25,9 @@ namespace hagame {
 			const void* userParam)
 		{
 			
-			// fprintf(stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
-			//	(type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),
-			//	type, severity, message);
+			 fprintf(stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
+				(type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),
+				type, severity, message);
 		}
 
 		enum class WindowMode {

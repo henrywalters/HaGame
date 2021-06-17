@@ -12,6 +12,9 @@ public:
 
 	void loadTextures() {
 		game->resources->loadTexture("kitty", "Textures/kitty.jpg");
+		game->resources->loadTexture("crosshair", "Textures/crosshair.png");
+		game->resources->loadTexture("skull", "Textures/skull1.png");
+		game->resources->loadTexture("circle", "Textures/circle.png");
 	}
 
 	void loadShaders() {
@@ -19,7 +22,8 @@ public:
 			"text",
 			"sprite",
 			"color",
-			"drawing"
+			"drawing",
+			"pixel"
 		};
 
 		for (auto shader : shaders) {
@@ -31,11 +35,16 @@ public:
 		game->resources->loadFont("roboto", "Fonts/Roboto/Roboto-Regular.ttf", 32);
 	}
 
+	void loadMeshes() {
+		game->resources->loadMesh("cube", hagame::graphics::CubeMesh);
+	}
+
 	void onSystemStart() {
 		std::cout << "Loading resources..." << std::endl;
 		loadTextures();
 		loadShaders();
 		loadFonts();
+		loadMeshes();
 		std::cout << "Complete." << std::endl;
 	}
 };

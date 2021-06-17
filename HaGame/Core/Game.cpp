@@ -11,9 +11,9 @@ void hagame::Game::run()
 
 	while (running) {
 		long now = hagame::utils::Clock::Now();
-		double dt = (double)(now - lastTick) / TICKS_PER_SECOND;
+		double dt = ((double)now - (double)lastTick) / TICKS_PER_SECOND;
 		secondsElapsed += dt;
-		fps = 1000000 / dt;
+		fps = TICKS_PER_SECOND / dt;
 		lastTick = now;
 		window->clear();
 		input.pollEvents();

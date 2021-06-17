@@ -35,7 +35,7 @@ namespace hagame {
 			Sample(std::function<void()> _onFull) : size(N), onFull(_onFull) {}
 
 			void insert(T value) {
-				if (set.size() == N) {
+				if (set.size() == N && set.size() > 0) {
 					onFull();
 					set.pop_front();
 				}

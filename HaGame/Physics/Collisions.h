@@ -5,6 +5,8 @@
 #include "../Utils/SpatialMap.h"
 #include "../Core/ECS/Entity.h"
 #include "../Math/AABB.h"
+#include "../Math/Ray.h"
+#include "../Math/Plane.h"
 #include "./Components/Collider.h"
 
 namespace hagame {
