@@ -52,12 +52,44 @@ namespace hagame {
 			static Ptr<VertexBuffer> Static(Array<DataType> data) {
 				Ptr<VertexBuffer<DataType>> buffer = std::make_shared<VertexBuffer<DataType>>();
 				buffer->initialize();
+				buffer->dynamic = false;
 				buffer->max = data.size();
 				buffer->allocated = buffer->max;
 				glBindBuffer(GL_ARRAY_BUFFER, buffer->id);
 				glBufferData(GL_ARRAY_BUFFER, sizeof(DataType) * data.size(), &data[0], GL_STATIC_DRAW);
 				glBindBuffer(GL_ARRAY_BUFFER, 0);
 				return buffer;
+			}
+
+			void canAssign(unsigned int index, size_t size) {
+				if (index + size >= allocated) {
+					throw new std::exception("Can not assign data of this size to this index in buffer. Larger than allocated memory size");
+				}
+			}
+
+			// Update a single instance of the DataType at a given index
+			void update(unsigned int index, DataType data) {
+				canAssign(index, sizeof(DataType));
+				bind();
+				glBufferSubData(GL_ARRAY_BUFFER, index * sizeof(DataType), sizeof(DataType), &data);
+				unbind();
+			}
+
+			// Update several instances of the DataType starting at a given index
+			void update(unsigned int index, Array<DataType> data) {
+				canAssign(index, sizeof(DataType) * data.size());
+				bind();
+				glBufferSubData(GL_ARRAY_BUFFER, index * sizeof(DataType), sizeof(DataType) * data.size(), &data[0]);
+				unbind();
+			}
+
+			// Update a member of a single instance at a given index. Useful for updating a member of a struct or class
+			template <class MemberType>
+			void update(unsigned int index, size_t memberOffset, MemberType memberData) {
+				canAssign(index, sizeof(MemberType));
+				bind();
+				glBufferSubData(GL_ARRAY_BUFFER, index * sizeof(DataType) + memberOffset, sizeof(MemberType), &memberData);
+				unbind();
 			}
 
 			void clear() {
@@ -70,6 +102,9 @@ namespace hagame {
 				glBindBuffer(GL_ARRAY_BUFFER, id);
 			}
 
+			void unbind() {
+				glBindBuffer(GL_ARRAY_BUFFER, 0);
+			}
 		};
 	}
 }

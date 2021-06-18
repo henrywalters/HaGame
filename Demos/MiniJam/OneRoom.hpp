@@ -2,6 +2,7 @@
 #include "./ResourceSystem.h"
 #include "./DrawingSystem.h"
 #include "./MovementSystem.h"
+#include "./ViewportSystem.h"
 
 class MiniJamOneRoom : public hagame::Scene {
 public:
@@ -18,6 +19,7 @@ public:
 		addSystem<ResourceSystem>();
 		addSystem<DrawingSystem>();
 		addSystem<MovementSystem>();
+		addSystem<ViewportSystem>();
 		addSystem<hagame::graphics::RenderSystem>();
 	}
 

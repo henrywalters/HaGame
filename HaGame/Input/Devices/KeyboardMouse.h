@@ -11,6 +11,8 @@ namespace hagame {
 	namespace input {
 		namespace devices {
 
+			using KeyCode = SDL_KeyCode;
+
 			struct MouseState {
 				Vec2 position;
 				Vec2 prevPosition;
@@ -27,6 +29,31 @@ namespace hagame {
 					return position - viewport.pos;
 				}
 			};
+
+			struct KeyboardState {
+				bool up = false;
+				bool upPressed = false;
+				bool right = false;
+				bool rightPressed = false;
+				bool down = false;
+				bool downPressed = false;
+				bool left = false;
+				bool leftPressed = false;
+			};
+
+			// Defines a mapping from a keyboard to generic device
+			struct KeyboardMapping {
+				KeyCode rUp, rRight, rDown, rLeft;
+				KeyCode lUp, lRight, lDown, lLeft;
+				KeyCode dUp, dRight, dDown, dLeft;
+
+				KeyCode select, home, start;
+
+				KeyCode a, b, x, y;
+
+				KeyCode rTrigger, rShoulder, lTrigger, lShoulder;
+			};
+
 
 			const int MAX_MOUSE_MOVE = 500;
 			class KeyboardMouse : public hagame::input::Device {
@@ -71,6 +98,7 @@ namespace hagame {
 				Vec2 screenCenter;
 
 				MouseState mouse;
+				KeyboardState keyboard;
 
 				KeyboardMouse() {
 					initialized = false;
@@ -153,7 +181,6 @@ namespace hagame {
 							updateBtnState(mouse.right, mouse.rightPressed, false);
 						}
 						break;
-
 					}
 				}
 
@@ -169,7 +196,9 @@ namespace hagame {
 
 					lAxis[0] = handleAxis(isKeyDown(SDLK_d), isKeyDown(SDLK_a));
 					lAxis[1] = handleAxis(isKeyDown(SDLK_w), isKeyDown(SDLK_s));
-					
+
+					dPad[0] = handleAxis(isKeyDown(SDLK_RIGHT), isKeyDown(SDLK_LEFT));
+					dPad[1] = handleAxis(isKeyDown(SDLK_UP), isKeyDown(SDLK_DOWN));
 
 					updateBtnState(select, selectPressed, isKeyDown(SDLK_TAB));
 					updateBtnState(start, startPressed, isKeyDown(SDLK_ESCAPE));

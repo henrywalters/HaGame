@@ -80,7 +80,7 @@ public:
 							Vec2 velOffset;
 							velOffset[j] = pm->vel[j] * dt;
 							if (playerCircle.contains(stroke->points[i] - velOffset[j])) {
-								pm->vel[j] = 0.0;
+								pm->vel[j] = -pm->vel[j] * 0.25;
 							}
 						}
 

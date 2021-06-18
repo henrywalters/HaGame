@@ -9,79 +9,86 @@ namespace hagame {
 	namespace graphics {
 
 		struct PixelInstance {
+			Vec2 pos;
 			Color color;
 		};
 
 		class PixelGrid {
 
-			Vec2Int partitions;
-			Color clearColor;
-			Ptr<VertexBuffer<Vec2>> posBuffer;
-			Ptr<VertexBuffer<PixelInstance>> instanceBuffer;
+			Ptr<VertexBuffer<Vec2>> quadBuffer;
+			Ptr<VertexBuffer<Pixel>> instanceBuffer;
 			Ptr<VertexArray> vertArray;
 			Vec2 gridSize;
 			Vec2 pixelSize;
 			Array<Pixel> pixels;
+			Vec2 padding;
 
 		public:
+
+			Vec2Int partitions;
+			Color clearColor;
 			
-			PixelGrid(Vec2Int _partitions, Vec2 _gridSize, Color _clearColor = Color::white()) : 
+			PixelGrid(Vec2Int _partitions, Vec2 _gridSize, Color _clearColor = Color::white(), Vec2 _padding = Vec2::Zero()) : 
 				partitions(_partitions),
 				gridSize(_gridSize), 
 				pixelSize(Vec2({_gridSize[0] / _partitions[0], _gridSize[1] / _partitions[1]})), 
 				clearColor(_clearColor),
+				padding(_padding),
 				pixels(Array<Pixel>())
 			{
 
-				Array<Vec2> data;
-				Array<Vec4> colorData;
-				Array<PixelInstance> instanceData = Array<PixelInstance>();
+				auto scale = Vec2::Identity() - padding;
+
+				Array<Vec2> quadData = {
+					Vec2({-0.5f,  0.5f}).prod(pixelSize).prod(scale),
+					Vec2({ 0.5f, -0.5f}).prod(pixelSize).prod(scale),
+					Vec2({-0.5f, -0.5f}).prod(pixelSize).prod(scale),
+
+					Vec2({-0.5f,  0.5f}).prod(pixelSize).prod(scale),
+					Vec2({ 0.5f, -0.5f}).prod(pixelSize).prod(scale),
+					Vec2({ 0.5f,  0.5f}).prod(pixelSize).prod(scale)
+				};
+
+				auto paddingOffset = pixelSize.prod(padding);
+
+				quadBuffer = VertexBuffer<Vec2>::Static(quadData);
 
 				for (int i = 0; i < partitions[1]; i++) {
 					
 					for (int j = 0; j < partitions[0]; j++) {
 						Pixel pixel;
-
-						pixel.color = (i * partitions[1] + (j + i)) % 2 == 0 ? Color::red() : clearColor ;
-						pixel.pos = Vec2({ j * pixelSize[0] + pixelSize[0] / 2, i * pixelSize[1] + pixelSize[1] / 2 });
-
+						pixel.color = clearColor;
+						pixel.pos = Vec2({ j * pixelSize[0] + pixelSize[0] / 2 + paddingOffset[0] / 2, i * pixelSize[1] + pixelSize[1] / 2 + paddingOffset[1] / 2 });
 						pixels.push_back(pixel);
-
-						Vec2 a, b, c, d;
-
-						a = pixel.pos + Vec2({ -pixelSize[0] / 2, -pixelSize[1] / 2 });
-						b = pixel.pos + Vec2({ pixelSize[0] / 2, -pixelSize[1] / 2 });
-						c = pixel.pos + Vec2({ pixelSize[0] / 2, pixelSize[1] / 2 });
-						d = pixel.pos + Vec2({ -pixelSize[0] / 2, pixelSize[1] / 2 });
-
-						data.insert(data.end(), { a, b, c, a, c, d });
-
-
-						PixelInstance instance;
-						instance.color = pixel.color;
-						//instance.index = i;
-						instanceData.insert(instanceData.end(), { instance, instance, instance, instance, instance, instance });
 					}
 				}
 
 				vertArray = std::make_shared<VertexArray>();
 				vertArray->initialize();
 
-				std::cout << instanceData.size() << std::endl;
+				instanceBuffer = VertexBuffer<Pixel>::Dynamic(pixels);
 
-				posBuffer = VertexBuffer<Vec2>::Dynamic(data);
-				instanceBuffer = VertexBuffer<PixelInstance>::Dynamic(instanceData);
+				vertArray->defineAttribute<Vec2>(quadBuffer.get(), DataType::Float, 0, 2);
 
-				vertArray->defineAttribute<Vec2>(posBuffer.get(), DataType::Float, 0, 2);
-				vertArray->defineAttribute<PixelInstance>(instanceBuffer.get(), DataType::Float, 1, 4);
+				vertArray->defineAttribute<Pixel>(instanceBuffer.get(), DataType::Float, 1, 2, offsetof(Pixel, pos));
+				vertArray->setInstanced(1);
+
+				vertArray->defineAttribute<Pixel>(instanceBuffer.get(), DataType::Float, 2, 4, offsetof(Pixel, color));
+				vertArray->setInstanced(2);
+
+			}
+
+			void setColor(int row, int col, Color color) {
+				if (row >= 0 && col >= 0 && row < partitions[1] && col < partitions[0]) {
+					instanceBuffer->update<Color>(row * partitions[0] + col, offsetof(Pixel, color), color);
+				}
 				
-				//buffer->defineAttrib(0, 2, sizeof(Vec2), (void *) 0);
 			}
 
 			void draw(ShaderProgram* shader) {
 				shader->use();
 				vertArray->bind();
-				glDrawArrays(GL_TRIANGLES, 0, partitions[1] * partitions[0] * 6);
+				glDrawArraysInstanced(GL_TRIANGLES, 0, 6, partitions[0] * partitions[1]);
 			}
 
 		};

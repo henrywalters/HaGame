@@ -28,7 +28,7 @@ namespace hagame {
 					Vec3 strafeDir = entity->transform->right();
 
 					Vec3 forwardMove = forwardDir * params.movement[1];
-					Vec3 strafeMove = strafeDir * params.movement[0];
+					Vec3 strafeMove = strafeDir * -params.movement[0];
 
 					sm->isRunning = params.running;
 

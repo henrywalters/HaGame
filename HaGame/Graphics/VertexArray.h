@@ -35,7 +35,7 @@ namespace hagame {
 				buffer->bind();
 				bind();
 				glEnableVertexAttribArray(layoutNumber);
-				glVertexAttribPointer(layoutNumber, attributeSize, getOpenGLEnum(dataType), GL_FALSE, 0, (void *) 0);
+				glVertexAttribPointer(layoutNumber, attributeSize, GL_FLOAT, GL_FALSE, sizeof(ChunkDataType), (void *) 0);
 				glBindVertexArray(0);
 			}
 
@@ -49,12 +49,16 @@ namespace hagame {
 				buffer->bind();
 				bind();
 				glEnableVertexAttribArray(layoutNumber);
-				glVertexAttribPointer(layoutNumber, attributeSize, getOpenGLEnum(dataType), GL_FALSE, sizeof(DataType), (void*)chunkOffset);
-				glVertexAttribDivisor(layoutNumber, 1);
+				glVertexAttribPointer(layoutNumber, attributeSize, GL_FLOAT, GL_FALSE, sizeof(ChunkDataType), (void*)chunkOffset);
 				glBindVertexArray(0);
 			}
 
-
+			void setInstanced(int layoutNumber) {
+				bind();
+				glEnableVertexAttribArray(layoutNumber);
+				glVertexAttribDivisor(layoutNumber, 1);
+				glBindVertexArray(0);
+			}
 		};
 	}
 }
