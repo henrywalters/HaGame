@@ -19,7 +19,7 @@ public:
 		addScene<FPS>("fps");
 		addScene<MiniJamOneRoom>("minijam");
 
-		//scenes.setActive("fps");
+		// scenes.setActive("fps");
 		scenes.setActive("minijam");
 
 		resources->setBasePath("../../../Assets");

@@ -5,6 +5,9 @@
 #include <vector>
 #include <queue>
 #include <unordered_map>
+#include <set>
+#include <stack>
+#include <tuple>
 #include <memory>
 #include <optional>
 #include <glm/gtc/type_ptr.hpp>
@@ -30,6 +33,10 @@
 typedef void (*voidfunc_t)();
 
 // Standard Library aliases
+
+template <class T>
+using Optional = std::optional<T>;
+
 using String = std::string;
 using Exception = std::exception;
 
@@ -60,7 +67,7 @@ template <class K, class V>
 using Map = std::unordered_map<K, V>;
 
 template <class K, class V>
-bool hasKey(Map<K, V> map, std::string key) {
+bool hasKey(Map<K, V> map, K key) {
 	return map.find(key) != map.end();
 }
 
@@ -169,5 +176,21 @@ inline glm::vec3 glVec3(Vec3 vec) {
 inline glm::vec4 glVec4(Vec4 vec) {
 	return glm::vec4(vec[0], vec[1], vec[2], vec[3]);
 }
+
+template <template <typename...> class Base, typename Derived>
+struct is_base_of_template
+{
+	using U = typename std::remove_cv<Derived>::type;
+
+	template <typename... Args>
+	static std::true_type test(Base<Args...>*);
+
+	static std::false_type test(void*);
+
+	using type = decltype(test(std::declval<U*>()));
+};
+
+template <template <typename...> class Base, typename Derived>
+using is_base_of_template_t = typename is_base_of_template<Base, Derived>::type;
 
 #endif

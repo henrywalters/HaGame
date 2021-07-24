@@ -28,7 +28,7 @@ namespace hagame {
 				}
 			}
 
-			Mesh* generateMesh() {
+			Ptr<Mesh> generateMesh() {
 				/*
 					D--------C
 					-        -
@@ -76,7 +76,7 @@ namespace hagame {
 					}
 				}
 
-				return new Mesh(vertices, indices);
+				return std::make_shared<Mesh>(vertices, indices);
 			}
 		};
 	}

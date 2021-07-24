@@ -139,7 +139,7 @@ public:
 	Ptr<DynamicStroke> currentStroke;
 	float strokeSize = 2.0f;
 
-	Ptr<hagame::graphics::PixelGrid> pixels;
+	
 
 	String getSystemName() {
 		return "DrawingSystem";
@@ -149,7 +149,6 @@ public:
 		strokes = Array<Ptr<Stroke>>();
 		drawing = game->input.keyboardMouse.mouse.left;
 		currentStroke = std::make_shared<DynamicStroke>(strokeSize);
-		pixels = std::make_shared<hagame::graphics::PixelGrid>((game->window->size.resize<2>() * 0.05).cast<int>(), game->window->size, hagame::graphics::Color("#afb3b0"), Vec2(0.1));
 	}
 
 	void handleStrokes() {
@@ -157,17 +156,6 @@ public:
 		mousePos[1] = game->window->size[1] - mousePos[1];
 
 		mousePos += scene->getSystem<ViewportSystem>()->offset;
-
-		Vec2Int mouseGridPos = (mousePos * 0.05).cast<int>();
-
-		if (game->input.keyboardMouse.mouse.left) {
-			pixels->setColor(mouseGridPos[1], mouseGridPos[0], hagame::graphics::Color::red());
-		}
-
-		if (game->input.keyboardMouse.mouse.right) {
-			pixels->setColor(mouseGridPos[1], mouseGridPos[0], pixels->clearColor);
-		}
-		
 
 		if (game->input.keyboardMouse.mouse.left && !drawing) {
 			// drawing = true;
@@ -218,9 +206,6 @@ public:
 		
 		
 		for (auto stroke : strokes) {
-			//shader->use();
-			//shader->setMVP(Mat4::Identity(), Mat4::Identity(), orth);
-			//hagame::graphics::drawRect(stroke->boundingBox, hagame::graphics::Color::blue(), shader);
 			drawingShader->use();
 			drawingShader->setMat4("projection", projection);
 			drawingShader->setVec4("color", hagame::graphics::Color::green());
@@ -231,9 +216,6 @@ public:
 	void onSystemUpdate(double dt) {
 		handleStrokes();
 		drawStrokes();
-		game->resources->getShaderProgram("pixel")->use();
-		game->resources->getShaderProgram("pixel")->setMat4("projection", scene->getSystem<ViewportSystem>()->projection);
-		pixels->draw(game->resources->getShaderProgram("pixel"));
 	}
 };
 

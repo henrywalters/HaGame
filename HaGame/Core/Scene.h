@@ -7,6 +7,7 @@
 #include "../Graphics/Camera.h"
 #include "../Graphics/Components/CameraComponent.h"
 #include "ECS/System.h"
+#include "ECS/Entity.h"
 #include "ECS/ECS.h"
 
 namespace hagame {
@@ -17,21 +18,21 @@ namespace hagame {
 	private:
 		void setActiveCamera() {
 
-			hagame::ecs::Entity* cameraEntity;
 			bool foundCamera = false;
 			
 			for (auto entity : ecs.getRegistry()->view<graphics::CameraComponent>()) {
 				auto cam = &ecs.getRegistry()->get<graphics::CameraComponent>(entity);
 				if (cam->active) {
 					activeCamera = cam->camera;
-					cameraEntity = ecs.entities.getByEnttId(entity);
+					
+					activeCameraEntity = ecs.entities.getByEnttId(entity);
 					foundCamera = true;
 					break;
 				}
 			}
 
 			if (foundCamera) {
-				viewMat = activeCamera->getViewMatrix(cameraEntity->transform.get());
+				viewMat = activeCamera->getViewMatrix(activeCameraEntity->transform.get());
 				projMat = activeCamera->getProjMatrix();
 			}
 			
@@ -78,6 +79,7 @@ namespace hagame {
 		utils::Timer timer;
 
 		ecs::ECS ecs;
+		ecs::Entity* activeCameraEntity;
 		graphics::Camera* activeCamera;
 		Mat4 viewMat;
 		Mat4 projMat;

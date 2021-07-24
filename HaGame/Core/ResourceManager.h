@@ -55,6 +55,7 @@ namespace hagame {
 
 		// Create a mesh from an OBJ file
 		hagame::graphics::Mesh* loadMesh(String meshName, String path);
+		hagame::graphics::Mesh* loadMesh(String meshName, Ptr<hagame::graphics::Mesh> mesh);
 
 		// Create a mesh from it's vertices and indicies (typically a primitive will exist!)
 		hagame::graphics::Mesh* loadMesh(String meshName, hagame::graphics::MeshDefinition definition);

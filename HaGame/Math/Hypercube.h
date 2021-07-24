@@ -24,7 +24,7 @@ namespace hagame {
 
 			bool contains(Vector<dimensions, T> point) {
 				for (int i = 0; i < dimensions; i++) {
-					if (point[i] < pos[i] || point[i] > pos[i] + size[i]) return false;
+					if (point[i] < pos[i] || point[i] >= pos[i] + size[i]) return false;
 				}
 				return true;
 			}

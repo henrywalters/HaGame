@@ -30,7 +30,9 @@ namespace hagame {
 
 			bool active = true;
 
-			virtual String getSystemName() = 0;
+			virtual String getSystemName() {
+				throw new std::exception("getSystemName unimplemented for this system");
+			}
 			virtual void onSystemStart() {}
 			virtual void onSystemBeforeUpdate(double dt) {}
 			virtual void onSystemUpdate(double dt) {}

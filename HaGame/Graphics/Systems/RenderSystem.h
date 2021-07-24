@@ -37,7 +37,7 @@ namespace hagame {
 					r->shader->use();
 					r->shader->setMVP(model, scene->viewMat, scene->projMat);
 					r->shader->setMat4("normal", model.inverted());
-					// r->shader->setVec4("color", r->color);
+					r->shader->setVec4("color", r->color);
 					// r->shader->setMaterial("material", r->material);
 					
 					if (r->texture) {

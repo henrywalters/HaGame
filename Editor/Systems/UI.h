@@ -33,7 +33,7 @@ public:
 	}
 
 	void onSystemBeforeUpdate() {
-		auto shader = game->resources.getShaderProgram("material");
+		auto shader = game->resources->getShaderProgram("material");
 		shader->use();
 		shader->setVec3("lightPos", editorLightPos);
 		shader->setVec3("lightColor", editorLightColor.resize<3>());

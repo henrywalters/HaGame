@@ -140,6 +140,12 @@ hagame::graphics::Mesh* hagame::ResourceManager::loadMesh(String meshName, Strin
 	return meshes[meshName].get();
 }
 
+hagame::graphics::Mesh* hagame::ResourceManager::loadMesh(String meshName, Ptr<hagame::graphics::Mesh> mesh)
+{
+	meshes[meshName] = mesh;
+	return meshes[meshName].get();
+}
+
 hagame::graphics::Mesh* hagame::ResourceManager::loadMesh(String meshName, hagame::graphics::MeshDefinition definition)
 {
 	Ptr<hagame::graphics::Mesh> mesh = std::make_shared<hagame::graphics::Mesh>(definition);

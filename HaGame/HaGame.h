@@ -64,6 +64,8 @@
 #include "Utils/String.cpp"
 #include "Utils/Random.h"
 #include "Utils/Testing.h"
+#include "Utils/GridMap.h"
+#include "Utils/Algorithms/AStar.h"
 
 #include "Physics/Components/RigidBody.h"
 #include "Physics/Components/SimpleMovement.h"

@@ -343,7 +343,7 @@ public:
 		auto floor = addEntity();
 		// floor->transform->rotation = Quat(0, Vec3::Top());
 		auto fRenderer = floor->addComponent<hagame::graphics::MeshRenderer>();
-		fRenderer->mesh = hagame::graphics::Plane<1000, 1000>(Vec2({ 1000, 1000 })).generateMesh();
+		fRenderer->mesh = hagame::graphics::Plane<1000, 1000>(Vec2({ 1000, 1000 })).generateMesh().get();
 		fRenderer->color = RED;
 		fRenderer->shader = game->resources->getShaderProgram("texture");
 		fRenderer->opacityTexture = game->resources->getTexture("chainwall_opacity");
@@ -400,7 +400,7 @@ public:
 		// auto gRotate = gun1->addComponent<hagame::physics::RotationMovement>();
 
 		camera = addChild(player);
-		camera->transform->position = Vec3({ -1, 2, -1 });
+		camera->transform->position = Vec3({ -1, 10, -1 });
 		auto camComponent = camera->addComponent<hagame::graphics::CameraComponent>();
 		camComponent->active = true;
 		camComponent->camera = pCamera.get();

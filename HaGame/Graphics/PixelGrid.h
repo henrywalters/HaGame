@@ -18,13 +18,14 @@ namespace hagame {
 			Ptr<VertexBuffer<Vec2>> quadBuffer;
 			Ptr<VertexBuffer<Pixel>> instanceBuffer;
 			Ptr<VertexArray> vertArray;
-			Vec2 gridSize;
-			Vec2 pixelSize;
+
 			Array<Pixel> pixels;
 			Vec2 padding;
 
 		public:
 
+			Vec2 gridSize;
+			Vec2 pixelSize;
 			Vec2Int partitions;
 			Color clearColor;
 			
@@ -49,7 +50,7 @@ namespace hagame {
 					Vec2({ 0.5f,  0.5f}).prod(pixelSize).prod(scale)
 				};
 
-				auto paddingOffset = pixelSize.prod(padding);
+				
 
 				quadBuffer = VertexBuffer<Vec2>::Static(quadData);
 
@@ -58,7 +59,7 @@ namespace hagame {
 					for (int j = 0; j < partitions[0]; j++) {
 						Pixel pixel;
 						pixel.color = clearColor;
-						pixel.pos = Vec2({ j * pixelSize[0] + pixelSize[0] / 2 + paddingOffset[0] / 2, i * pixelSize[1] + pixelSize[1] / 2 + paddingOffset[1] / 2 });
+						pixel.pos = getPos(Vec2Int({j, i}));
 						pixels.push_back(pixel);
 					}
 				}
@@ -78,11 +79,20 @@ namespace hagame {
 
 			}
 
+			Vec2 getPos(Vec2Int index) {
+				auto paddingOffset = pixelSize.prod(padding);
+				return index.cast<float>().prod(pixelSize) + pixelSize / 2 + paddingOffset / 2;
+			}
+
+			Vec2Int getIndex(Vec2 pos) {
+				auto paddingOffset = pixelSize.prod(padding);
+				return (pos - paddingOffset / 2).div(pixelSize).cast<int>();
+			}
+
 			void setColor(int row, int col, Color color) {
 				if (row >= 0 && col >= 0 && row < partitions[1] && col < partitions[0]) {
 					instanceBuffer->update<Color>(row * partitions[0] + col, offsetof(Pixel, color), color);
 				}
-				
 			}
 
 			void draw(ShaderProgram* shader) {

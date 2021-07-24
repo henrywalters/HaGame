@@ -31,14 +31,8 @@ namespace hagame {
 			};
 
 			struct KeyboardState {
-				bool up = false;
-				bool upPressed = false;
-				bool right = false;
-				bool rightPressed = false;
-				bool down = false;
-				bool downPressed = false;
-				bool left = false;
-				bool leftPressed = false;
+				bool numbers[10];
+				bool numbersPressed[10];
 			};
 
 			// Defines a mapping from a keyboard to generic device
@@ -203,6 +197,10 @@ namespace hagame {
 					updateBtnState(select, selectPressed, isKeyDown(SDLK_TAB));
 					updateBtnState(start, startPressed, isKeyDown(SDLK_ESCAPE));
 					updateBtnState(a, aPressed, isKeyDown(SDLK_SPACE));
+
+					for (int i = 0; i < 10; i++) {
+						updateBtnState(keyboard.numbers[i], keyboard.numbersPressed[i], isKeyDown(SDLK_0 + i));
+					}
 				}
 			};
 		}

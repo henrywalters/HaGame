@@ -62,7 +62,7 @@ namespace hagame {
 			}
 
 			void canAssign(unsigned int index, size_t size) {
-				if (index + size >= allocated) {
+				if (index > allocated) {
 					throw new std::exception("Can not assign data of this size to this index in buffer. Larger than allocated memory size");
 				}
 			}

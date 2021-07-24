@@ -3,6 +3,7 @@
 #include "./DrawingSystem.h"
 #include "./MovementSystem.h"
 #include "./ViewportSystem.h"
+#include "./Pathfinding.hpp"
 
 class MiniJamOneRoom : public hagame::Scene {
 public:
@@ -20,6 +21,7 @@ public:
 		addSystem<DrawingSystem>();
 		addSystem<MovementSystem>();
 		addSystem<ViewportSystem>();
+		// addSystem<Pathfinding>();
 		addSystem<hagame::graphics::RenderSystem>();
 	}
 
