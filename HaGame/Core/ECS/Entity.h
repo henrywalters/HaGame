@@ -19,8 +19,8 @@ namespace hagame {
 
 			entt::basic_registry<uint32_t>* registry;
 
-			Entity* parent;
-			Array<Entity*> children;
+			Ptr<Entity> parent;
+			Array<Ptr<Entity>> children;
 
 			Ptr<Transform> transform;
 

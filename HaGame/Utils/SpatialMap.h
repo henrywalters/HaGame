@@ -17,30 +17,30 @@ namespace hagame {
 			const long P2 = 19349663;
 			const long P3 = 83492791;
 
-			Map<long, Array<DataType*>> map;
+			Map<long, Array<Ptr<DataType>>> map;
 		public:
 
 			hagame::math::Vector<3, SpatialDataType> chunkSize;
 
-			SpatialMap(hagame::math::Vector<3, SpatialDataType> _chunkSize) : map(Map<long, Array<DataType*>>()), chunkSize(_chunkSize) {}
+			SpatialMap(hagame::math::Vector<3, SpatialDataType> _chunkSize) : map(Map<long, Array<Ptr<DataType>>>()), chunkSize(_chunkSize) {}
 
 			void clear() {
 				map.clear();
 			}
 
-			void insert(hagame::math::Vector<3, SpatialDataType> position, DataType* value) {
+			void insert(hagame::math::Vector<3, SpatialDataType> position, Ptr<DataType> value) {
 				long hash = hashPosition(position);
 				if (map.find(hash) == map.end()) {
-					map[hash] = Array<DataType*>();
+					map[hash] = Array<Ptr<DataType>>();
 				}
 				map[hash].push_back(value);
 			}
 
-			Array<DataType*> get(hagame::math::Vector<3, SpatialDataType> position) {
+			Array<Ptr<DataType>> get(hagame::math::Vector<3, SpatialDataType> position) {
 				return map[hashPosition(position)];
 			}
 
-			Array<DataType*> get(hagame::math::Ray ray) {
+			Array<Ptr<DataType>> get(hagame::math::Ray ray) {
 
 			}
 

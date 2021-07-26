@@ -30,7 +30,7 @@ namespace hagame {
 			}
 
 			template <class T>
-			T* add(Game* game) {
+			Ptr<T> add(Game* game) {
 				static_assert(std::is_base_of<System, T>::value, "Must be an instance of System");
 				Ptr<T> system = std::make_shared<T>();
 				system->registry = registry;
@@ -38,53 +38,53 @@ namespace hagame {
 				system->window = &Game::window;
 				system->input = &Game::input;
 				systems.push_back(system);
-				return system.get();
+				return system;
 			}
 
 			template <class T>
-			T* add(Game* game, Scene* scene) {
+			Ptr<T> add(Game* game, Scene* scene) {
 				static_assert(std::is_base_of<System, T>::value, "Must be an instance of System");
 				Ptr<T> system = std::make_unique<T>();
 				system->registry = registry;
 				system->game = game;
 				system->scene = scene;
 				systems.push_back(system);
-				return system.get();
+				return system;
 			}
 
 			template <class T>
-			T* get(Game* game, Scene* scene) {
+			Ptr<T> get(Game* game, Scene* scene) {
 				for (auto system : systems) {
 					if (typeid(T) == typeid(*system))
-						return (T*) system.get();
+						return std::dynamic_pointer_cast<T>(system);
 				}
 				throw new std::exception("System does not exist in this scene");
 			}
 
-			void forAll(std::function<void(System*)> lambda) {
+			void forAll(std::function<void(Ptr<System>)> lambda) {
 				for (int i = 0; i < systems.size(); i++) {
-					lambda(systems[i].get());
+					lambda(systems[i]);
 				}
 			}
 
 			void startAll() {
-				forAll([](ecs::System* system) { system->start(); });
+				forAll([](Ptr<ecs::System> system) { system->start(); });
 			}
 
 			void stopAll() {
-				forAll([](ecs::System* system) { system->stop(); });
+				forAll([](Ptr<ecs::System> system) { system->stop(); });
 			}
 
 			void beforeUpdateAll(double dt) {
-				forAll([dt](ecs::System* system) { system->beforeUpdate(dt); });
+				forAll([dt](Ptr<ecs::System> system) { system->beforeUpdate(dt); });
 			}
 
 			void updateAll(double dt) {
-				forAll([dt](ecs::System* system) { system->update(dt); });
+				forAll([dt](Ptr<ecs::System> system) { system->update(dt); });
 			}
 
 			void afterUpdateAll(double dt) {
-				forAll([dt](ecs::System* system) { system->afterUpdate(dt); });
+				forAll([dt](Ptr<ecs::System> system) { system->afterUpdate(dt); });
 			}
 		};
 	}

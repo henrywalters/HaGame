@@ -70,7 +70,6 @@ namespace hagame {
 				fontMap.clear();
 				glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 				for (int i = startIdx; i <= endIdx; i++) {
-					std::cout << "Stored character for " << i << " - " << (char)i <<  std::endl;
 					fontMap.insert(std::make_pair<char, FontCharacter>((char) i, loadCharacter((char) i)));
 				}
 			}

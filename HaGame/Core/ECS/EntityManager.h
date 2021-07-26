@@ -21,7 +21,7 @@ namespace hagame {
 				entities = std::vector<Ptr<Entity>>();
 			}
 			
-			Entity* add() {
+			Ptr<Entity> add() {
 				Ptr<Entity> entity = std::make_shared<Entity>(registry->create(), entities.size());
 				entity->registry = registry;
 				entity->transform = std::make_shared<hagame::Transform>();
@@ -29,22 +29,22 @@ namespace hagame {
 				entities.push_back(entity);
 				enttMap[entity->entt_id] = entity;
 				idMap[entity->id] = entity;
-				return entity.get();
+				return entity;
 			}
 
-			Entity* add(Entity* parent) {
-				Entity* entity = add();
+			Ptr<Entity> add(Ptr<Entity> parent) {
+				Ptr<Entity> entity = add();
 				entity->parent = parent;
 				parent->children.push_back(entity);
 				return entity;
 			}
 
-			Entity* get(uint32_t id) {
-				return idMap[id].get();
+			Ptr<Entity> get(uint32_t id) {
+				return idMap[id];
 			}
 
-			Entity* getByEnttId(uint32_t id) {
-				return enttMap[id].get();
+			Ptr<Entity> getByEnttId(uint32_t id) {
+				return enttMap[id];
 			}
 
 			void clear() {

@@ -47,7 +47,7 @@ namespace hagame {
 			}
 
 			template <class T>
-			void forEach(std::function<void(T*, Entity*)> lambda) {
+			void forEach(std::function<void(T*, Ptr<Entity>)> lambda) {
 				for (auto entity : registry->view<T>()) {
 					lambda(&registry->get<T>(entity), scene->ecs.entities.getByEnttId(entity));
 				}

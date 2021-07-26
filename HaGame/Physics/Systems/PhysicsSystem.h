@@ -16,7 +16,7 @@ namespace hagame {
 			}
 
 			void onSystemUpdate(double dt) {
-				forEach<RigidBody>([this, dt](RigidBody* rb, hagame::ecs::Entity* entity) {
+				forEach<RigidBody>([this, dt](RigidBody* rb, Ptr<ecs::Entity> entity) {
 					rb->applyGlobalGravity();
 					rb->update(dt);
 

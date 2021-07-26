@@ -26,7 +26,7 @@ public:
 		Vec2 mousePos = game->input.keyboardMouse.mouse.position;
 		mousePos[1] = game->window->size[1] - mousePos[1];
 
-		forEach<PlayerMovement>([this, dt, &mousePos](PlayerMovement* pm, hagame::ecs::Entity* entity) {
+		forEach<PlayerMovement>([this, dt, &mousePos](PlayerMovement* pm, Ptr<hagame::ecs::Entity> entity) {
 			Vec2 movement;
 			if (game->input.gamepads.size() > 0 && game->input.gamepads[0].lAxis.magnitude() > 0) {
 				movement = game->input.gamepads[0].lAxis;

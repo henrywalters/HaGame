@@ -22,8 +22,8 @@ namespace hagame {
 
 			Collisions() : entityMap(utils::SpatialMap<ecs::Entity, float>(CHUNK_SIZE)) {}
 
-			Array<ecs::Entity*> queryAABB(math::AABB aabb) {
-				Array<ecs::Entity*> entities;
+			Array<Ptr<ecs::Entity>> queryAABB(math::AABB aabb) {
+				Array<Ptr<ecs::Entity>> entities;
 				std::cout << "Checking: " << entityMap.get(aabb.center).size() << std::endl;
 				for (auto other : entityMap.get(aabb.center)) {
 					auto otherCollider = other->getComponent<Collider>();

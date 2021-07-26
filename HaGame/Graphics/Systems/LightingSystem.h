@@ -14,17 +14,17 @@ namespace hagame {
 			}
 
 			void onSystemBeforeUpdate(double dt) {
-				forEach<LightComponent>([this](LightComponent* light, hagame::ecs::Entity* entity) {
+				forEach<LightComponent>([this](LightComponent* light, Ptr<ecs::Entity> entity) {
 					game->resources->getShaderProgram("texture")->use();
 					game->resources->getShaderProgram("texture")->setLight("light", entity->transform->position, light->light);
 				});
 
-				forEach<DirLightComponent>([this](DirLightComponent* light, hagame::ecs::Entity* entity) {
+				forEach<DirLightComponent>([this](DirLightComponent* light, Ptr<ecs::Entity> entity) {
 					game->resources->getShaderProgram("texture")->use();
 					game->resources->getShaderProgram("texture")->setLight("light", light->light);
 				});
 
-				forEach<PointLightComponent>([this](PointLightComponent* light, hagame::ecs::Entity* entity) {
+				forEach<PointLightComponent>([this](PointLightComponent* light, Ptr<ecs::Entity> entity) {
 					game->resources->getShaderProgram("texture")->use();
 					game->resources->getShaderProgram("texture")->setLight("light", entity->transform->position, light->light);
 				});

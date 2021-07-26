@@ -43,10 +43,10 @@ target_link_libraries(HaGame ${LIBS})
 add_executable(HaGameEditor Editor/Editor.cpp "Editor/Editor.h" "Editor/Systems/CameraController.h" "Editor/Systems/Renderer.h" "Editor/Systems/MousePicker.h" "Editor/Systems/UI.h")
 target_link_libraries(HaGameEditor ${LIBS})
 
-add_executable(Demos Demos/Demo.cpp "Demos/Demo.cpp" "Demos/FPS/FPS.hpp" "Demos/Demo.h" "Demos/MiniJam/OneRoom.hpp" "Demos/MiniJam/ResourceSystem.h" "Demos/MiniJam/DrawingSystem.h" "Demos/MiniJam/MovementSystem.h" "Demos/MiniJam/ViewportSystem.h" "Demos/MiniJam/Pathfinding.hpp")
+add_executable(Demos Demos/Demo.cpp "Demos/Demo.cpp" "Demos/FPS/FPS.hpp" "Demos/Demo.h" "Demos/MiniJam/OneRoom.hpp" "Demos/MiniJam/ResourceSystem.h" "Demos/MiniJam/DrawingSystem.h" "Demos/MiniJam/MovementSystem.h" "Demos/MiniJam/ViewportSystem.h" "Demos/MiniJam/Pathfinding.hpp" "Demos/SpriteSheetHelper/SpriteSheetHelper.h")
 target_link_libraries(Demos ${LIBS})
 
-add_executable(Goom2 Goom2/Goom2.cpp "Goom2/Goom2.cpp" "Goom2/Goom2.h"  )
+add_executable(Goom2 Goom2/Goom2.cpp "Goom2/Goom2.cpp" "Goom2/Goom2.h"   "Goom2/Systems/ResourceSystem.h" "Goom2/Scenes/MainMenu.h")
 target_link_libraries(Goom2 ${LIBS})
 
 if (MSVC_VERSION GREATER_EQUAL "1900")

@@ -1,6 +1,7 @@
 #include "../HaGame/HaGame.h"
 #include "FPS/FPS.hpp"
 #include "MiniJam/OneRoom.hpp"
+#include "SpriteSheetHelper/SpriteSheetHelper.h"
 
 class Demo : public hagame::Game {
 public:
@@ -18,9 +19,10 @@ public:
 
 		addScene<FPS>("fps");
 		addScene<MiniJamOneRoom>("minijam");
+		addScene<SpriteSheetHelper>("ssh");
 
 		// scenes.setActive("fps");
-		scenes.setActive("minijam");
+		scenes.setActive("ssh");
 
 		resources->setBasePath("../../../Assets");
 

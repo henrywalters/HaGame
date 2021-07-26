@@ -16,14 +16,14 @@ namespace hagame {
 			}
 
 			void onSystemStart() {
-				forEach<Collider>([this](Collider* c, ecs::Entity* entity) {
+				forEach<Collider>([this](Collider* c, Ptr<ecs::Entity> entity) {
 					c->updateAABB(entity->transform->getModelMatrix().resize<3, 3>(), entity->transform->position);
 				});
 			}
 
 			void onSystemBeforeUpdate(double dt) {
 				game->collisions.entityMap.clear();
-				forEach<Collider>([this, dt](Collider* c, ecs::Entity* entity) {
+				forEach<Collider>([this, dt](Collider* c, Ptr<ecs::Entity> entity) {
 					if (c->active) {
 						game->collisions.entityMap.insert(entity->transform->position, entity);
 
@@ -42,7 +42,7 @@ namespace hagame {
 			}
 
 			void onSystemAfterUpdate(double dt) {
-				forEach<Collider>([this, dt](Collider* c, ecs::Entity* entity) {
+				forEach<Collider>([this, dt](Collider* c, Ptr<ecs::Entity> entity) {
 					if (c->active) {
 						if (c->display && c->shader) {
 							c->shader->setMVP(Mat4::Identity(), scene->viewMat, scene->projMat);

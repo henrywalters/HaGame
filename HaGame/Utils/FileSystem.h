@@ -11,6 +11,8 @@
 
 #ifdef WIN32
 #include <direct.h>
+#include <windows.h>
+#include <string.h>
 #define GetCurrentDir _getcwd
 #else
 #include <unistd.h>
@@ -38,6 +40,8 @@ namespace hagame {
 			File getGlobalFile(std::string path);
 			std::string readFile(std::string path);
 			std::vector<std::string> listFiles(std::string path);
+
+			File getFileDialog();
 
 			void forEachFile(std::string path, std::function<void(std::string filePath)> lambda);
 			void forEachFile(std::string path, std::function<void(std::string filePath, std::string fileName)> lambda);

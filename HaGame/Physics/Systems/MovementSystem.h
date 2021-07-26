@@ -16,7 +16,7 @@ namespace hagame {
 			}
 
 			void handleSimpleMovement(double dt) {
-				forEach<SimpleMovement>([this, dt](SimpleMovement* sm, hagame::ecs::Entity* entity) {
+				forEach<SimpleMovement>([this, dt](SimpleMovement* sm, Ptr<ecs::Entity> entity) {
 					auto rb = entity->getComponent<RigidBody>();
 					if (rb == NULL) {
 						throw new std::exception("Simple Movement system requires RigidBody component");
@@ -50,7 +50,7 @@ namespace hagame {
 			}
 
 			void handleRotationMovement(double dt) {
-				forEach<RotationMovement>([this, dt](RotationMovement* rm, hagame::ecs::Entity* entity) {
+				forEach<RotationMovement>([this, dt](RotationMovement* rm, Ptr<ecs::Entity> entity) {
 					entity->transform->rotate(Quat(rm->speed * dt, rm->axis));
 				});
 			}

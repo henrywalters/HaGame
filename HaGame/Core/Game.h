@@ -51,16 +51,16 @@ namespace hagame {
 		virtual void onGameEnd() {};
 		virtual void onGameUpdate(double dt) {};
 
-		Scene* addScene(String sceneName) {
-			Scene* scene = scenes.add(sceneName);
+		Ptr<Scene> addScene(String sceneName) {
+			Ptr<Scene> scene = scenes.add(sceneName);
 			scene->name = sceneName;
 			scene->game = this;
 			return scene;
 		}
 
 		template <class T>
-		Scene* addScene(String sceneName) {
-			Scene* scene = scenes.add<T>(sceneName);
+		Ptr<Scene> addScene(String sceneName) {
+			Ptr<Scene> scene = scenes.add<T>(sceneName);
 			scene->name = sceneName;
 			scene->game = this;
 			return scene;

@@ -18,15 +18,15 @@ namespace hagame {
 
 			void onSystemUpdate(double dt) {
 
-				hagame::ecs::Entity* camera;
+				Ptr<ecs::Entity> camera;
 
-				forEach<CameraComponent>([this, &camera](CameraComponent* cam, hagame::ecs::Entity* entity) {
+				forEach<CameraComponent>([this, &camera](CameraComponent* cam, Ptr<ecs::Entity> entity) {
 					if (cam->active) {
 						camera = entity;
 					}
 				});
 
-				forEach<FPSCameraController>([this, dt, camera](FPSCameraController* cam, hagame::ecs::Entity* entity) {
+				forEach<FPSCameraController>([this, dt, camera](FPSCameraController* cam, Ptr<ecs::Entity> entity) {
 
 					auto params = cam->inputFn();
 					cam->yaw += params.look[0] * dt * cam->xSensitivity;
@@ -36,7 +36,7 @@ namespace hagame {
 					entity->transform->setRotation(Quat(cam->yaw, Vec3::Top()));
 					camera->transform->rotation = Quat(cam->yaw, Vec3::Top()) * Quat(cam->roll, Vec3::Face()) * Quat(cam->pitch, Vec3::Right());
 
-					((hagame::graphics::PerspectiveCamera*) camera)->fov = params.zoomed ? PI / 5 : PI / 3;
+					// ((hagame::graphics::PerspectiveCamera*) camera)->fov = params.zoomed ? PI / 5 : PI / 3;
 				});
 			}
 		};

@@ -32,7 +32,7 @@ namespace hagame {
 
 			void onSystemUpdate(double dt) {
 
-				forEach<MeshRenderer>([this, dt](MeshRenderer* r, hagame::ecs::Entity* entity) {
+				forEach<MeshRenderer>([this, dt](MeshRenderer* r, Ptr<ecs::Entity> entity) {
 					auto model = entity->transform->getModelMatrix();
 					r->shader->use();
 					r->shader->setMVP(model, scene->viewMat, scene->projMat);
@@ -67,7 +67,7 @@ namespace hagame {
 					r->mesh->draw(r->shader);
 				});
 
-				forEach<RigidBodyRenderer>([this](RigidBodyRenderer* r, hagame::ecs::Entity* entity) {
+				forEach<RigidBodyRenderer>([this](RigidBodyRenderer* r, Ptr<ecs::Entity> entity) {
 					auto rb = entity->getComponent<hagame::physics::RigidBody>();
 					if (rb) {
 						r->shader->setMVP(entity->transform->getModelMatrix(), scene->viewMat, scene->projMat);
@@ -76,13 +76,13 @@ namespace hagame {
 					}
 				});
 
-				forEach<BoundingBoxRenderer>([this](BoundingBoxRenderer* r, hagame::ecs::Entity* entity) {
+				forEach<BoundingBoxRenderer>([this](BoundingBoxRenderer* r, Ptr<ecs::Entity> entity) {
 					r->shader->setMVP(Mat4::Identity(), scene->viewMat, scene->projMat);
 					Cube bb = transformBoundingBox(r->boundingBox, entity->transform->getModelMatrix().resize<3, 3>(), entity->transform->position);
 					hagame::graphics::drawCubeOutline(bb, hagame::graphics::Color::green(), r->shader);
 				});
 
-				forEach<AxisRenderer>([this](AxisRenderer* r, hagame::ecs::Entity* entity) {
+				forEach<AxisRenderer>([this](AxisRenderer* r, Ptr<ecs::Entity> entity) {
 					r->shader->setMVP(Mat4::Identity(), scene->viewMat, scene->projMat);
 					hagame::graphics::drawLine(hagame::graphics::Line(entity->transform->position, entity->transform->position + (entity->transform->face() * r->axisLength), r->zColor), r->shader);
 					hagame::graphics::drawLine(hagame::graphics::Line(entity->transform->position, entity->transform->position + (entity->transform->right() * r->axisLength), r->xColor), r->shader);
@@ -98,13 +98,14 @@ namespace hagame {
 					cube->draw(r->shader);
 				});
 
-				forEach<Text3dRenderer>([this](Text3dRenderer* r, hagame::ecs::Entity* entity) {
+				forEach<Text3dRenderer>([this](Text3dRenderer* r, Ptr<ecs::Entity> entity) {
 					r->shader->use();
 					r->shader->setMVP(entity->transform->getModelMatrix() * Mat4::Scale(Vec3(r->font->getScale())), scene->viewMat, scene->projMat);
 					drawText(r->shader, r->font, r->message, r->color, Vec3::Zero(), r->maxLength);
 				});
 
-				forEach<SpriteRenderer>([this](SpriteRenderer* r, hagame::ecs::Entity* entity) {
+				forEach<SpriteRenderer>([this](SpriteRenderer* r, Ptr<ecs::Entity> entity) {
+					std::cout << entity->id << "\n";
 					r->shader->use();
 					r->shader->setMVP(
 						Mat4::Translation(entity->transform->position + r->sprite.rect.pos.resize<3>()) * Mat4::Rotation(entity->transform->rotation) * Mat4::Scale(r->sprite.rect.size.resize<3>()),

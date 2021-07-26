@@ -29,17 +29,17 @@ namespace hagame {
 				_states(Map<String, Ptr<StateType>>())
 			{}
 
-			StateType* add(String stateName) {
-				Ptr<StateType> state = std::make_unique<StateType>();
+			Ptr<StateType> add(String stateName) {
+				Ptr<StateType> state = std::make_shared<StateType>();
 				_states.insert(std::make_pair(stateName, state));
-				return state.get();
+				return state;
 			}
 
 			template <class T>
-			StateType* add(String stateName) {
-				Ptr<StateType> state = std::make_unique<T>();
+			Ptr<StateType> add(String stateName) {
+				Ptr<StateType> state = std::make_shared<T>();
 				_states.insert(std::make_pair(stateName, state));
-				return state.get();
+				return state;
 			}
 
 			bool has(String stateName) {
@@ -80,6 +80,12 @@ namespace hagame {
 				}
 
 				return _active.value().get();
+			}
+
+			void forEach(std::function<void(Ptr<StateType>)> lambda) {
+				for (auto& [key, state] : _states) {
+					lambda(state);
+				}
 			}
 		};
 	}

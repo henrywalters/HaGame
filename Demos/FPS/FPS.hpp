@@ -64,7 +64,7 @@ public:
 
 		emitterBuffers = Map<uint32_t, Ptr<EmitterBuffers>>();
 
-		forEach<ParticleEmitter>([this](ParticleEmitter* emitter, hagame::ecs::Entity* entity) {
+		forEach<ParticleEmitter>([this](ParticleEmitter* emitter, Ptr<hagame::ecs::Entity> entity) {
 			auto buffers = std::make_shared<EmitterBuffers>();
 
 			emitter->particleShader->use();
@@ -95,7 +95,7 @@ public:
 
 		glCheckError();
 
-		forEach<ParticleEmitter>([dt, this](ParticleEmitter* emitter, hagame::ecs::Entity* entity) {
+		forEach<ParticleEmitter>([dt, this](ParticleEmitter* emitter, Ptr<hagame::ecs::Entity> entity) {
 
 			hagame::utils::Timer t;
 
@@ -226,7 +226,7 @@ public:
 
 class FPS : public hagame::Scene {
 private:
-	hagame::ecs::Entity* addGameObject(Vec3 pos, String mesh, hagame::graphics::Material mat, String tex, String shader) {
+	Ptr<hagame::ecs::Entity> addGameObject(Vec3 pos, String mesh, hagame::graphics::Material mat, String tex, String shader) {
 		auto entity = addEntity();
 		entity->transform->position = pos;
 		entity->transform->scale = BlockSize;
@@ -251,11 +251,11 @@ public:
 	const hagame::graphics::Color BLUE = hagame::graphics::Color(54, 134, 255);
 	const hagame::graphics::Color GREEN = hagame::graphics::Color(0, 255, 0);
 
-	hagame::ecs::Entity* player;
-	hagame::ecs::Entity* obstacles;
-	hagame::ecs::Entity* gun;
-	hagame::ecs::Entity* camera;
-	hagame::ecs::Entity* light;
+	Ptr<hagame::ecs::Entity> player;
+	Ptr<hagame::ecs::Entity> obstacles;
+	Ptr<hagame::ecs::Entity> gun;
+	Ptr<hagame::ecs::Entity> camera;
+	Ptr<hagame::ecs::Entity> light;
 
 	Ptr<hagame::graphics::PerspectiveCamera> pCamera = std::make_shared<hagame::graphics::PerspectiveCamera>();
 

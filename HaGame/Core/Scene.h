@@ -50,8 +50,8 @@ namespace hagame {
 		void activate() {
 			timer.reset();
 			onSceneBeforeActivate();
-			onSceneActivate();
 			ecs.systems.startAll();
+			onSceneActivate();
 			onSceneAfterActivate();
 			//DEBUG_LOG("Scene start", timer.elapsed());
 		}
@@ -79,27 +79,27 @@ namespace hagame {
 		utils::Timer timer;
 
 		ecs::ECS ecs;
-		ecs::Entity* activeCameraEntity;
+		Ptr<ecs::Entity> activeCameraEntity;
 		graphics::Camera* activeCamera;
 		Mat4 viewMat;
 		Mat4 projMat;
 		Mat4 uiProjMat;
 
 		template<class T>
-		T* addSystem() {
+		Ptr<T> addSystem() {
 			return ecs.systems.add<T>(game, this);
 		}
 
 		template<class T>
-		T* getSystem() {
+		Ptr<T> getSystem() {
 			return ecs.systems.get<T>(game, this);
 		}
 
-		ecs::Entity* addChild(ecs::Entity* parent) {
+		Ptr<ecs::Entity> addChild(Ptr<ecs::Entity> parent) {
 			return ecs.entities.add(parent);
 		}
 
-		ecs::Entity* addEntity() {
+		Ptr<ecs::Entity> addEntity() {
 			return ecs.entities.add();
 		}
 	};
