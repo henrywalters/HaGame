@@ -16,6 +16,31 @@ namespace hagame {
 				else throw new Exception("Type not supported for OpenGL");
 			}
 
+			struct VertexBufferArray {
+				GLuint vao;
+				GLuint vbo;
+			};
+
+			template <class T, size_t vectSize>
+			VertexBufferArray loadVBA(const Array<float> buffer) {
+				VertexBufferArray data;
+				GLenum type = getType<T>();
+
+				glGenVertexArrays(1, &data.vao);
+				glGenBuffers(1, &data.vbo);
+
+				glBindBuffer(GL_ARRAY_BUFFER, data.vbo);
+				glBufferData(GL_ARRAY_BUFFER, sizeof(T) * buffer.size(), &buffer[0], GL_STATIC_DRAW);
+
+				glBindVertexArray(data.vao);
+				glEnableVertexAttribArray(0);
+				glVertexAttribPointer(0, vectSize, type, GL_FALSE, vectSize * sizeof(T), (void*)0);
+				glBindBuffer(GL_ARRAY_BUFFER, 0);
+				glBindVertexArray(0);
+
+				return data;
+			}
+
 			template <class T, size_t vectSize>
 			GLuint loadVAO(const Array<float> buffer) {
 				GLuint vao;

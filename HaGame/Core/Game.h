@@ -9,9 +9,11 @@
 #include "../Physics/Collisions.h"
 #include "../Input/InputManager.h"
 #include "../Graphics/Window.h"
+#include "../Audio/Audio.h"
 #include "ResourceManager.h"
 #include "Scene.h"
 #include <SDL.h>
+#include <SDL_mixer.h>
 
 namespace hagame {
 	// Base game class that wraps a simple game loop
@@ -22,6 +24,7 @@ namespace hagame {
 		Ptr<ResourceManager> resources;
 		input::InputManager input;
 		graphics::Window* window;
+		Ptr<audio::Audio> audio;
 		hagame::utils::Random random;
 		physics::Collisions collisions;
 
@@ -36,7 +39,8 @@ namespace hagame {
 		Game(graphics::Window* _window) : 
 			scenes(utils::StateManager<Scene>([this](Scene* scene) { scene->activate(); }, [this](Scene* scene) { scene->deactivate(); })), 
 			window(_window),
-			resources(std::make_shared<ResourceManager>(""))
+			resources(std::make_shared<ResourceManager>("")),
+			audio(std::make_shared<audio::Audio>())
 		{
 			running = false;
 			lastTick = utils::Clock::Now();
@@ -67,7 +71,10 @@ namespace hagame {
 		}
 
 		static void initializeSDL() {
-			SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_HAPTIC);
+			if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_HAPTIC | SDL_INIT_AUDIO) < 0) {
+				throw new std::exception("Failed to initialize SDL");
+			}
+			audio::Audio::Initialize();
 		}
 
 		void run();

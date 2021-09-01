@@ -6,9 +6,8 @@
 namespace hagame {
 	namespace graphics {
 		struct SpriteRenderer {
-			Sprite sprite;
+			Ptr<Sprite> sprite;
 			ShaderProgram* shader;
-			Mat4 projection;
 		};
 	}
 }

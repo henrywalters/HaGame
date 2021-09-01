@@ -2,10 +2,14 @@
 
 void hagame::Game::run()
 {
-	
+
+	scenes.forEach([](String name, Ptr<hagame::Scene> scene) {
+		scene->initialize();
+	});
+
 	onGameStart();
 
-	if (scenes.hasActive()) scenes.active()->activate();
+	// if (scenes.hasActive()) scenes.active()->activate();
 
 	running = true;
 

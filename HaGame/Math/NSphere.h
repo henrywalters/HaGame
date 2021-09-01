@@ -42,6 +42,10 @@ namespace hagame {
 				float delta2 = delta.dot(delta);
 				return delta2 <= radius * radius;
 			}
+
+			std::string toString() {
+				return "C = " + center.toString() + " r = " + std::to_string(radius);
+			}
 		};
 	}
 }

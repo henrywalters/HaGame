@@ -6,16 +6,28 @@
 #include "../Utils/Aliases.h"
 #include "../Graphics/OpenGL.h"
 #include "../Graphics/Primitives.h"
+#include "../Graphics/VertexArray.h"
+#include "../Graphics/VertexBuffer.h"
 
 namespace hagame {
 	namespace graphics {
 		class Sprite {
 		private:
 
-			unsigned int VAO;
+			Ptr<VertexBuffer<Vec4>> vbo;
+			Ptr<VertexArray> vao;
+			GLuint VAO;
+
+			gl::VertexBufferArray VBA;
 
 			void initializeForGL() {
-				VAO = graphics::gl::loadVAO<float, 4>(graphics::QuadVertices);
+				// VAO = graphics::gl::loadVAO<float, 4>(graphics::QuadVertices);
+				//VBA = graphics::gl::loadVBA<float, 4>(graphics::QuadVertices);
+				vbo = VertexBuffer<Vec4>::Static(graphics::QuadVertexVectors);
+				vao = std::make_shared<VertexArray>();
+				vao->initialize();
+				vao->defineAttribute<Vec4>(vbo.get(), DataType::Float, 0, 4);
+
 			}
 
 		public:
@@ -42,13 +54,21 @@ namespace hagame {
 				initializeForGL();
 			}
 
+			~Sprite() {
+				vbo->clear();
+				//glBindBuffer(GL_ARRAY_BUFFER, VBA.vbo);
+				//glClearBufferData(GL_ARRAY_BUFFER, GL_RG32F, GL_RG32F, GL_FLOAT, NULL);
+			}
+
 			void draw(ShaderProgram* shader) {
 				shader->use();
 				shader->setVec4("color", color);
 				glActiveTexture(GL_TEXTURE0);
 				texture->bind();
-				glBindVertexArray(VAO);
+				vao->bind();
+				// glBindVertexArray(VBA.vao);
 				glDrawArrays(GL_TRIANGLES, 0, 6);
+				glCheckError();
 				glBindVertexArray(0);
 			}
 

@@ -10,10 +10,10 @@ namespace hagame {
 	namespace physics {
 
 		enum ColliderType {
-			Box,
-			Plane,
-			Sphere,
-			Mesh,
+			BoxCollider,
+			//Plane,
+			SphereCollider,
+			//Mesh,
 		};
 
 		// Collider component ensures it is added to the spacial map.
@@ -28,17 +28,23 @@ namespace hagame {
 			// Control whether the collider types will be displayed
 			bool display = false;
 
-			ColliderType type = ColliderType::Box;
+			// Control what type of collider to use
+			ColliderType type = ColliderType::BoxCollider;
 
+			// If you want to display the collider, you better freaking set this
 			hagame::graphics::ShaderProgram* shader;
 
-			Cube boundingCube;
+			// Required for BoxCollider
+			std::optional<Cube> boundingCube = std::nullopt;
 
-			hagame::math::AABB aabb;
+			// Required for SphereCollider
+			std::optional<Sphere> boundingSphere = std::nullopt;
 
-			void updateAABB(Mat3 model, Vec3 translation) {
-				aabb = hagame::math::AABB(transformBoundingBox(boundingCube, model, translation));
-			}
+			// Ignore collisions with any of these specific entities
+			Array<uint32_t> ignoreEntities;
+
+			// Ignore collisions with any entity that has any of these tags
+			Array<String> ignoreTags;
 		};
 	}
 }

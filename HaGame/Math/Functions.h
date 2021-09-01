@@ -1,6 +1,7 @@
 #ifndef Functions
 #define Functions
 #include "Vector.h"
+#include "Line.h"
 #include "../Utils/Aliases.h"
 
 template <class T>
@@ -11,6 +12,38 @@ T max(T a, T b) {
 template <class T>
 T min(T a, T b) {
 	return a < b: a ? b;
+}
+
+template <size_t N, class T>
+T max(T arr[N]) {
+	T max = 0;
+	bool first = false;
+	for (int i = 0; i < N; i++) {
+		if (!first) {
+			max = arr[i];
+			first = true;
+		}
+		else if (arr[i] > max) {
+			max = arr[i];
+		}
+	}
+	return max;
+}
+
+template <size_t N, class T>
+T min(T arr[N]) {
+	T min = 0;
+	bool first = false;
+	for (int i = 0; i < N; i++) {
+		if (!first) {
+			min = arr[i];
+			first = true;
+		}
+		else if (min == NULL || arr[i] < min) {
+			min = arr[i];
+		}
+	}
+	return min;
 }
 
 template <class T>

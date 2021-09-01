@@ -6,8 +6,8 @@
 namespace hagame {
 	namespace graphics {
 		struct CameraComponent {
-			bool active;
-			Camera* camera;
+			bool active = true;
+			Ptr<Camera> camera;
 		};
 	}
 }

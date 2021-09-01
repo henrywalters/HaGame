@@ -13,6 +13,7 @@
 #include "../Components/TextRenderer.h"
 #include "../Components/Text3dRenderer.h"
 #include "../Components/SpriteRenderer.h"
+#include "../Components/AnimatedSpriteRenderer.h"
 #include <cstddef>
 
 namespace hagame {
@@ -105,14 +106,33 @@ namespace hagame {
 				});
 
 				forEach<SpriteRenderer>([this](SpriteRenderer* r, Ptr<ecs::Entity> entity) {
-					std::cout << entity->id << "\n";
-					r->shader->use();
-					r->shader->setMVP(
-						Mat4::Translation(entity->transform->position + r->sprite.rect.pos.resize<3>()) * Mat4::Rotation(entity->transform->rotation) * Mat4::Scale(r->sprite.rect.size.resize<3>()),
-						Mat4::Identity(),
-						r->projection
-					);
-					r->sprite.draw(r->shader);
+					if (r->sprite->texture != NULL) {
+						r->shader->use();
+						r->shader->setMVP(
+							Mat4::Translation(entity->transform->position + r->sprite->rect.pos.resize<3>()) * Mat4::Rotation(entity->transform->rotation) * Mat4::Scale(r->sprite->rect.size.resize<3>()),
+							scene->viewMat,
+							scene->projMat
+						);
+						r->sprite->draw(r->shader);
+					}
+					
+				});
+
+				forEach<AnimatedSpriteRenderer>([this, dt](AnimatedSpriteRenderer* r, Ptr<ecs::Entity> entity) {
+					if (r->sprites->hasActive()) {
+						std::cout << r->sprites->active()->rect.size.toString() << "\n";
+						r->sprites->active()->update(dt);
+						r->shader->use();
+						r->shader->setMVP(
+							Mat4::Translation(
+								entity->transform->position + r->sprites->active()->rect.pos.resize<3>()) * Mat4::Rotation(entity->transform->rotation) * Mat4::Scale(r->sprites->active()->rect.size.resize<3>()),
+							scene->viewMat,
+							scene->projMat
+						);
+						r->sprites->active()->draw(r->shader);
+						glCheckError();
+					}
+
 				});
 			}
 		};

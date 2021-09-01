@@ -18,6 +18,7 @@ namespace hagame {
 			std::optional<Ptr<StateType>> _active;
 			std::function<void(StateType*)> _onDeactivate;
 			std::function<void(StateType*)> _onActivate;
+			String _activeName;
 		public:
 
 			StateManager() : _states(Map<String, Ptr<StateType>>()), _active(std::nullopt), _onActivate([](StateType* s) {}), _onDeactivate([](StateType* s) {}) {}
@@ -55,8 +56,8 @@ namespace hagame {
 				if (!has(stateName)) {
 					throw new Exception("Requested state does not exist");
 				}
-
-				_active = _states[stateName];
+				if (_activeName != stateName)
+					_active = _states[stateName];
 			}
 
 			void activate(String stateName) {
@@ -65,13 +66,18 @@ namespace hagame {
 					throw new Exception("Requested state does not exist");
 				}
 
-				if (hasActive()) {
-					_onDeactivate(active());
-				}
+				if (_activeName != stateName) {
 
-				_active = _states[stateName];
+					std::cout << stateName << "\n";
 
-				_onActivate(active());
+					if (hasActive()) {
+						_onDeactivate(active());
+					}
+
+					_active = _states[stateName];
+
+					_onActivate(active());
+				}	
 			}
 
 			StateType* active() {
@@ -85,6 +91,12 @@ namespace hagame {
 			void forEach(std::function<void(Ptr<StateType>)> lambda) {
 				for (auto& [key, state] : _states) {
 					lambda(state);
+				}
+			}
+
+			void forEach(std::function<void(String, Ptr<StateType>)> lambda) {
+				for (auto& [key, state] : _states) {
+					lambda(key, state);
 				}
 			}
 		};

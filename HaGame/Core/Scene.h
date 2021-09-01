@@ -33,7 +33,7 @@ namespace hagame {
 
 			if (foundCamera) {
 				viewMat = activeCamera->getViewMatrix(activeCameraEntity->transform.get());
-				projMat = activeCamera->getProjMatrix();
+				projMat = activeCamera->getProjMatrix(activeCameraEntity->transform.get());
 			}
 			
 		}
@@ -41,11 +41,17 @@ namespace hagame {
 	protected:
 		friend class Game;
 
+		virtual void onSceneInit() {}
 		virtual void onSceneBeforeActivate() {}
 		virtual void onSceneActivate() {}
 		virtual void onSceneAfterActivate() {}
 		virtual void onSceneUpdate(double dt) {}
 		virtual void onSceneDeactivate() {}
+
+		void initialize() {
+			onSceneInit();
+			ecs.systems.initAll();
+		}
 
 		void activate() {
 			timer.reset();
@@ -80,7 +86,7 @@ namespace hagame {
 
 		ecs::ECS ecs;
 		Ptr<ecs::Entity> activeCameraEntity;
-		graphics::Camera* activeCamera;
+		Ptr<graphics::Camera> activeCamera;
 		Mat4 viewMat;
 		Mat4 projMat;
 		Mat4 uiProjMat;
@@ -101,6 +107,10 @@ namespace hagame {
 
 		Ptr<ecs::Entity> addEntity() {
 			return ecs.entities.add();
+		}
+
+		void removeEntity(Ptr<ecs::Entity> entity) {
+			ecs.entities.remove(entity);
 		}
 	};
 }

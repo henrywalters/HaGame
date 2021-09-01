@@ -22,6 +22,11 @@
 
 namespace hagame {
 	namespace utils {
+
+		bool DEFAULT_FILE_SORT(std::string a, std::string b) {
+			return a < b;
+		}
+
 		class FileSystem {
 		public:
 
@@ -39,7 +44,9 @@ namespace hagame {
 			File getFile(std::string path);
 			File getGlobalFile(std::string path);
 			std::string readFile(std::string path);
-			std::vector<std::string> listFiles(std::string path);
+			std::vector<std::string> listAll(std::string path, std::function<bool(std::string fileA, std::string fileB)> compFn = DEFAULT_FILE_SORT);
+			std::vector<std::string> listFiles(std::string path, std::function<bool(std::string fileA, std::string fileB)> compFn = DEFAULT_FILE_SORT);
+			std::vector<std::string> listDirs(std::string path, std::function<bool(std::string fileA, std::string fileB)> compFn = DEFAULT_FILE_SORT);
 
 			File getFileDialog();
 
@@ -50,6 +57,15 @@ namespace hagame {
 			bool isGlobalFile(std::string path);
 			bool isFile(std::string path);
 			bool isDir(std::string path);
+
+			bool containsExtension(std::string ext, std::string path = "");
+
+			void goToParent();
+
+			static std::string GetFileName(std::string path);
+			static std::string GetFile(std::string path);
+			static std::string GetFileExtension(std::string path);
+
 		};
 	}
 }

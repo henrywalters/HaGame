@@ -49,6 +49,22 @@ using UniqPtr = std::unique_ptr<T>;
 template <class T>
 using Array = std::vector<T>;
 
+template <class T>
+bool hasElement(Array<T> arr, T el) {
+	for (T item : arr) {
+		if (item == el) return true;
+	}
+	return false;
+}
+
+template <class T>
+using Set = std::set<T>;
+
+template <class T>
+bool hasKey(Set<T> set, T key) {
+	return set.find(key) != set.end();
+}
+
 #ifndef toStr
 #define toStr(value) std::to_string(value)
 #endif
@@ -77,6 +93,8 @@ using Queue = std::deque<T>;
 // Math aliases
 const float EPSILON = 0.1f;
 const float PI = 3.141592f;
+const float SQRT_2 = 1.414213;
+const float SQRT_3 = 1.732051;
 const float DEG_TO_RAD = PI / 180.0f;
 const float RAD_TO_DEG = 180.0f / PI;
 

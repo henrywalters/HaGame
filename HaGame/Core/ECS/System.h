@@ -33,6 +33,8 @@ namespace hagame {
 			virtual String getSystemName() {
 				throw new std::exception("getSystemName unimplemented for this system");
 			}
+
+			virtual void onSystemInit() {}
 			virtual void onSystemStart() {}
 			virtual void onSystemBeforeUpdate(double dt) {}
 			virtual void onSystemUpdate(double dt) {}
@@ -51,6 +53,10 @@ namespace hagame {
 				for (auto entity : registry->view<T>()) {
 					lambda(&registry->get<T>(entity), scene->ecs.entities.getByEnttId(entity));
 				}
+			}
+
+			void init() {
+				onSystemInit();
 			}
 
 			void start() {

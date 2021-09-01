@@ -61,8 +61,16 @@ namespace hagame {
 				return buffer;
 			}
 
+			void resize(int maxSize) {
+				clear();
+				max = maxSize;
+				glBindBuffer(GL_ARRAY_BUFFER, id);
+				glBufferData(GL_ARRAY_BUFFER, sizeof(DataType) * maxSize, NULL, GL_DYNAMIC_DRAW);
+				glBindBuffer(GL_ARRAY_BUFFER, 0);
+			}
+
 			void canAssign(unsigned int index, size_t size) {
-				if (index > allocated) {
+				if (index > max) {
 					throw new std::exception("Can not assign data of this size to this index in buffer. Larger than allocated memory size");
 				}
 			}

@@ -195,3 +195,18 @@ hagame::graphics::Font* hagame::ResourceManager::getFont(String fontName) {
 	}
 	return fonts[fontName].get();
 }
+
+hagame::audio::Sample* hagame::ResourceManager::loadAudioSample(String sampleName, String filePath)
+{
+	Ptr<hagame::audio::Sample> sample = std::make_shared<hagame::audio::Sample>(fs->getFullPath(filePath));
+	audioSamples[sampleName] = sample;
+	return audioSamples[sampleName].get();
+}
+
+hagame::audio::Sample* hagame::ResourceManager::getAudioSample(String sampleName)
+{
+	if (!hasKey(audioSamples, sampleName)) {
+		throw new Exception("Audio sample does not exist");
+	}
+	return audioSamples[sampleName].get();
+}

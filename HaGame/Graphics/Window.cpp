@@ -36,7 +36,7 @@ void hagame::graphics::Window::initGL() {
 	glewGetErrorString(glewError);
 
 	//if (SDL_GL_SetSwapInterval(-1) < 0) {
-	//	throw new std::exception("Failed to set VSync");
+	// 	throw new std::exception("Failed to set VSync");
 	//}
 
 	glEnable(GL_DEBUG_OUTPUT);

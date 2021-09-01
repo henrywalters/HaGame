@@ -8,6 +8,8 @@
 #include "../Graphics/Image.h"
 #include "../Graphics/Mesh.h"
 #include "../Graphics/Font.h"
+#include "../Audio/Audio.h"
+#include "../Audio/Sample.h"
 
 namespace hagame {
 	class ResourceManager {
@@ -21,6 +23,7 @@ namespace hagame {
 		Map<String, Ptr<hagame::graphics::Mesh>> meshes;
 		Map<String, Ptr<hagame::utils::File>> files;
 		Map<String, Ptr<hagame::graphics::Font>> fonts;
+		Map<String, Ptr<hagame::audio::Sample>> audioSamples;
 
 		// Perform preprocessing steps on a shaders source code. For now, this just means resolving #include statements
 		String processShaderFile(hagame::utils::File file);
@@ -71,6 +74,9 @@ namespace hagame {
 
 
 		hagame::graphics::Font* getFont(String fontName);
+
+		hagame::audio::Sample* loadAudioSample(String sampleName, String filePath);
+		hagame::audio::Sample* getAudioSample(String sampleName);
 	};
 }
 

@@ -17,9 +17,9 @@ namespace hagame {
 			const long P2 = 19349663;
 			const long P3 = 83492791;
 
-			Map<long, Array<Ptr<DataType>>> map;
+			
 		public:
-
+			Map<long, Array<Ptr<DataType>>> map;
 			hagame::math::Vector<3, SpatialDataType> chunkSize;
 
 			SpatialMap(hagame::math::Vector<3, SpatialDataType> _chunkSize) : map(Map<long, Array<Ptr<DataType>>>()), chunkSize(_chunkSize) {}
@@ -40,9 +40,9 @@ namespace hagame {
 				return map[hashPosition(position)];
 			}
 
-			Array<Ptr<DataType>> get(hagame::math::Ray ray) {
+			//Array<Ptr<DataType>> get(hagame::math::Ray ray) {
 
-			}
+			//}
 
 			// Hashing function based on "Optimized Spatial Hashing for Collision Detection of Deformable Objects." Read more: http://www.beosil.com/download/CollisionDetectionHashing_VMV03.pdf
 			long hashPosition(hagame::math::Vector<3, SpatialDataType> position) {

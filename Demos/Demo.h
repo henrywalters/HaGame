@@ -24,7 +24,7 @@ public:
 		// scenes.setActive("fps");
 		scenes.setActive("ssh");
 
-		resources->setBasePath("../../../Assets");
+		resources->setBasePath("..\\..\\..\\Assets");
 
 		fpsSample.onFull = [this]() {
 			window->setTitle("HaGame Demo | " + std::to_string(fpsSample.average()) + " (" + std::to_string(fpsSample.stddev()) + "mu)");

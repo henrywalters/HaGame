@@ -126,7 +126,11 @@ endif()
 
 # Define options for searching SDL2_mixer Library in a custom path
 
-set(SDL2_MIXER_PATH "" CACHE STRING "Custom SDL2_mixer Library path")
+if (WIN32)
+    set(SDL2_MIXER_PATH "${CMAKE_CURRENT_LIST_DIR}/../extern/SDL2_mixer-2.0.4")
+endif()
+
+message(STATUS "SDL MIxer path: ${SDL2_MIXER_PATH}")
 
 set(_SDL2_MIXER_NO_DEFAULT_PATH OFF)
 if(SDL2_MIXER_PATH)

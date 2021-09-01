@@ -5,11 +5,14 @@
 
 #include "./Scenes/MainMenu.h"
 #include "./Scenes/Sandbox.h"
+#include "./Scenes/MapBuilder.h"
 
 #include "./Systems/ResourceSystem.h"
+#include "./Systems/PlayerSystem.h"
 
 const String MAIN_MENU = "main_menu";
 const String SANDBOX = "sandbox";
+const String MAP_BUILDER = "map_builder";
 
 class Goom2 : public hagame::Game {
 public:
@@ -17,26 +20,27 @@ public:
 	hagame::utils::Timer timer;
 	hagame::math::Sample<double, 60> fpsSample;
 
-	Goom2(hagame::graphics::Window* window) : Game(window) {}
-
-	void onGameStart() {
+	Goom2(hagame::graphics::Window* window) : Game(window) {
 
 		resources->setBasePath("../../../Assets");
+
+		addScene<MainMenu>(MAIN_MENU);
+		addScene<Sandbox>(SANDBOX);
+		// addScene<MapBuilder>(MAP_BUILDER);
+
+		scenes.forEach([this](Ptr<hagame::Scene> scene) {
+			scene->addSystem<ResourceSystem>();
+			scene->addSystem<hagame::graphics::RenderSystem>();
+			scene->addSystem<hagame::physics::CollisionSystem>();
+		});
+	}
+
+	void onGameStart() {
 
 		fpsSample.onFull = [this]() {
 			window->setTitle("Goom2: Back to hell, again | " + std::to_string(fpsSample.average()) + " (" + std::to_string(fpsSample.stddev()) + "mu)");
 			fpsSample.clear();
 		};
-
-		// Add scenes
-
-		addScene<MainMenu>(MAIN_MENU);
-		addScene<Sandbox>(SANDBOX);
-
-		scenes.forEach([this](Ptr<hagame::Scene> scene) {
-			scene->addSystem<ResourceSystem>();
-			scene->addSystem<hagame::graphics::RenderSystem>();
-		});
 
 		scenes.activate(SANDBOX);
 	}

@@ -16,12 +16,12 @@ namespace hagame {
 			}
 
 			void onSystemUpdate(double dt) {
-				forEach<RigidBody>([this, dt](RigidBody* rb, Ptr<ecs::Entity> entity) {
+				/*forEach<RigidBody>([this, dt](RigidBody* rb, Ptr<ecs::Entity> entity) {
 					rb->applyGlobalGravity();
 					rb->update(dt);
 
-					auto aabb = hagame::math::AABB(entity->getComponent<Collider>()->boundingCube);
-					aabb.center = entity->getComponent<Collider>()->aabb.center;
+					//auto aabb = hagame::math::AABB(entity->getComponent<Collider>()->boundingCube);
+					//aabb.center = entity->getComponent<Collider>()->aabb.center;
 					auto obb = aabb.getOBB();
 					obb.orientation = Mat4::Rotation(entity->transform->rotation);
 
@@ -39,12 +39,12 @@ namespace hagame {
 					
 					for (int i = 0; i < 3; i++) {
 						aabb.center += rb->vel[i] * dt;
-						auto aabbCollisions = game->collisions.queryAABB(aabb);
+						//auto aabbCollisions = game->collisions.queryAABB(aabb);
 						for (auto coll : aabbCollisions) {
 							if (coll->id != entity->id) {
 								rb->vel[i] = 0;
 								std::cout << "Checking OBB intersection\n";
-								auto otherObb = coll->getComponent<Collider>()->aabb.getOBB();
+								//auto otherObb = coll->getComponent<Collider>()->aabb.getOBB();
 								otherObb.orientation = Mat4::Rotation(coll->transform->rotation);
 								if (obb.isIntersecting(otherObb)) {
 									rb->vel[i] = 0;
@@ -63,6 +63,7 @@ namespace hagame {
 
 					//std::cout << "Cells to check: " << cellsToCheck.size() << std::endl;
 				});
+				*/
 			}
 		};
 	}

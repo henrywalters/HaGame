@@ -15,6 +15,10 @@ public:
 		game->resources->loadTexture("crosshair", "Textures/crosshair.png");
 		game->resources->loadTexture("skull", "Textures/skull1.png");
 		game->resources->loadTexture("circle", "Textures/circle.png");
+		game->resources->loadTexture("missle", "Textures/missle.png");
+		game->resources->loadTexture("plasma_ball", "Textures/plasma_ball.png");
+		game->resources->loadTexture("crate", "Textures/crate.jpg");
+		game->resources->loadTexture("bullethole", "Textures/bullethole.png");
 	}
 
 	void loadShaders() {
@@ -39,7 +43,7 @@ public:
 		game->resources->loadMesh("cube", hagame::graphics::CubeMesh);
 	}
 
-	void onSystemStart() {
+	void onSystemInit() {
 		std::cout << "Loading resources..." << std::endl;
 		loadTextures();
 		loadShaders();

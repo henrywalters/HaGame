@@ -212,6 +212,11 @@ namespace hagame {
 				return copy;
 			}
 
+			// Return vect projected onto this vector
+			Vector proj(Vector vect) {
+				return vect * (dot(vect) / vect.dot(vect));
+			}
+
 			// Cast vector from type T to V
 			template <class V>
 			Vector<size, V> cast() {

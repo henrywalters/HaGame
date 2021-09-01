@@ -67,6 +67,10 @@ namespace hagame {
 				}
 			}
 
+			void initAll() {
+				forAll([](Ptr<ecs::System> system) { system->init();  });
+			}
+
 			void startAll() {
 				forAll([](Ptr<ecs::System> system) { system->start(); });
 			}

@@ -42,3 +42,19 @@ String stringJoin(Array<String> strs, String delim)
 	}
 	return out;
 }
+
+String stringReplace(String str, char replace, String with)
+{
+	String out = "";
+	for (int i = 0; i < str.size(); i++) {
+		if (str[i] == replace) {
+			for (int j = 0; j < with.size(); j++) {
+				out += with[j];
+			}
+		}
+		else {
+			out += str[i];
+		}
+	}
+	return out;
+}

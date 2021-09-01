@@ -29,7 +29,7 @@ public:
 		auto player = addEntity();
 		player->addComponent<PlayerMovement>();
 		auto playerSprite = player->addComponent<hagame::graphics::SpriteRenderer>();
-		playerSprite->sprite = hagame::graphics::Sprite(game->resources->getTexture("circle"), Rect(Vec2::Zero(), Vec2(25.0f)));
+		playerSprite->sprite = new hagame::graphics::Sprite(game->resources->getTexture("circle"), Rect(Vec2::Zero(), Vec2(25.0f)));
 		playerSprite->shader = game->resources->getShaderProgram("sprite");
 		playerSprite->projection = orth;
 		player->transform->move(Vec3({ game->window->size[0] / 2, game->window->size[1] / 2, 0 }));

@@ -17,7 +17,7 @@ namespace hagame {
 				return Mat4::LookAt(transform->position, transform->position + transform->face(), Vec3::Top());
 			}
 
-			Mat4 getProjMatrix() {
+			Mat4 getProjMatrix(hagame::Transform* transform) {
 				return Mat4::Perspective(fov, aspectRatio, zNear, zFar);
 			}
 		};

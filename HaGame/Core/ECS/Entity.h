@@ -17,6 +17,8 @@ namespace hagame {
 
 		public:
 
+			Set<String> tags;
+
 			entt::basic_registry<uint32_t>* registry;
 
 			Ptr<Entity> parent;
@@ -32,9 +34,31 @@ namespace hagame {
 				name = "Entity_" + _id;
 			}
 
+			~Entity() {
+				registry->destroy(entt_id);
+			}
+
+			void addTag(String tag) {
+				tags.insert(tag);
+			}
+
+			// Check if entity has the given tag
+			bool hasTag(String tag) {
+				return hasKey(tags, tag);
+			}
+
+			// Check if entity has at least one of the tags
+			bool hasTag(Array<String> tags) {
+				for (String tag : tags) {
+					if (hasTag(tag)) return true;
+				}
+				return false;
+			}
+
 			template <class T>
 			T* addComponent() {
-				return &registry->emplace_or_replace<T>(entt_id);
+				T* component = &registry->emplace<T>(entt_id);
+				return component;
 			}
 
 			template <class T>
