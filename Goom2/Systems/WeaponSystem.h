@@ -6,6 +6,7 @@
 #include "./../Components/Projectile.h"
 #include "./../Components/Weapon.h"
 #include "./../Components/Inventory.h"
+#include "./../Components/Health.h"
 
 struct BulletHitEvent {
 	uint32_t targetId;
@@ -25,6 +26,10 @@ public:
 
 		if (!weapon->fire(true)) {
 			return;
+		}
+
+		if (weapon->weapon.shotSound.has_value()) {
+			game->resources->getAudioSample(weapon->weapon.shotSound.value())->play();
 		}
 
 		for (int i = 0; i < weapon->weapon.bulletsPerShot; i++) {
@@ -82,12 +87,21 @@ public:
 					//	Vec2(5.0f)
 					//), hagame::graphics::Color::green(), game->resources->getShaderProgram("color"));
 
-					auto bulletHole = scene->addEntity();
+					auto bulletHole = scene->addChild(raycastHit.value());
 					bulletHole->transform->setPosition(ray.getPointOnLine(t));
 					bulletHole->transform->position[2] = 1.0f;
 					auto holeR = bulletHole->addComponent<hagame::graphics::SpriteRenderer>();
 					holeR->sprite = std::make_shared<hagame::graphics::Sprite>(game->resources->getTexture("bullethole"), Rect(Vec2::Zero(), Vec2(8.0f)));
 					holeR->shader = game->resources->getShaderProgram("sprite");
+
+					auto health = raycastHit.value()->getComponent<Health>();
+					if (health != NULL) {
+						health->damage(weapon->weapon.bullet.value().damage);
+						if (!health->isAlive() && health->destroyOnDead) {
+							std::cout << "Killing " << raycastHit.value()->id << "\n";
+							scene->removeEntity(raycastHit.value());
+						}
+					}
 				}
 			}
 		}
@@ -119,15 +133,12 @@ public:
 					t
 				)) {
 					entity->transform->move(bullet->direction.resize<3>() * bullet->bullet.speed * dt * t);
-					if (t == 0) {
-						scene->removeEntity(entity);
-					}
-					
+					scene->removeEntity(entity);
 				}
 				else {
 					entity->transform->move(bullet->direction.resize<3>() * bullet->bullet.speed * dt);
 
-					if (bullet->aliveFor >= 2.0) {
+					if (bullet->aliveFor >= 5.0) {
 						scene->removeEntity(entity);
 					}
 				}

@@ -26,7 +26,7 @@ namespace hagame {
 				game->collisions.entityMap.clear();
 				forEach<Collider>([this, dt](Collider* c, Ptr<ecs::Entity> entity) {
 					if (c->active) {
-						game->collisions.entityMap.insert(entity->transform->position, entity);
+					game->collisions.entityMap.insert(entity->transform->position, entity);
 
 						/*if (c->dynamic) {
 							// TODO: add overloads for transform bounding box with AABB to prevent conversion between cube and AABB.

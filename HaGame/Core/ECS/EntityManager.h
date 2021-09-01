@@ -47,6 +47,10 @@ namespace hagame {
 			}
 
 			void remove(Ptr<Entity> entity) {
+				for (auto child : entity->children) {
+					child->parent.reset();
+					remove(child);
+				}
 				enttMap[entity->entt_id].reset();
 				idMap[entity->id].reset();
 				entity.reset();

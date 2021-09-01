@@ -21,6 +21,7 @@ struct WeaponDef {
 	float fireRate;
 	bool automatic;
 	std::string animation;
+	Optional<String> shotSound;
 };
 
 struct Weapon {
@@ -91,7 +92,8 @@ const WeaponDef HANDGUN_DEF{
 	120,
 	0.1f,
 	false,
-	"handgun"
+	"handgun",
+	"handgun_shot"
 };
 
 const WeaponDef SHOTGUN_DEF{
@@ -101,9 +103,10 @@ const WeaponDef SHOTGUN_DEF{
 	10,
 	8,
 	42,
-	0.5f,
+	0.2f,
 	false,
-	"shotgun"
+	"shotgun",
+	"shotgun_shot"
 };
 
 const WeaponDef RIFLE_DEF{
@@ -113,9 +116,10 @@ const WeaponDef RIFLE_DEF{
 	1,
 	30,
 	240,
-	0.1f,
+	0.15f,
 	true,
-	"rifle"
+	"rifle",
+	"rifle_shot"
 };
 
 const WeaponDef PLASMA_RIFLE_DEF{
@@ -125,9 +129,10 @@ const WeaponDef PLASMA_RIFLE_DEF{
 	1,
 	30,
 	120,
-	0.25f,
+	0.2f,
 	true,
-	"rifle"
+	"rifle",
+	"plasma_shot"
 };
 
 const WeaponDef ROCKET_LAUNCHER_DEF{
@@ -139,7 +144,8 @@ const WeaponDef ROCKET_LAUNCHER_DEF{
 	8,
 	2.0f,
 	false,
-	"rifle"
+	"rifle",
+	std::nullopt
 };
 
 #endif

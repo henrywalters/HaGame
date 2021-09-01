@@ -52,6 +52,7 @@
 #include "Graphics/Components/PixelGridRenderer.h"
 #include "Graphics/Components/SpriteRenderer.h"
 #include "Graphics/Components/AnimatedSpriteRenderer.h"
+#include "Graphics/Components/BoxRenderer.h"
 #include "Graphics/Systems/RenderSystem.h"
 #include "Graphics/Systems/CameraSystem.h"
 #include "Graphics/Systems/LightingSystem.h"

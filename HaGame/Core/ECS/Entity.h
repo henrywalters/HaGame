@@ -67,8 +67,13 @@ namespace hagame {
 			}
 
 			template <class T>
+			bool hasComponent() {
+				return registry->has<T>(entt_id);
+			}
+
+			template <class T>
 			T* getComponent() {
-				return &registry->get<T>(entt_id);
+				return hasComponent<T>() ? &registry->get<T>(entt_id) : NULL;
 			}
 			
 		};

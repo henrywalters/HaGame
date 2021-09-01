@@ -8,22 +8,34 @@
 #include "./../Components/Projectile.h"
 #include "./../Components/Inventory.h"
 #include "./../Systems/WeaponSystem.h"
+#include "./../Components/Health.h"
 
 const Array<String> map = {
-	"########################",
-	"#                      #",
-	"#                      #",
-	"#                      #",
-	"#                      #",
-	"#                      #",
-	"#                      #",
-	"#                      #",
-	"# # # # # # #          ",
-	"#                      #",
-	"#                      #",
-	"#                      #",
-	"#                      #",
-	"########################"
+	"################################################",
+	"#                                              #",
+	"#                                              #",
+	"#                                              #",
+	"#                                              #",
+	"#                                              #",
+	"#                                              #",
+	"#                                              #",
+	"#                                              #",
+	"#                                              #",
+	"#                                              #",
+	"#                                              #",
+	"#                                              #",
+	"########################  ######################",
+	" T T T                                         #",
+	"  T T T                                        #",
+	" T T T           ######                        #",
+	"  T T T          ######                        #",
+	" T T T           ######                        #",
+	"  T T T          ######                        #",
+	" T T T           ######                        #",
+	" T T T           ######                        #",
+	"  T T T          ######                        #",
+	"  T T T          ######                        #",
+	"################################################"
 };
 
 const float CUBE_SIZE = 75.0f;
@@ -51,12 +63,12 @@ public:
 		return "PlayerSystem";
 	}
 
-	void addTarget(Vec2 pos, Vec2 size) {
+	void addWall(Vec2 pos, Vec2 size) {
 		auto target = scene->addEntity();
 		auto targetRenderer = target->addComponent<hagame::graphics::SpriteRenderer>();
 		targetRenderer->shader = game->resources->getShaderProgram("sprite");
 		targetRenderer->sprite = std::make_shared<hagame::graphics::Sprite>(
-			game->resources->getTexture("crate"),
+			game->resources->getTexture("stones"),
 			Rect(size * 0.5, size)
 			);
 		target->transform->setPosition(pos.resize<3>() + Vec3({0, 0, 0.0f}));
@@ -65,18 +77,29 @@ public:
 		targetCollider->boundingCube = Cube(0.0f, size.resize<3>());
 	}
 
+	void addTarget(Vec2 pos, float radius) {
+		auto target = scene->addEntity();
+		target->addComponent<Health>();
+		auto targetRenderer = target->addComponent<hagame::graphics::SpriteRenderer>();
+		targetRenderer->shader = game->resources->getShaderProgram("sprite");
+		targetRenderer->sprite = std::make_shared<hagame::graphics::Sprite>(
+			game->resources->getTexture("target"),
+			Rect(Vec2::Zero(), Vec2(radius * 2.0))
+			);
+		target->transform->setPosition(pos.resize<3>() + Vec3({ 0, 0, 0.0f }));
+		auto targetCollider = target->addComponent<hagame::physics::Collider>();
+		targetCollider->dynamic = false;
+		targetCollider->type = hagame::physics::ColliderType::SphereCollider;
+		targetCollider->boundingSphere = Sphere(Vec3::Zero(), radius);
+	}
+
 	void onSystemInit() {
 
 		game->input.keyboardMouse.hideCursor();
 
 		std::cout << "Initializing player system\n";
 
-		for (int i = 0; i < map.size(); i++) {
-			for (int j = 0; j < map[i].size(); j++) {
-				if (map[i][j] == '#') 
-					addTarget(Vec2(CUBE_SIZE).prod(Vec2({ (float)j, (float)i })), Vec2(CUBE_SIZE));
-			}
-		}
+		
 
 		// addTarget(Vec2(0.0f), Vec2(200.0f));
 
@@ -84,9 +107,28 @@ public:
 		player->addTag("player");
 		playerController = player->addComponent<PlayerController>();
 		inventory = player->addComponent<Inventory>();
+		/*
+		auto healthBar = scene->addChild(player);
+		healthBar->transform->setPosition(Vec3({ 0, 50, 0 }));
+		auto healthRenderer = healthBar->addComponent<hagame::graphics::BoxRenderer>();
+		healthRenderer->box = Rect(Vec2({ -25, -10 }), Vec2({ 50, 20 }));
+		healthRenderer->fillColor = hagame::graphics::Color::red();
+		healthRenderer->shader = game->resources->getShaderProgram("color");
+		*/
 
 		auto camera = player->addComponent<hagame::graphics::CameraComponent>();
 		camera->camera = std::make_shared<hagame::graphics::OrthographicCamera>(game->window->size);
+
+		for (int i = 0; i < map.size(); i++) {
+			for (int j = 0; j < map[i].size(); j++) {
+				if (map[i][j] == '#')
+					addWall(Vec2(CUBE_SIZE).prod(Vec2({ (float)j, (float)map.size() - i })), Vec2(CUBE_SIZE));
+				else if (map[i][j] == 'P')
+					player->transform->setPosition(Vec3(CUBE_SIZE).prod(Vec3({ (float)j, (float)i, 0.0 })));
+				else if (map[i][j] == 'T')
+					addTarget(Vec2(CUBE_SIZE).prod(Vec2({ (float)j, (float)map.size() - i })), 30.0f);
+			}
+		}
 
 		inventory->pickupWeapon(HANDGUN);
 		inventory->pickupWeapon(PLASMA_RIFLE);
@@ -103,6 +145,7 @@ public:
 		playerCollider->shader = game->resources->getShaderProgram("color");
 		playerCollider->type = hagame::physics::ColliderType::SphereCollider;
 		playerCollider->boundingSphere = Sphere(Vec3::Zero(), (25.0f));
+		playerCollider->ignoreTags.push_back("bullet");
 
 		game->resources->getFileSystem()->forEachFile("Textures/TopDownShooter", [this](String aPath, String aName) {
 			game->resources->getFileSystem()->forEachFile(aPath, [this, aName](String bPath, String bName) {
@@ -115,7 +158,6 @@ public:
 					return aNum < bNum;
 				});
 
-				std::cout << aName << "\n";
 
 				if (aName == "feet") {
 
@@ -188,7 +230,7 @@ public:
 		pixelShader->setMVP(Mat4::Identity(), Mat4::Identity(), scene->projMat);
 		// hagame::graphics::drawLine(hagame::graphics::Line(player->transform->position, mousePos.resize<3>(), hagame::graphics::Color::blue()), pixelShader);
 
-		hagame::math::Ray ray = hagame::math::Ray(player->transform->position, (mousePos.resize<3>() - player->transform->position));
+		hagame::math::Ray ray = hagame::math::Ray(player->transform->position, (mousePos.resize<3>() - player->transform->position) * 1000000);
 
 		hagame::graphics::drawRect(Rect(
 			mousePos.resize<2>() - Vec2(5.0f),
@@ -198,10 +240,22 @@ public:
 		auto rayHit = game->collisions.raycast(player, ray, t, {"bullet"});
 		
 		if (rayHit.has_value()) {
-			hagame::graphics::drawRect(Rect(
-				ray.getPointOnLine(t).resize<2>() - Vec2(2.5f),
-				Vec2(5.0f)
+
+			auto point = ray.getPointOnLine(t).resize<2>();
+
+			auto spread = inventory->activeWeapon().value()->weapon.bullet.value().spread;
+			auto size = tan(spread) * (player->transform->position.resize<2>() - point).magnitude();
+
+			/*hagame::graphics::drawRect(Rect(
+				point - Vec2(size / 2),
+				Vec2(size)
 			), hagame::graphics::Color::red(), game->resources->getShaderProgram("color"));
+			*/
+			hagame::graphics::drawRect(Rect(
+				point,
+				Vec2(1)
+			), hagame::graphics::Color::red(), game->resources->getShaderProgram("color"));
+
 		}
 
 		timer.reset();

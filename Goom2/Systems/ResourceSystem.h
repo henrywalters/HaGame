@@ -18,7 +18,13 @@ public:
 		game->resources->loadTexture("missle", "Textures/missle.png");
 		game->resources->loadTexture("plasma_ball", "Textures/plasma_ball.png");
 		game->resources->loadTexture("crate", "Textures/crate.jpg");
+		game->resources->loadTexture("stones", "Textures/stones.jpg");
 		game->resources->loadTexture("bullethole", "Textures/bullethole.png");
+		game->resources->loadTexture("target", "Textures/target.png");
+		game->resources->loadAudioSample("shotgun_shot", "Audio/shotgun_shot.wav");
+		game->resources->loadAudioSample("plasma_shot", "Audio/plasma_shot.wav");
+		game->resources->loadAudioSample("handgun_shot", "Audio/glock_shot.wav");
+		game->resources->loadAudioSample("rifle_shot", "Audio/ak47_shot.wav");
 	}
 
 	void loadShaders() {

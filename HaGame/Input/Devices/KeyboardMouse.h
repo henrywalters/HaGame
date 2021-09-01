@@ -158,7 +158,6 @@ namespace hagame {
 							updateBtnState(mouse.middle, mouse.middlePressed, true);
 						}
 						else if (event.button.button == SDL_BUTTON_LEFT) {
-							std::cout << "Left Down\n";
 							updateBtnState(mouse.left, mouse.leftPressed, true);
 						}
 						else if (event.button.button == SDL_BUTTON_RIGHT) {
@@ -170,7 +169,6 @@ namespace hagame {
 							updateBtnState(mouse.middle, mouse.middlePressed, false);
 						}
 						else if (event.button.button == SDL_BUTTON_LEFT) {
-							std::cout << "Left up\n";
 							updateBtnState(mouse.left, mouse.leftPressed, false);
 						}
 						else if (event.button.button == SDL_BUTTON_RIGHT) {

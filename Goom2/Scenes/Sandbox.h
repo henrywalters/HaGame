@@ -5,6 +5,7 @@
 #include "./Components/PlayerController.h"
 #include "./../Systems/PlayerSystem.h"
 #include "./../Systems/WeaponSystem.h"
+#include "./../Systems/EnemySystem.h"
 
 class Sandbox : public hagame::Scene {
 
@@ -13,6 +14,7 @@ class Sandbox : public hagame::Scene {
 
 		addSystem<PlayerSystem>();
 		addSystem<WeaponSystem>();
+		addSystem<EnemySystem>();
 	}
 };
 

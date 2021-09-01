@@ -28,16 +28,16 @@ const Bullet HANDGUN_BULLET{
 };
 
 const Bullet SHOTGUN_PELLET{
-	5.0f,
+	8.0f,
 	1000.0f,
-	20.0f * DEG_TO_RAD,
+	15.0f * DEG_TO_RAD,
 	0.0f,
 	false,
 	std::nullopt
 };
 
 const Bullet RIFLE_BULLET{
-	25.0f,
+	17.5f,
 	1000.0f,
 	5.0f * DEG_TO_RAD,
 	0.0f,
@@ -46,7 +46,7 @@ const Bullet RIFLE_BULLET{
 };
 
 const Bullet PLASMA_BLOB{
-	50.0f,
+	20.0f,
 	1000.0f,
 	2.5f * DEG_TO_RAD,
 	0.0f,
@@ -58,7 +58,7 @@ const Bullet PLASMA_BLOB{
 };
 
 const Bullet ROCKET{
-	20.0f,
+	100.0f,
 	500.0f,
 	0.0f * DEG_TO_RAD,
 	20.0f,

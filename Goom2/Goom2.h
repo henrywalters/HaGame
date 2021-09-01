@@ -9,6 +9,7 @@
 
 #include "./Systems/ResourceSystem.h"
 #include "./Systems/PlayerSystem.h"
+#include "./Systems/EnemySystem.h"
 
 const String MAIN_MENU = "main_menu";
 const String SANDBOX = "sandbox";

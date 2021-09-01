@@ -23,6 +23,10 @@ namespace hagame {
 					Mix_FreeChunk(data);
 				}
 			}
+
+			void play() {
+				Mix_PlayChannel(-1, data, 0);
+			}
 		};
 	}
 }
