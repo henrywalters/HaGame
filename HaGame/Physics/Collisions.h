@@ -69,37 +69,35 @@ namespace hagame {
 			Optional<Ptr<ecs::Entity>> raycast(Ptr<ecs::Entity> origin, math::Ray ray, float& t, Array<String> ignoreTags = {}) {
 				Optional<Ptr<ecs::Entity>> entity = std::nullopt;
 				float currT;
-				for (auto& [key, neighborhood] : entityMap.map)
-				{
-					for (auto neighbor : neighborhood) {
+				for (auto neighbor : entityMap.get(origin->transform->position)) {
 
-						if (neighbor->id == origin->id || (ignoreTags.size() > 0 && neighbor->hasTag(ignoreTags)))
-							continue;
+					if (neighbor->id == origin->id || (ignoreTags.size() > 0 && neighbor->hasTag(ignoreTags)))
+						continue;
 
-						auto nCollider = neighbor->getComponent<Collider>();
+					auto nCollider = neighbor->getComponent<Collider>();
 
-						if (nCollider->type == ColliderType::BoxCollider) {
-							auto cube = nCollider->boundingCube.value();
-							cube.pos += neighbor->transform->position;
-							if (ray.checkCube(cube, currT) && (currT < t || !entity.has_value())) {
-								t = currT;
-								entity = neighbor;
-							}
+					if (nCollider->type == ColliderType::BoxCollider) {
+						auto cube = nCollider->boundingCube.value();
+						cube.pos += neighbor->transform->position;
+						if (ray.checkCube(cube, currT) && (currT < t || !entity.has_value())) {
+							t = currT;
+							entity = neighbor;
 						}
-						else if (nCollider->type == ColliderType::SphereCollider) {
-							auto sphere = nCollider->boundingSphere.value();
-							sphere.center += neighbor->transform->position;
-							if (ray.checkSphere(sphere, currT) && (currT < t || !entity.has_value())) {
-								t = currT;
-								entity = neighbor;
-							}
+					}
+					else if (nCollider->type == ColliderType::SphereCollider) {
+						auto sphere = nCollider->boundingSphere.value();
+						sphere.center += neighbor->transform->position;
+						if (ray.checkSphere(sphere, currT) && (currT < t || !entity.has_value())) {
+							t = currT;
+							entity = neighbor;
 						}
 					}
 				}
+				
 				return entity;
 			}
 
-			bool checkCollisions(Ptr<ecs::Entity> entity, Collider* collider, Vec3 velocity, double dt, float &t) {
+			Optional<Ptr<ecs::Entity>> checkCollisions(Ptr<ecs::Entity> entity, Collider* collider, Vec3 velocity, double dt, float &t) {
 				if (collider != NULL && collider->dynamic && velocity.magnitude() > 0) {
 					auto bs = getBoundingSphere(entity, collider);
 					auto velNorm = velocity.normalized();
@@ -126,11 +124,12 @@ namespace hagame {
 
 					bool collided = false;
 					float tMin;
+					Ptr<ecs::Entity> collidedWith;
 					float collisionT;
-					for (auto& [key, neighborhood] : entityMap.map)
-					{
-						//for (auto neighbor : entityMap.get(entity->transform->position + velocity * dt)) {
-						for (auto neighbor : neighborhood) {
+					//for (auto& [key, neighborhood] : entityMap.map)
+					//{
+					for (auto neighbor : entityMap.get(entity->transform->position + velocity * dt)) {
+						//for (auto neighbor : neighborhood) {
 							if (neighbor->id == entity->id || hasElement(collider->ignoreEntities, neighbor->id) || neighbor->hasTag(collider->ignoreTags))
 								continue;
 
@@ -145,6 +144,7 @@ namespace hagame {
 										// TODO: add fine grain collision check here but it seems to work great.
 										if (collisionT < tMin || !collided) {
 											tMin = collisionT;
+											collidedWith = neighbor;
 											collided = true;
 										}
 									}
@@ -158,22 +158,27 @@ namespace hagame {
 									if (rays[i].checkSphere(sphere, collisionT)) {
 										if (collisionT < tMin || !collided) {
 											tMin = collisionT;
+											collidedWith = neighbor;
 											collided = true;
 										}
 									}
 								}
 							}
-						}
+						//}
 					}
 					
 
 					if (collided) {
 						t = tMin;
-						return true;
+						CollisionEvent e;
+						e.collider = entity;
+						e.target = collidedWith;
+						events.emit(e);
+						return collidedWith;
 					}
 				}
 
-				return false;
+				return std::nullopt;
 			}
 		};
 	}

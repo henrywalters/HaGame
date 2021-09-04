@@ -53,7 +53,7 @@ const Bullet PLASMA_BLOB{
 	false,
 	ProjectileDef{
 		"plasma_ball",
-		Vec2({15, 15})
+		Vec2({10, 10})
 	}
 };
 

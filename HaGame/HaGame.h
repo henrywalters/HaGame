@@ -3,6 +3,11 @@
 
 #pragma once
 
+#ifndef HAGAME_H
+#define HAGAME_H
+
+#define WITH_SDL2
+
 #include <iostream>
 
 #include "Utils/Memory.h"
@@ -111,6 +116,37 @@
 #include "Vendor/imgui/backends/imgui_impl_opengl3.h"
 #include "Vendor/imgui/backends/imgui_impl_opengl3.cpp"
 
+// #include "Vendor/soloud/soloud.h"
+// #include "Vendor/soloud/soloud_wav.h"
+#include "Vendor/soloud/soloud.cpp"
+#include "Vendor/soloud/soloud_sdl2.cpp"
+#include "Vendor/soloud/soloud_sdl2_dll.c"
+#include "Vendor/soloud/soloud_audiosource.cpp"
+#include "Vendor/soloud/soloud_bus.cpp"
+#include "Vendor/soloud/soloud_core_3d.cpp"
+#include "Vendor/soloud/soloud_core_basicops.cpp"
+#include "Vendor/soloud/soloud_core_faderops.cpp"
+#include "Vendor/soloud/soloud_core_filterops.cpp"
+#include "Vendor/soloud/soloud_core_getters.cpp"
+#include "Vendor/soloud/soloud_core_setters.cpp"
+#include "Vendor/soloud/soloud_core_voicegroup.cpp"
+#include "Vendor/soloud/soloud_core_voiceops.cpp"
+#include "Vendor/soloud/soloud_fader.cpp"
+#include "Vendor/soloud/soloud_fft.cpp"
+#include "Vendor/soloud/soloud_fft_lut.cpp"
+#include "Vendor/soloud/soloud_file.cpp"
+#include "Vendor/soloud/soloud_filter.cpp"
+#include "Vendor/soloud/soloud_misc.cpp"
+#include "Vendor/soloud/soloud_queue.cpp"
+#include "Vendor/soloud/soloud_thread.cpp"
+#include "Vendor/soloud/stb_vorbis.c"
+#include "Vendor/soloud/soloud_wav.cpp"
+#include "Vendor/soloud/soloud_wavstream.cpp"
+#include "Vendor/soloud/dr_impl.cpp"
+// #include "Vendor/soloud/dr_mp3.h"
+// #include "Vendor/soloud/dr_wav.h"
 
 
 // TODO: Reference additional headers your program requires here.
+
+#endif

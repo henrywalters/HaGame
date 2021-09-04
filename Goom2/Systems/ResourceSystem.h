@@ -21,6 +21,10 @@ public:
 		game->resources->loadTexture("stones", "Textures/stones.jpg");
 		game->resources->loadTexture("bullethole", "Textures/bullethole.png");
 		game->resources->loadTexture("target", "Textures/target.png");
+		game->resources->loadTexture("turret", "Textures/turret.png");
+	}
+
+	void loadAudio() {
 		game->resources->loadAudioSample("shotgun_shot", "Audio/shotgun_shot.wav");
 		game->resources->loadAudioSample("plasma_shot", "Audio/plasma_shot.wav");
 		game->resources->loadAudioSample("handgun_shot", "Audio/glock_shot.wav");
@@ -55,6 +59,7 @@ public:
 		loadShaders();
 		loadFonts();
 		loadMeshes();
+		loadAudio();
 		std::cout << "Complete." << std::endl;
 	}
 };

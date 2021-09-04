@@ -85,6 +85,30 @@ namespace hagame {
 				return Vector({ 0, 0, -1 });
 			}
 
+			static Vector<3, T> Right(T value) {
+				return Vector({ value, 0, 0 });
+			}
+
+			static Vector<3, T> Left(T value) {
+				return Vector({ -value, 0, 0 });
+			}
+
+			static Vector<3, T> Top(T value) {
+				return Vector({ 0, value, 0 });
+			}
+
+			static Vector<3, T> Bottom(T value) {
+				return Vector({ 0, -value, 0 });
+			}
+
+			static Vector<3, T> Face(T value) {
+				return Vector({ 0, 0, value });
+			}
+
+			static Vector<3, T> Back(T value) {
+				return Vector({ 0, 0, -value });
+			}
+
 			// Basic accessors
 			const T x() {
 				return vector[0];
@@ -170,6 +194,10 @@ namespace hagame {
 					sum += vector[i] * vect[i];
 				}
 				return sum;
+			}
+
+			T angleBetween(Vector vect) {
+				return atan2(cross(vect).dot(Vec3::Face()), dot(vect));
 			}
 
 			// Return the vector such that V.prod(V.inverse()) = V.Identity();

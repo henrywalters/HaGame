@@ -9,33 +9,31 @@
 #include "./../Components/Inventory.h"
 #include "./../Systems/WeaponSystem.h"
 #include "./../Components/Health.h"
+#include "./../Components/Enemy.h"
+#include "./../Components/Enemies/Turret.h"
 
 const Array<String> map = {
-	"################################################",
-	"#                                              #",
-	"#                                              #",
-	"#                                              #",
-	"#                                              #",
-	"#                                              #",
-	"#                                              #",
-	"#                                              #",
-	"#                                              #",
-	"#                                              #",
-	"#                                              #",
-	"#                                              #",
-	"#                                              #",
-	"########################  ######################",
-	" T T T                                         #",
-	"  T T T                                        #",
-	" T T T           ######                        #",
-	"  T T T          ######                        #",
-	" T T T           ######                        #",
-	"  T T T          ######                        #",
-	" T T T           ######                        #",
-	" T T T           ######                        #",
-	"  T T T          ######                        #",
-	"  T T T          ######                        #",
-	"################################################"
+	"#############################",
+	"#############################",
+	"#############################",
+	"#############################",
+	"#############################",
+	"#############################",
+	"#############################",
+	"             T              ",
+	"                       #    ",
+	"         T       T     #    ",
+	"             P              ",
+	"         T       T     #    ",
+	"                       #    ",
+	"             T              ",
+	"#############################",
+	"#############################",
+	"#############################",
+	"#############################",
+	"#############################",
+	"#############################",
+	"#############################"
 };
 
 const float CUBE_SIZE = 75.0f;
@@ -48,6 +46,7 @@ public:
 	PlayerController* playerController;
 	hagame::physics::Collider* playerCollider;
 	Inventory* inventory;
+	Health* pHealth;
 
 	hagame::math::Sample<double, 10000> circleTest = hagame::math::Sample<double, 10000>([this]() {
 		std::cout << "Circle collision time: " << circleTest.average() << " std = " << circleTest.stddev() << "\n";
@@ -86,11 +85,38 @@ public:
 			game->resources->getTexture("target"),
 			Rect(Vec2::Zero(), Vec2(radius * 2.0))
 			);
-		target->transform->setPosition(pos.resize<3>() + Vec3({ 0, 0, 0.0f }));
+		
 		auto targetCollider = target->addComponent<hagame::physics::Collider>();
 		targetCollider->dynamic = false;
 		targetCollider->type = hagame::physics::ColliderType::SphereCollider;
 		targetCollider->boundingSphere = Sphere(Vec3::Zero(), radius);
+		targetCollider->ignoreTags.push_back("player");
+
+		auto targetHealth = scene->addChild(target);
+		targetHealth->transform->lockRotation = true;
+		targetHealth->transform->setPosition(Vec3({ 0, 50, 0 }));
+		auto targetHealthRenderer = targetHealth->addComponent<hagame::graphics::BoxRenderer>();
+		targetHealthRenderer->box = Rect(Vec2({ 0, -10 }), Vec2({ 40, 2 }));
+		targetHealthRenderer->borderColor = hagame::graphics::Color::red();
+		targetHealthRenderer->fillColor = hagame::graphics::Color::green();
+		targetHealthRenderer->shader = game->resources->getShaderProgram("color");
+		
+		target->transform->setPosition(pos.resize<3>() + Vec3({ 0, 0, 0.0f }));
+	}
+
+	void addTurret(Vec2 pos) {
+		auto turret = scene->addEntity();
+		auto enemy = turret->addComponent<Enemy>();
+		turret->transform->setPosition(pos.resize<3>());
+		enemy->def = TURRET;
+		enemy->state = "SEARCH";
+		enemy->weapon = std::make_shared<Weapon>(PLASMA_RIFLE_DEF);
+		auto turretRenderer = turret->addComponent<hagame::graphics::SpriteRenderer>();
+		turretRenderer->shader = game->resources->getShaderProgram("sprite");
+		turretRenderer->sprite = std::make_shared<hagame::graphics::Sprite>(
+			game->resources->getTexture("turret"),
+			Rect(Vec2::Zero(), Vec2(50.0f))
+		);
 	}
 
 	void onSystemInit() {
@@ -99,20 +125,21 @@ public:
 
 		std::cout << "Initializing player system\n";
 
-		
-
-		// addTarget(Vec2(0.0f), Vec2(200.0f));
 
 		player = scene->addEntity();
 		player->addTag("player");
+		// pHealth = player->addComponent<Health>();
 		playerController = player->addComponent<PlayerController>();
 		inventory = player->addComponent<Inventory>();
-		/*
-		auto healthBar = scene->addChild(player);
+		
+		/*auto healthBar = scene->addChild(player);
+		healthBar->transform->lockRotation = true;
 		healthBar->transform->setPosition(Vec3({ 0, 50, 0 }));
 		auto healthRenderer = healthBar->addComponent<hagame::graphics::BoxRenderer>();
-		healthRenderer->box = Rect(Vec2({ -25, -10 }), Vec2({ 50, 20 }));
-		healthRenderer->fillColor = hagame::graphics::Color::red();
+		healthRenderer->box = Rect(Vec2({ 0, -10 }), Vec2({ 50, 3 }));
+		healthRenderer->borderColor = hagame::graphics::Color::red();
+		healthRenderer->fillColor = hagame::graphics::Color::green();
+		// healthRenderer->fillPercent = 0.25f;
 		healthRenderer->shader = game->resources->getShaderProgram("color");
 		*/
 
@@ -124,9 +151,9 @@ public:
 				if (map[i][j] == '#')
 					addWall(Vec2(CUBE_SIZE).prod(Vec2({ (float)j, (float)map.size() - i })), Vec2(CUBE_SIZE));
 				else if (map[i][j] == 'P')
-					player->transform->setPosition(Vec3(CUBE_SIZE).prod(Vec3({ (float)j, (float)i, 0.0 })));
+					player->transform->setPosition(Vec3(CUBE_SIZE).prod(Vec3({ (float)j, (float)map.size() - i , 0.0 })));
 				else if (map[i][j] == 'T')
-					addTarget(Vec2(CUBE_SIZE).prod(Vec2({ (float)j, (float)map.size() - i })), 30.0f);
+					addTurret(Vec2(CUBE_SIZE).prod(Vec2({ (float)j, (float)map.size() - i })));
 			}
 		}
 
@@ -184,7 +211,7 @@ public:
 		playerRenderer->body->setActive("handgun_move");
 		playerRenderer->feet->setActive("feet_walk");
 		
-		player->transform->setPosition(Vec3({ game->window->size[0] / 2.0f, game->window->size[1] / 2.0f, 0.0f }));
+		// player->transform->setPosition(Vec3({ game->window->size[0] / 2.0f, game->window->size[1] / 2.0f, 0.0f }));
 	}
 
 	void onSystemUpdate(double dt) {
@@ -243,7 +270,7 @@ public:
 
 			auto point = ray.getPointOnLine(t).resize<2>();
 
-			auto spread = inventory->activeWeapon().value()->weapon.bullet.value().spread;
+			auto spread = inventory->activeWeapon().value()->weapon.bullet.value().spread * 200;
 			auto size = tan(spread) * (player->transform->position.resize<2>() - point).magnitude();
 
 			/*hagame::graphics::drawRect(Rect(
@@ -252,8 +279,8 @@ public:
 			), hagame::graphics::Color::red(), game->resources->getShaderProgram("color"));
 			*/
 			hagame::graphics::drawRect(Rect(
-				point,
-				Vec2(1)
+				point - Vec2(spread / 2),
+				Vec2(spread)
 			), hagame::graphics::Color::red(), game->resources->getShaderProgram("color"));
 
 		}

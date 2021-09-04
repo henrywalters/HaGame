@@ -1,31 +1,23 @@
 #ifndef AUDIO_SAMPLE_H
 #define AUDIO_SAMPLE_H
 
-#include "./../Utils/Aliases.h"
-#include <SDL.h>
-#include <SDL_mixer.h>
+#include "../Vendor/soloud/soloud.h"
+#include "../Vendor/soloud/soloud_wav.h"
 
 namespace hagame {
 	namespace audio {
+
+		class Audio;
+
 		class Sample {
-			Mix_Chunk* data = NULL;
+
+			friend class Audio;
+
+			SoLoud::Wav wav;
 			
 		public:
 			Sample(String wavFile) {
-				data = Mix_LoadWAV(wavFile.c_str());
-				if (data == NULL) {
-					throw new std::exception("Failed to load wav file");
-				}
-			}
-
-			~Sample() {
-				if (data != NULL) {
-					Mix_FreeChunk(data);
-				}
-			}
-
-			void play() {
-				Mix_PlayChannel(-1, data, 0);
+				wav.load(wavFile.c_str());
 			}
 		};
 	}

@@ -34,6 +34,7 @@ namespace hagame {
 		void rotate(Vec3 axis, float degrees);
 		void rotate(Quat rot);
 		void rotateAbout(Vec3 point, Quat rot);
+		bool lockRotation = false;
 		void grow(Vec3 size);
 
 		void lookAt(Vec3 point);

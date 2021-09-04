@@ -106,9 +106,24 @@ namespace hagame {
 				T b = vector[1];
 				T c = vector[2];
 				T d = vector[3];
-				T yaw = atan((2 * (a * b + c * d)) / (a * a - b * b - c * c + d * d));
-				T pitch = asin(2 * (b * d - a * c));
-				T roll = atan((2 * (a * d + b * c)) / (a * a + b * b - c * c - d * d));
+
+				// Roll
+				T roll_a = 2 * (a * b + c * d);
+				T roll_b = 1 - 2 * (b * b + c + c);
+				T roll = atan2(roll_a, roll_b);
+
+				// Pitch
+				T pitch = 2 * (a * c - d * b);
+				if (abs(pitch) >= 1)
+					pitch = std::copysign(PI / 2, pitch);
+				else
+					pitch = asin(pitch);
+
+				// Yaw
+				T yaw_a = 2 * (a * d + b * c);
+				T yaw_b = 1 - 2 * (c * c + d * d);
+				T yaw = atan2(yaw_a, yaw_b);
+
 				return Vector<3, T>({ yaw, pitch, roll });
 			}
 

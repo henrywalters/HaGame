@@ -49,6 +49,7 @@ namespace hagame {
 			Game::input.onQuit([this]() {
 				running = false;
 			});
+			audio->initialize();
 		}
 
 		virtual void onGameStart() {};
@@ -74,7 +75,6 @@ namespace hagame {
 			if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_HAPTIC | SDL_INIT_AUDIO) < 0) {
 				throw new std::exception("Failed to initialize SDL");
 			}
-			audio::Audio::Initialize();
 		}
 
 		void run();

@@ -35,6 +35,7 @@ namespace hagame {
 				Ptr<Entity> entity = add();
 				entity->parent = parent;
 				parent->children.push_back(entity);
+				entity->transform->position = parent->transform->position;
 				return entity;
 			}
 

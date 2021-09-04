@@ -11,8 +11,30 @@ struct Health {
 
 	bool destroyOnDead = true;
 
+	Ptr<hagame::graphics::VertexBuffer<Vec4>> vbo;
+	Ptr<hagame::graphics::VertexArray> vao;
+
+	Health() {
+		vbo = hagame::graphics::VertexBuffer<Vec4>::Static(hagame::graphics::QuadVertexVectors);
+		vao = std::make_shared<hagame::graphics::VertexArray>();
+		vao->initialize();
+		vao->defineAttribute<Vec4>(vbo.get(), hagame::graphics::DataType::Float, 0, 4);
+	}
+
+	~Health() {
+		vbo->clear();
+	}
+
 	bool isAlive() {
 		return health > 0;
+	}
+
+	float percentHealth() {
+		return health / maxHealth;
+	}
+
+	float percentShield() {
+		return shield / maxShield;
 	}
 
 	void damage(float dmg) {

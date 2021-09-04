@@ -39,7 +39,7 @@ public:
 	void onGameStart() {
 
 		fpsSample.onFull = [this]() {
-			window->setTitle("Goom2: Back to hell, again | " + std::to_string(fpsSample.average()) + " (" + std::to_string(fpsSample.stddev()) + "mu)");
+			// 
 			fpsSample.clear();
 		};
 
@@ -47,7 +47,9 @@ public:
 	}
 
 	void onGameUpdate(double dt) {
-		fpsSample.insert(fps / 1000000);
+		//fpsSample.insert(fps / 1000000);
+
+		window->setTitle("Goom2: Back to hell, again | " + std::to_string(fps / 1000000) + "mu)");
 
 		if (input.keyboardMouse.isKeyDown(SDLK_DELETE)) {
 			running = false;

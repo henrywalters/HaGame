@@ -21,17 +21,19 @@ void hagame::Transform::setPosition(Vec3 pos)
 
 void hagame::Transform::setRotation(Quat rot)
 {
-	Quat delta = rot * rotation.inverse();
-	rotation = rot;
-	updateModel();
-	if (entity) {
-		for (auto child : entity->children) {
-			child->transform->position = delta.rotatePoint(child->transform->position - position) + position;
-			child->transform->rotate(delta);
-
+	if (!lockRotation) {
+		Quat delta = rot * rotation.inverse();
+		rotation = rot;
+		updateModel();
+		if (entity) {
+			for (auto child : entity->children) {
+				if (!child->transform->lockRotation) {
+					child->transform->position = delta.rotatePoint(child->transform->position - position) + position;
+					child->transform->rotate(delta);
+				}
+			}
 		}
 	}
-	
 }
 
 void hagame::Transform::setScale(Vec3 size)
@@ -59,20 +61,25 @@ void hagame::Transform::move(Vec3 offset)
 }
 
 void hagame::Transform::rotate(Vec3 axis, float degrees) {
-	rotation = rotation * Quat(degrees, axis);
-	updateModel();
+	if (!lockRotation) {
+		rotation = rotation * Quat(degrees, axis);
+		updateModel();
+	}
 }
 
 void hagame::Transform::rotate(Quat rot) {
-	rotation = rotation * rot;
-	updateModel();
-	if (entity) {
-		for (auto child : entity->children) {
-			child->transform->position = rot.rotatePoint(child->transform->position - position) + position;
-			child->transform->rotate(rot);
+	if (!lockRotation) {
+		rotation = rotation * rot;
+		updateModel();
+		if (entity) {
+			for (auto child : entity->children) {
+				if (!child->transform->lockRotation) {
+					child->transform->position = rot.rotatePoint(child->transform->position - position) + position;
+					child->transform->rotate(rot);
+				}
+			}
 		}
 	}
-	
 }
 
 

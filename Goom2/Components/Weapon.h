@@ -129,7 +129,7 @@ const WeaponDef PLASMA_RIFLE_DEF{
 	1,
 	30,
 	120,
-	0.2f,
+	0.25f,
 	true,
 	"rifle",
 	"plasma_shot"

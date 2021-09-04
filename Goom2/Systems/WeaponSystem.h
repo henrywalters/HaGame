@@ -29,7 +29,7 @@ public:
 		}
 
 		if (weapon->weapon.shotSound.has_value()) {
-			game->resources->getAudioSample(weapon->weapon.shotSound.value())->play();
+			game->audio->play(game->resources->getAudioSample(weapon->weapon.shotSound.value()));
 		}
 
 		for (int i = 0; i < weapon->weapon.bulletsPerShot; i++) {
@@ -94,19 +94,24 @@ public:
 					holeR->sprite = std::make_shared<hagame::graphics::Sprite>(game->resources->getTexture("bullethole"), Rect(Vec2::Zero(), Vec2(8.0f)));
 					holeR->shader = game->resources->getShaderProgram("sprite");
 
-					auto health = raycastHit.value()->getComponent<Health>();
-					if (health != NULL) {
-						health->damage(weapon->weapon.bullet.value().damage);
-						if (!health->isAlive() && health->destroyOnDead) {
-							std::cout << "Killing " << raycastHit.value()->id << "\n";
-							scene->removeEntity(raycastHit.value());
-						}
-					}
+					applyDamage(raycastHit.value(), weapon->weapon.bullet.value());
 				}
 			}
 		}
+	}
 
-		
+	void applyDamage(Ptr<hagame::ecs::Entity> entity, Bullet bullet) {
+		auto health = entity->getComponent<Health>();
+		auto bRenderer = entity->getComponent<hagame::graphics::BoxRenderer>();
+		if (health != NULL) {
+			health->damage(bullet.damage);
+			if (bRenderer != NULL) {
+				bRenderer->fillPercent = health->percentHealth();
+			}
+			if (!health->isAlive() && health->destroyOnDead) {
+				scene->removeEntity(entity); 
+			}
+		}
 	}
 
 	void onSystemUpdate(double dt) {
@@ -125,14 +130,18 @@ public:
 			auto collider = entity->getComponent<hagame::physics::Collider>();
 
 			if (collider != NULL) {
-				if (game->collisions.checkCollisions(
+
+				auto collidedWith = game->collisions.checkCollisions(
 					entity,
 					entity->getComponent<hagame::physics::Collider>(),
 					bullet->direction.resize<3>() * bullet->bullet.speed,
 					dt,
 					t
-				)) {
+				);
+
+				if (collidedWith.has_value()) {
 					entity->transform->move(bullet->direction.resize<3>() * bullet->bullet.speed * dt * t);
+					applyDamage(collidedWith.value(), bullet->bullet);
 					scene->removeEntity(entity);
 				}
 				else {

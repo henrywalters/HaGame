@@ -40,6 +40,25 @@ namespace hagame {
 				return map[hashPosition(position)];
 			}
 
+			Array<Array<Ptr<DataType>>> get(hagame::math::Vector<3, SpatialDataType> position, SpatialDataType radius) {
+				Array<Array<Ptr<DataType>>> output = Array<Array<Ptr<DataType>>>();
+				Vec3 points[] = {
+					Vec3::Zero(),
+					Vec3::Top() * radius,
+					Vec3::Bottom() * radius,
+					Vec3::Right() * radius,
+					Vec3::Left() * radius,
+					Vec3::Face() * radius,
+					Vec3::Back() * radius
+				};
+
+				for (int i = 0; i < 7; i++) {
+					output.push_back(map[hashPosition(position + points[i])]);
+				}
+
+				return output;
+			}
+
 			//Array<Ptr<DataType>> get(hagame::math::Ray ray) {
 
 			//}

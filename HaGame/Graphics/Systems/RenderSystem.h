@@ -119,13 +119,16 @@ namespace hagame {
 				});
 
 				forEach<BoxRenderer>([this](BoxRenderer* r, Ptr<ecs::Entity> entity) {
+					std::cout << entity->id << "\n";
 					r->shader->use();
-					r->shader->setMVP(
-						Mat4::Translation(entity->transform->position + r->box.pos.resize<3>()) * Mat4::Rotation(entity->transform->rotation) * Mat4::Scale(r->box.size.resize<3>()),
-						scene->viewMat,
-						scene->projMat
-					);
-					r->draw();
+					r->shader->setMat4("view", scene->viewMat);
+					r->shader->setMat4("projection", scene->projMat);
+					//r->shader->setMVP(
+					//	Mat4::Translation(entity->transform->position + r->box.pos.resize<3>())  * Mat4::Scale(r->box.size.resize<3>()),
+					//	scene->viewMat,
+					//	scene->projMat
+					//);
+					r->draw(entity->transform->position);
 				});
 
 				forEach<AnimatedSpriteRenderer>([this, dt](AnimatedSpriteRenderer* r, Ptr<ecs::Entity> entity) {
