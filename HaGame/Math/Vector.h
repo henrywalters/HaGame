@@ -188,6 +188,16 @@ namespace hagame {
 				
 			}
 
+			Vector rounded() {
+				Vector copy = *this;
+				for (int i = 0; i < size; i++) { copy[i] = std::round(copy[i]); }
+				return copy;
+			}
+
+			void round() {
+				for (int i = 0; i < size; i++) { vector[i] = std::round(vector[i]); }
+			}
+
 			T dot(Vector vect) {
 				T sum = 0;
 				for (int i = 0; i < size; i++) {

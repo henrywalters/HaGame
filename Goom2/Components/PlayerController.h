@@ -4,7 +4,7 @@
 #include "./../../HaGame/HaGame.h"
 #include "./../../HaGame/UI/Editable.h"
 
-class PlayerController : public hagame::ui::Editable {
+class PlayerController  {
 
 public:
 	Vec3 vel;

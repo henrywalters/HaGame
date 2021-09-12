@@ -9,11 +9,13 @@ namespace hagame {
 
 		public:
 
-			Vec2 _size;
-			float zoom = 1.25f;
+			Vec2 size;
+			float zoom = 1.0f;
+			float zFar = 10.0f;
+			float zNear = -10.0f;
 
-			OrthographicCamera() : _size(Vec2::Zero()) {}
-			OrthographicCamera(Vec2 size) : _size(size) {}
+			OrthographicCamera() {}
+			OrthographicCamera(Vec2 _size) : size(_size) {}
 
 			Mat4 getViewMatrix(hagame::Transform* transform) {
 				return Mat4::Identity();
@@ -21,13 +23,17 @@ namespace hagame {
 
 			Mat4 getProjMatrix(hagame::Transform* transform) {
 				return Mat4::Orthographic(
-					transform->position[0] - _size[0] / (2.0 * zoom) , 
-					transform->position[0] + _size[0] / (2.0 * zoom),
-					transform->position[1] - _size[1] / (2.0 * zoom),
-					transform->position[1] + _size[1] / (2.0 * zoom),
+					transform->position[0] - size[0] * 0.5f * zoom,
+					transform->position[0] + size[0] * 0.5f * zoom,
+					transform->position[1] - size[1] * 0.5f * zoom,
+					transform->position[1] + size[1] * 0.5f * zoom,
 					-1.0, 
 					1.0
 				);
+			}
+
+			Vec2 getGamePos(Ptr<hagame::Transform> transform, Vec2 screenPos) {
+				return (screenPos - size * 0.5f) * zoom + transform->position.resize<2>();
 			}
 		};
 	}

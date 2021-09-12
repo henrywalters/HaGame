@@ -5,6 +5,7 @@
 #include "../../Math/Vector.h"
 #include "../../Math/Functions.h"
 #include "../../Utils/Aliases.h"
+#include "../../Vendor/imgui/imgui.h"
 #include "SDL.h"
 
 namespace hagame {
@@ -14,6 +15,7 @@ namespace hagame {
 			using KeyCode = SDL_KeyCode;
 
 			struct MouseState {
+				int wheel;
 				Vec2 position;
 				Vec2 prevPosition;
 				Vec2 delta;
@@ -175,6 +177,10 @@ namespace hagame {
 							updateBtnState(mouse.right, mouse.rightPressed, false);
 						}
 						break;
+					case SDL_MOUSEWHEEL:
+						mouse.wheel = event.wheel.y;
+						std::cout << event.wheel.y << "\n";
+						break;
 					}
 				}
 
@@ -183,6 +189,7 @@ namespace hagame {
 					mouse.delta = Vec2::Zero();
 					//handleMouse();
 
+					mouse.wheel = 0;
 					mouse.leftPressed = false;
 					mouse.rightPressed = false;
 					mouse.middlePressed = false;
@@ -206,6 +213,15 @@ namespace hagame {
 					for (int i = 0; i < 10; i++) {
 						updateBtnState(keyboard.numbers[i], keyboard.numbersPressed[i], isKeyDown(SDLK_0 + i));
 					}
+				}
+
+				void updateImgui(double dt) {
+					ImGuiIO& io = ImGui::GetIO();
+					io.DeltaTime = dt;
+					io.MousePos = ImVec2(mouse.position[0], mouse.position[1]);
+					io.MouseDown[0] = mouse.left;
+					io.MouseDown[1] = mouse.right;
+					io.MouseWheel = static_cast<float>(mouse.wheel);
 				}
 			};
 		}

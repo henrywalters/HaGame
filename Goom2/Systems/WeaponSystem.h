@@ -41,11 +41,11 @@ public:
 				auto bullet = bulletContainer->addComponent<Projectile>();
 				bullet->ownerId = entity->id;
 				auto bulletRenderer = bulletContainer->addComponent<hagame::graphics::SpriteRenderer>();
-				bulletRenderer->shader = game->resources->getShaderProgram("sprite");
-				bulletRenderer->sprite = std::make_shared<hagame::graphics::Sprite>(
-					game->resources->getTexture(weapon->weapon.bullet.value().projectile.value().sprite),
-					Rect(Vec2::Zero(), weapon->weapon.bullet.value().projectile.value().size)
-					);
+				// bulletRenderer->shader = game->resources->getShaderProgram("sprite");
+				//bulletRenderer->sprite = std::make_shared<hagame::graphics::Sprite>(
+					//game->resources->getTexture(weapon->weapon.bullet.value().projectile.value().sprite),
+					//Rect(Vec2::Zero(), weapon->weapon.bullet.value().projectile.value().size)
+					//);
 				bullet->bullet = weapon->weapon.bullet.value();
 
 				bullet->direction = Quat(
@@ -91,8 +91,8 @@ public:
 					bulletHole->transform->setPosition(ray.getPointOnLine(t));
 					bulletHole->transform->position[2] = 1.0f;
 					auto holeR = bulletHole->addComponent<hagame::graphics::SpriteRenderer>();
-					holeR->sprite = std::make_shared<hagame::graphics::Sprite>(game->resources->getTexture("bullethole"), Rect(Vec2::Zero(), Vec2(8.0f)));
-					holeR->shader = game->resources->getShaderProgram("sprite");
+					// holeR->sprite = std::make_shared<hagame::graphics::Sprite>(game->resources->getTexture("bullethole"), Rect(Vec2::Zero(), Vec2(8.0f)));
+					// holeR->shader = game->resources->getShaderProgram("sprite");
 
 					applyDamage(raycastHit.value(), weapon->weapon.bullet.value());
 				}

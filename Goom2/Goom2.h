@@ -10,6 +10,7 @@
 #include "./Systems/ResourceSystem.h"
 #include "./Systems/PlayerSystem.h"
 #include "./Systems/EnemySystem.h"
+#include "./Systems/ActorSystem.h"
 
 const String MAIN_MENU = "main_menu";
 const String SANDBOX = "sandbox";
@@ -25,9 +26,9 @@ public:
 
 		resources->setBasePath("../../../Assets");
 
-		addScene<MainMenu>(MAIN_MENU);
-		addScene<Sandbox>(SANDBOX);
-		// addScene<MapBuilder>(MAP_BUILDER);
+		//addScene<MainMenu>(MAIN_MENU);
+		//addScene<Sandbox>(SANDBOX);
+		addScene<MapBuilder>(MAP_BUILDER);
 
 		scenes.forEach([this](Ptr<hagame::Scene> scene) {
 			scene->addSystem<ResourceSystem>();
@@ -43,7 +44,7 @@ public:
 			fpsSample.clear();
 		};
 
-		scenes.activate(SANDBOX);
+		scenes.activate(MAP_BUILDER);
 	}
 
 	void onGameUpdate(double dt) {

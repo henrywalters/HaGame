@@ -20,7 +20,7 @@ namespace hagame {
 		};
 
 		// Prime number to help LCD
-		const Vec3 CHUNK_SIZE = Vec3(2000.0f);
+		const Vec3 CHUNK_SIZE = Vec3(10000.0f);
 
 		bool isColliding(Rect r1, Rect r2);
 
@@ -69,30 +69,33 @@ namespace hagame {
 			Optional<Ptr<ecs::Entity>> raycast(Ptr<ecs::Entity> origin, math::Ray ray, float& t, Array<String> ignoreTags = {}) {
 				Optional<Ptr<ecs::Entity>> entity = std::nullopt;
 				float currT;
-				for (auto neighbor : entityMap.get(origin->transform->position)) {
+				for (auto& [key, neighborhood] : entityMap.map) {
+					for (auto neighbor : neighborhood) {
 
-					if (neighbor->id == origin->id || (ignoreTags.size() > 0 && neighbor->hasTag(ignoreTags)))
-						continue;
+						if (neighbor->id == origin->id || (ignoreTags.size() > 0 && neighbor->hasTag(ignoreTags)))
+							continue;
 
-					auto nCollider = neighbor->getComponent<Collider>();
+						auto nCollider = neighbor->getComponent<Collider>();
 
-					if (nCollider->type == ColliderType::BoxCollider) {
-						auto cube = nCollider->boundingCube.value();
-						cube.pos += neighbor->transform->position;
-						if (ray.checkCube(cube, currT) && (currT < t || !entity.has_value())) {
-							t = currT;
-							entity = neighbor;
+						if (nCollider->type == ColliderType::BoxCollider) {
+							auto cube = nCollider->boundingCube.value();
+							cube.pos += neighbor->transform->position;
+							if (ray.checkCube(cube, currT) && (currT < t || !entity.has_value())) {
+								t = currT;
+								entity = neighbor;
+							}
 						}
-					}
-					else if (nCollider->type == ColliderType::SphereCollider) {
-						auto sphere = nCollider->boundingSphere.value();
-						sphere.center += neighbor->transform->position;
-						if (ray.checkSphere(sphere, currT) && (currT < t || !entity.has_value())) {
-							t = currT;
-							entity = neighbor;
+						else if (nCollider->type == ColliderType::SphereCollider) {
+							auto sphere = nCollider->boundingSphere.value();
+							sphere.center += neighbor->transform->position;
+							if (ray.checkSphere(sphere, currT) && (currT < t || !entity.has_value())) {
+								t = currT;
+								entity = neighbor;
+							}
 						}
 					}
 				}
+				
 				
 				return entity;
 			}

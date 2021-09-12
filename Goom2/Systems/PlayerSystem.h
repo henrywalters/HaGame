@@ -9,7 +9,7 @@
 #include "./../Components/Inventory.h"
 #include "./../Systems/WeaponSystem.h"
 #include "./../Components/Health.h"
-#include "./../Components/Enemy.h"
+#include "./../Components/Actor.h"
 #include "./../Components/Enemies/Turret.h"
 
 const Array<String> map = {
@@ -20,19 +20,19 @@ const Array<String> map = {
 	"#############################",
 	"#############################",
 	"#############################",
-	"             T              ",
+	"                            ",
+	"     T                 #    ",
+	"              T        #    ",
+	"         T         T        ",
 	"                       #    ",
-	"         T       T     #    ",
-	"             P              ",
-	"         T       T     #    ",
-	"                       #    ",
-	"             T              ",
-	"#############################",
-	"#############################",
-	"#############################",
-	"#############################",
-	"#############################",
-	"#############################",
+	"     T         P       #    ",
+	"           T                ",
+	"#################  ##########",
+	"#################  ##########",
+	"#################  ##########",
+	"###########        ##########",
+	"###########      T ##########",
+	"##########         ##########",
 	"#############################"
 };
 
@@ -65,11 +65,11 @@ public:
 	void addWall(Vec2 pos, Vec2 size) {
 		auto target = scene->addEntity();
 		auto targetRenderer = target->addComponent<hagame::graphics::SpriteRenderer>();
-		targetRenderer->shader = game->resources->getShaderProgram("sprite");
-		targetRenderer->sprite = std::make_shared<hagame::graphics::Sprite>(
-			game->resources->getTexture("stones"),
-			Rect(size * 0.5, size)
-			);
+		//targetRenderer->shader = game->resources->getShaderProgram("sprite");
+		//targetRenderer->sprite = std::make_shared<hagame::graphics::Sprite>(
+		//	game->resources->getTexture("stones"),
+		//	Rect(size * 0.5, size)
+		//	);
 		target->transform->setPosition(pos.resize<3>() + Vec3({0, 0, 0.0f}));
 		auto targetCollider = target->addComponent<hagame::physics::Collider>();
 		targetCollider->dynamic = false;
@@ -80,11 +80,11 @@ public:
 		auto target = scene->addEntity();
 		target->addComponent<Health>();
 		auto targetRenderer = target->addComponent<hagame::graphics::SpriteRenderer>();
-		targetRenderer->shader = game->resources->getShaderProgram("sprite");
-		targetRenderer->sprite = std::make_shared<hagame::graphics::Sprite>(
-			game->resources->getTexture("target"),
-			Rect(Vec2::Zero(), Vec2(radius * 2.0))
-			);
+		//targetRenderer->shader = game->resources->getShaderProgram("sprite");
+		//targetRenderer->sprite = std::make_shared<hagame::graphics::Sprite>(
+		//	game->resources->getTexture("target"),
+		//	Rect(Vec2::Zero(), Vec2(radius * 2.0))
+		//	);
 		
 		auto targetCollider = target->addComponent<hagame::physics::Collider>();
 		targetCollider->dynamic = false;
@@ -106,17 +106,26 @@ public:
 
 	void addTurret(Vec2 pos) {
 		auto turret = scene->addEntity();
-		auto enemy = turret->addComponent<Enemy>();
+		auto actor = turret->addComponent<Actor>();
 		turret->transform->setPosition(pos.resize<3>());
-		enemy->def = TURRET;
-		enemy->state = "SEARCH";
-		enemy->weapon = std::make_shared<Weapon>(PLASMA_RIFLE_DEF);
+		actor->game = game;
+		actor->def = TURRET;
+		turret->addTag(actor->def.tagName);
+		actor->state = "SEARCH";
+		actor->weapon = std::make_shared<Weapon>(PLASMA_RIFLE_DEF);
+
+		auto targetCollider =turret->addComponent<hagame::physics::Collider>();
+		targetCollider->dynamic = false;
+		targetCollider->type = hagame::physics::ColliderType::SphereCollider;
+		targetCollider->boundingSphere = Sphere(Vec3::Zero(), 25.0f);
+		targetCollider->ignoreTags.push_back("player");
+
 		auto turretRenderer = turret->addComponent<hagame::graphics::SpriteRenderer>();
-		turretRenderer->shader = game->resources->getShaderProgram("sprite");
-		turretRenderer->sprite = std::make_shared<hagame::graphics::Sprite>(
-			game->resources->getTexture("turret"),
-			Rect(Vec2::Zero(), Vec2(50.0f))
-		);
+		//turretRenderer->shader = game->resources->getShaderProgram("sprite");
+		//turretRenderer->sprite = std::make_shared<hagame::graphics::Sprite>(
+		//	game->resources->getTexture("turret"),
+		//	Rect(Vec2::Zero(), Vec2(50.0f))
+		//);
 	}
 
 	void onSystemInit() {

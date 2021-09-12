@@ -15,9 +15,8 @@ public:
 		
 		forEach<Enemy>([this, dt](Enemy* enemy, Ptr<hagame::ecs::Entity> entity) {
 			enemy->weapon->update(dt);
-			int rayCasts = 26;
-
-			Ptr<hagame::ecs::Entity> spotted = NULL;
+			int rayCasts = 4;
+			float speed = 2.0f;
 
 			auto targetPoint = entity->transform->position + entity->transform->top() * enemy->def.sightDistance;
 			auto targetRay = hagame::math::Ray(entity->transform->position, targetPoint - entity->transform->position);
@@ -38,11 +37,10 @@ public:
 
 				if (entityInSight.has_value()) {
 					if (entityInSight.value()->hasTag("player")) {
-						spotted = entityInSight.value();
+						enemy->target = entityInSight.value();
 						if (enemy->state == "SEARCH") {
 							enemy->state = "TARGET";
 						}
-						
 					}
 				}
 				else {
@@ -57,22 +55,27 @@ public:
 				
 			}
 
-			auto angle = spotted != NULL ? entity->transform->top().angleBetween((spotted->transform->position - entity->transform->position)) : 0.0f;
+			auto angle = enemy->target != NULL ? entity->transform->top().angleBetween((enemy->target->transform->position - entity->transform->position)) : 0.0f;
+
+			std::cout << enemy->state << angle << "\n";
 
 			if (enemy->state == "SEARCH") {
-				entity->transform->rotate(Quat(1.0f * dt, Vec3::Face()));
+				entity->transform->rotate(Quat(speed * dt, Vec3::Face()));
 			}
 			else if (enemy->state == "TARGET") {
-				if (spotted == NULL) {
+				if (enemy->target == NULL) {
 					enemy->state = "SEARCH";
 				}
 				else {
-					
-					if (angle > 0.01) {
-						entity->transform->rotate(Quat(1.0f * dt, Vec3::Face()));
+					if (abs(angle) > enemy->def.sightAngle / 2.0) {
+						enemy->target = NULL;
+						enemy->state = "SEARCH";
+					} 
+					else if (angle > 0.01) {
+						entity->transform->rotate(Quat(speed * dt, Vec3::Face()));
 					}
 					else if (angle < -0.01) {
-						entity->transform->rotate(Quat(-1.0f * dt, Vec3::Face()));
+						entity->transform->rotate(Quat(-speed * dt, Vec3::Face()));
 					}
 					else {
 						enemy->state = "ATTACK";
@@ -80,7 +83,7 @@ public:
 				}
 			}
 			else {
-				if (spotted == NULL) {
+				if (enemy->target == NULL) {
 					enemy->state = "SEARCH";
 				}
 				else {

@@ -78,6 +78,7 @@
 #include "Utils/Random.h"
 #include "Utils/Testing.h"
 #include "Utils/GridMap.h"
+#include "Utils/RectGrid.h"
 #include "Utils/Algorithms/AStar.h"
 
 #include "Physics/Components/RigidBody.h"

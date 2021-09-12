@@ -31,7 +31,7 @@ namespace hagame {
 			std::string name;
 
 			Entity(uint32_t _entt_id, uint32_t _id) : id(_id), entt_id(_entt_id) {
-				name = "Entity_" + _id;
+				name = "Entity_" + std::to_string(_id);
 			}
 
 			~Entity() {
