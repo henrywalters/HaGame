@@ -27,14 +27,15 @@ public:
 		resources->setBasePath("../../../Assets");
 
 		//addScene<MainMenu>(MAIN_MENU);
-		//addScene<Sandbox>(SANDBOX);
-		addScene<MapBuilder>(MAP_BUILDER);
+		addScene<Sandbox>(SANDBOX);
+		// addScene<MapBuilder>(MAP_BUILDER);
 
 		scenes.forEach([this](Ptr<hagame::Scene> scene) {
 			scene->addSystem<ResourceSystem>();
 			scene->addSystem<hagame::graphics::RenderSystem>();
 			scene->addSystem<hagame::physics::CollisionSystem>();
 		});
+			
 	}
 
 	void onGameStart() {
@@ -44,7 +45,13 @@ public:
 			fpsSample.clear();
 		};
 
-		scenes.activate(MAP_BUILDER);
+		scenes.activate(SANDBOX);
+	}
+
+	void onGameBeforeUpdate() {
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplSDL2_NewFrame(window->window);
+		ImGui::NewFrame();
 	}
 
 	void onGameUpdate(double dt) {
@@ -59,6 +66,12 @@ public:
 		if (input.keyboardMouse.startPressed) {
 			window->toggleRenderMode();
 		}
+	}
+
+	void onGameAfterUpdate() {
+		ImGui::ShowDemoWindow();
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	}
 
 	void onGameEnd() {

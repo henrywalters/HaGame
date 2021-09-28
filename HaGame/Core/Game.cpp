@@ -21,10 +21,12 @@ void hagame::Game::run()
 		lastTick = now;
 		window->clear();
 		input.pollEvents();
+		onGameBeforeUpdate();
 		onGameUpdate(dt);
 		if (scenes.hasActive()) {
 			scenes.active()->update(dt);
 		}
+		onGameAfterUpdate();
 		window->render();
 	}
 

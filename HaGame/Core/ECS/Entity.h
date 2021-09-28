@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <string>
+#include "./Component.h"
 #include "../../Vendor/entt/entt.hpp"
 
 namespace hagame {
@@ -23,6 +24,7 @@ namespace hagame {
 
 			Ptr<Entity> parent;
 			Array<Ptr<Entity>> children;
+			// Array<Component*> components;
 
 			Ptr<Transform> transform;
 
@@ -61,6 +63,10 @@ namespace hagame {
 				return component;
 			}
 
+			void addComponent(entt::id_type componentId) {
+				// &registry->emplace()
+			}
+
 			template <class T>
 			void removeComponent() {
 				registry->remove_if_exists<T>(entt_id);
@@ -69,6 +75,11 @@ namespace hagame {
 			template <class T>
 			bool hasComponent() {
 				return registry->has<T>(entt_id);
+			}
+
+			bool hasComponent(entt::id_type componentId) {
+				entt::id_type types[] = { componentId };
+				return registry->runtime_view(std::cbegin(types), std::cend(types)).contains(entt_id);
 			}
 
 			template <class T>

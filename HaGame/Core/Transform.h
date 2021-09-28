@@ -13,11 +13,11 @@ namespace hagame {
 	class Transform {
 
 	private:
-
-	public:
 		Vec3 position;
 		Vec3 scale;
 		Quat rotation;
+	public:
+
 
 		Mat4 model;
 		bool cacheModel = true;
@@ -25,6 +25,11 @@ namespace hagame {
 		ecs::Entity* entity;
 
 		Transform();
+
+		Vec3 getPosition();
+		Vec3* getPositionRef();
+		Quat getRotation();
+		Vec3 getScale();
 
 		void setPosition(Vec3 pos);
 		void setRotation(Quat rot);

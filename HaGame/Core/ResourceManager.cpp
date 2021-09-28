@@ -67,7 +67,7 @@ hagame::graphics::ShaderProgram* hagame::ResourceManager::loadShaderProgram(Stri
 	std::string fragSrc = processShaderFile(fs->getFile(fragPath));
 	hagame::graphics::Shader vertShader = hagame::graphics::Shader::LoadVertex(vertSrc);
 	hagame::graphics::Shader fragShader = hagame::graphics::Shader::LoadFragment(fragSrc);
-	Ptr<hagame::graphics::ShaderProgram> program = std::make_shared<hagame::graphics::ShaderProgram>(vertShader, fragShader);
+	Ptr<hagame::graphics::ShaderProgram> program = std::make_shared<hagame::graphics::ShaderProgram>(programName, vertShader, fragShader);
 	shaderPrograms[programName] = program;
 	return shaderPrograms[programName].get();
 }

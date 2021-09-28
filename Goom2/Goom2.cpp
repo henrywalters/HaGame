@@ -9,10 +9,14 @@ struct TestEvent {
 	TestEvent(String _message) : message(_message) {}
 };
 
+struct Data {
+	Vec3 pos;
+};
+
 int main() {
 	hagame::Game::initializeSDL();
 
-	auto screenSize = hagame::graphics::MonitorManager::GetMonitor(1).displayBounds;
+	auto screenSize = hagame::graphics::MonitorManager::GetMonitor(0).displayBounds;
 
 	// constexpr std::uint32_fast32_t HANDGUN_ID{ 1 << 0 };
 	
@@ -20,7 +24,15 @@ int main() {
 	window.create();
 	Goom2 goom = Goom2(&window);
 
-	goom.run();
+	//Vec3 data = Vec3({ 1.0f, 2.0f, 3.0f });
+	//nlohmann::json j = data;
+
+	hagame::utils::FileSystem fs;
+	//fs.getFile("test_data.json").write(j.dump());
+
+	auto pos = JSON::parse(fs.getFile("test_data.json").read()).get<Vec3>();
+
+	//goom.run();
 
 	return 0;
 }

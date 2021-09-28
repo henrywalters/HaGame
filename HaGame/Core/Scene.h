@@ -101,14 +101,22 @@ namespace hagame {
 			return ecs.systems.get<T>(game, this);
 		}
 
+		// Instantiate a new entity belonging to a prexisting parent
 		Ptr<ecs::Entity> addChild(Ptr<ecs::Entity> parent) {
 			return ecs.entities.add(parent);
 		}
 
+		// Attach an entity to a parent. Removes the connection from previous parent if it exists
+		Ptr<ecs::Entity> addChild(Ptr<ecs::Entity> parent, Ptr<ecs::Entity> child) {
+			return ecs.entities.add(parent, child);
+		}
+
+		// Instantiate a new entity
 		Ptr<ecs::Entity> addEntity() {
 			return ecs.entities.add();
 		}
 
+		// Remove an entity, and its hildren
 		void removeEntity(Ptr<ecs::Entity> entity) {
 			ecs.entities.remove(entity);
 		}

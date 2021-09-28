@@ -6,5 +6,5 @@ out vec4 LFragment;
 uniform sampler2D image;
 
 void main() {
-	LFragment = Color * texture(image, TexCoords);
+	LFragment = texture(image, TexCoords);
 }

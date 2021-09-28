@@ -72,22 +72,22 @@ namespace hagame {
 					auto rb = entity->getComponent<hagame::physics::RigidBody>();
 					if (rb) {
 						r->shader->setMVP(entity->transform->getModelMatrix(), scene->viewMat, scene->projMat);
-						hagame::graphics::drawLine(hagame::graphics::Line(Vec3::Zero(), entity->transform->rotation.inverse().rotatePoint(rb->vel * r->velLen), r->velColor), r->shader);
-						hagame::graphics::drawLine(hagame::graphics::Line(Vec3::Zero(), entity->transform->rotation.inverse().rotatePoint(rb->accel * r->accelLen), r->accelColor), r->shader);
+						hagame::graphics::drawLine(hagame::graphics::Line(Vec3::Zero(), entity->transform->getRotation().inverse().rotatePoint(rb->vel * r->velLen), r->velColor), r->shader);
+						hagame::graphics::drawLine(hagame::graphics::Line(Vec3::Zero(), entity->transform->getRotation().inverse().rotatePoint(rb->accel * r->accelLen), r->accelColor), r->shader);
 					}
 				});
 
 				forEach<BoundingBoxRenderer>([this](BoundingBoxRenderer* r, Ptr<ecs::Entity> entity) {
 					r->shader->setMVP(Mat4::Identity(), scene->viewMat, scene->projMat);
-					Cube bb = transformBoundingBox(r->boundingBox, entity->transform->getModelMatrix().resize<3, 3>(), entity->transform->position);
+					Cube bb = transformBoundingBox(r->boundingBox, entity->transform->getModelMatrix().resize<3, 3>(), entity->transform->getPosition());
 					hagame::graphics::drawCubeOutline(bb, hagame::graphics::Color::green(), r->shader);
 				});
 
 				forEach<AxisRenderer>([this](AxisRenderer* r, Ptr<ecs::Entity> entity) {
 					r->shader->setMVP(Mat4::Identity(), scene->viewMat, scene->projMat);
-					hagame::graphics::drawLine(hagame::graphics::Line(entity->transform->position, entity->transform->position + (entity->transform->face() * r->axisLength), r->zColor), r->shader);
-					hagame::graphics::drawLine(hagame::graphics::Line(entity->transform->position, entity->transform->position + (entity->transform->right() * r->axisLength), r->xColor), r->shader);
-					hagame::graphics::drawLine(hagame::graphics::Line(entity->transform->position, entity->transform->position + (entity->transform->top() * r->axisLength), r->yColor), r->shader);
+					hagame::graphics::drawLine(hagame::graphics::Line(entity->transform->getPosition(), entity->transform->getPosition() + (entity->transform->face() * r->axisLength), r->zColor), r->shader);
+					hagame::graphics::drawLine(hagame::graphics::Line(entity->transform->getPosition(), entity->transform->getPosition() + (entity->transform->right() * r->axisLength), r->xColor), r->shader);
+					hagame::graphics::drawLine(hagame::graphics::Line(entity->transform->getPosition(), entity->transform->getPosition() + (entity->transform->top() * r->axisLength), r->yColor), r->shader);
 				});
 
 				forEach<SkyboxRenderer>([this](SkyboxRenderer* r) {
@@ -106,10 +106,10 @@ namespace hagame {
 				});
 
 				forEach<SpriteRenderer>([this](SpriteRenderer* r, Ptr<ecs::Entity> entity) {
-					if (r->sprite->texture != NULL) {
+					if (entity != NULL && r->sprite->texture != NULL && r->shader != NULL) {
 						r->shader->use();
 						r->shader->setMVP(
-							Mat4::Translation(entity->transform->position + r->sprite->rect.pos.resize<3>()) * Mat4::Rotation(entity->transform->rotation) * Mat4::Scale(r->sprite->rect.size.resize<3>()),
+							Mat4::Translation(entity->transform->getPosition() + r->sprite->rect.pos.resize<3>()) * Mat4::Rotation(entity->transform->getRotation()) * Mat4::Scale(r->sprite->rect.size.resize<3>()),
 							scene->viewMat,
 							scene->projMat
 						);
@@ -124,11 +124,11 @@ namespace hagame {
 					r->shader->setMat4("view", scene->viewMat);
 					r->shader->setMat4("projection", scene->projMat);
 					//r->shader->setMVP(
-					//	Mat4::Translation(entity->transform->position + r->box.pos.resize<3>())  * Mat4::Scale(r->box.size.resize<3>()),
+					//	Mat4::Translation(entity->transform->getPosition() + r->box.pos.resize<3>())  * Mat4::Scale(r->box.size.resize<3>()),
 					//	scene->viewMat,
 					//	scene->projMat
 					//);
-					r->draw(entity->transform->position);
+					r->draw(entity->transform->getPosition());
 				});
 
 				forEach<AnimatedSpriteRenderer>([this, dt](AnimatedSpriteRenderer* r, Ptr<ecs::Entity> entity) {
@@ -138,7 +138,7 @@ namespace hagame {
 						r->shader->use();
 						r->shader->setMVP(
 							Mat4::Translation(
-								entity->transform->position + r->sprites->active()->rect.pos.resize<3>()) * Mat4::Rotation(entity->transform->rotation) * Mat4::Scale(r->sprites->active()->rect.size.resize<3>()),
+								entity->transform->getPosition() + r->sprites->active()->rect.pos.resize<3>()) * Mat4::Rotation(entity->transform->getRotation()) * Mat4::Scale(r->sprites->active()->rect.size.resize<3>()),
 							scene->viewMat,
 							scene->projMat
 						);

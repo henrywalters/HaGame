@@ -18,8 +18,8 @@ public:
 			int rayCasts = 4;
 			float speed = 2.0f;
 
-			auto targetPoint = entity->transform->position + entity->transform->top() * enemy->def.sightDistance;
-			auto targetRay = hagame::math::Ray(entity->transform->position, targetPoint - entity->transform->position);
+			auto targetPoint = entity->transform->getPosition() + entity->transform->top() * enemy->def.sightDistance;
+			auto targetRay = hagame::math::Ray(entity->transform->getPosition(), targetPoint - entity->transform->getPosition());
 
 			auto targetRayPerp = entity->transform->right();
 			
@@ -29,7 +29,7 @@ public:
 			for (int i = -rayCasts / 2; i <= rayCasts / 2; i++) {
 				auto endPoint = targetPoint + (targetRayPerp * i * space);
 
-				auto ray = hagame::math::Ray(entity->transform->position, endPoint - entity->transform->position);
+				auto ray = hagame::math::Ray(entity->transform->getPosition(), endPoint - entity->transform->getPosition());
 
 				float t;
 				Optional<Ptr<hagame::ecs::Entity>> entityInSight;
@@ -48,14 +48,14 @@ public:
 				}
 
 				hagame::graphics::drawLine(hagame::graphics::Line(
-					entity->transform->position,
+					entity->transform->getPosition(),
 					ray.getPointOnLine(t),
 					hagame::graphics::Color(0.0f, 1.0f, 1.0f, 0.2f)
 				), game->resources->getShaderProgram("color"));
 				
 			}
 
-			auto angle = enemy->target != NULL ? entity->transform->top().angleBetween((enemy->target->transform->position - entity->transform->position)) : 0.0f;
+			auto angle = enemy->target != NULL ? entity->transform->top().angleBetween((enemy->target->transform->getPosition() - entity->transform->getPosition())) : 0.0f;
 
 			std::cout << enemy->state << angle << "\n";
 
@@ -91,7 +91,7 @@ public:
 						enemy->state = "TARGET";
 					}
 					else {
-						scene->getSystem<WeaponSystem>()->fire(entity, entity->transform->position, targetRay.direction, enemy->weapon);
+						scene->getSystem<WeaponSystem>()->fire(entity, entity->transform->getPosition(), targetRay.direction, enemy->weapon);
 					}
 				}
 				

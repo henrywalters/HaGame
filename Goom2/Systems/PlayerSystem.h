@@ -14,29 +14,18 @@
 
 const Array<String> map = {
 	"#############################",
-	"#############################",
-	"#############################",
-	"#############################",
-	"#############################",
-	"#############################",
-	"#############################",
-	"                            ",
-	"     T                 #    ",
-	"              T        #    ",
-	"         T         T        ",
 	"                       #    ",
-	"     T         P       #    ",
-	"           T                ",
-	"#################  ##########",
-	"#################  ##########",
-	"#################  ##########",
-	"###########        ##########",
-	"###########      T ##########",
-	"##########         ##########",
-	"#############################"
+	"                       #  T ",
+	"                       #    ",
+	"                            ",
+	"                       #    ",
+	"               P       #    ",
+	"                            ",
+	"#################  ##########"
 };
 
-const float CUBE_SIZE = 75.0f;
+const float CUBE_SIZE = 1.0f;
+const float PIXELS_PER_METER = 300.0f;
 
 class PlayerSystem : public hagame::ecs::System {
 public:
@@ -45,17 +34,10 @@ public:
 	PlayerRenderer* playerRenderer;
 	PlayerController* playerController;
 	hagame::physics::Collider* playerCollider;
+	Ptr<hagame::graphics::OrthographicCamera> orth;
 	Inventory* inventory;
 	Health* pHealth;
 
-	hagame::math::Sample<double, 10000> circleTest = hagame::math::Sample<double, 10000>([this]() {
-		std::cout << "Circle collision time: " << circleTest.average() << " std = " << circleTest.stddev() << "\n";
-		circleTest.clear();
-	});
-	hagame::math::Sample<double, 10000> boxTest = hagame::math::Sample<double, 10000>([this]() {
-		std::cout << "Box collision time: " << boxTest.average() << " std = " << boxTest.stddev() << "\n";
-		boxTest.clear();
-	});
 	hagame::utils::Timer timer;
 
 	String getSystemName() {
@@ -65,11 +47,11 @@ public:
 	void addWall(Vec2 pos, Vec2 size) {
 		auto target = scene->addEntity();
 		auto targetRenderer = target->addComponent<hagame::graphics::SpriteRenderer>();
-		//targetRenderer->shader = game->resources->getShaderProgram("sprite");
-		//targetRenderer->sprite = std::make_shared<hagame::graphics::Sprite>(
-		//	game->resources->getTexture("stones"),
-		//	Rect(size * 0.5, size)
-		//	);
+		targetRenderer->shader = game->resources->getShaderProgram("sprite");
+		targetRenderer->sprite = std::make_shared<hagame::graphics::Sprite>(
+			game->resources->getTexture("stones"),
+			Rect(size * 0.5, size)
+			);
 		target->transform->setPosition(pos.resize<3>() + Vec3({0, 0, 0.0f}));
 		auto targetCollider = target->addComponent<hagame::physics::Collider>();
 		targetCollider->dynamic = false;
@@ -80,11 +62,11 @@ public:
 		auto target = scene->addEntity();
 		target->addComponent<Health>();
 		auto targetRenderer = target->addComponent<hagame::graphics::SpriteRenderer>();
-		//targetRenderer->shader = game->resources->getShaderProgram("sprite");
-		//targetRenderer->sprite = std::make_shared<hagame::graphics::Sprite>(
-		//	game->resources->getTexture("target"),
-		//	Rect(Vec2::Zero(), Vec2(radius * 2.0))
-		//	);
+		targetRenderer->shader = game->resources->getShaderProgram("sprite");
+		targetRenderer->sprite = std::make_shared<hagame::graphics::Sprite>(
+			game->resources->getTexture("target"),
+			Rect(Vec2::Zero(), Vec2(radius * 2.0))
+			);
 		
 		auto targetCollider = target->addComponent<hagame::physics::Collider>();
 		targetCollider->dynamic = false;
@@ -117,15 +99,15 @@ public:
 		auto targetCollider =turret->addComponent<hagame::physics::Collider>();
 		targetCollider->dynamic = false;
 		targetCollider->type = hagame::physics::ColliderType::SphereCollider;
-		targetCollider->boundingSphere = Sphere(Vec3::Zero(), 25.0f);
+		targetCollider->boundingSphere = Sphere(Vec3::Zero(), CUBE_SIZE / 2.0f);
 		targetCollider->ignoreTags.push_back("player");
 
 		auto turretRenderer = turret->addComponent<hagame::graphics::SpriteRenderer>();
-		//turretRenderer->shader = game->resources->getShaderProgram("sprite");
-		//turretRenderer->sprite = std::make_shared<hagame::graphics::Sprite>(
-		//	game->resources->getTexture("turret"),
-		//	Rect(Vec2::Zero(), Vec2(50.0f))
-		//);
+		turretRenderer->shader = game->resources->getShaderProgram("sprite");
+		turretRenderer->sprite = std::make_shared<hagame::graphics::Sprite>(
+			game->resources->getTexture("turret"),
+			Rect(Vec2::Zero(), Vec2(CUBE_SIZE))
+		);
 	}
 
 	void onSystemInit() {
@@ -153,7 +135,9 @@ public:
 		*/
 
 		auto camera = player->addComponent<hagame::graphics::CameraComponent>();
-		camera->camera = std::make_shared<hagame::graphics::OrthographicCamera>(game->window->size);
+		orth = std::make_shared<hagame::graphics::OrthographicCamera>(game->window->size / PIXELS_PER_METER);
+		camera->camera = orth;
+		
 
 		for (int i = 0; i < map.size(); i++) {
 			for (int j = 0; j < map[i].size(); j++) {
@@ -175,12 +159,13 @@ public:
 
 		playerRenderer = player->addComponent<PlayerRenderer>();
 		playerRenderer->shader = game->resources->getShaderProgram("sprite");
+		playerRenderer->size = CUBE_SIZE * 0.75f;
 
 		playerCollider = player->addComponent<hagame::physics::Collider>();
 		playerCollider->display = true;
 		playerCollider->shader = game->resources->getShaderProgram("color");
 		playerCollider->type = hagame::physics::ColliderType::SphereCollider;
-		playerCollider->boundingSphere = Sphere(Vec3::Zero(), (25.0f));
+		playerCollider->boundingSphere = Sphere(Vec3::Zero(), (CUBE_SIZE * 0.75f * 0.5f));
 		playerCollider->ignoreTags.push_back("bullet");
 
 		game->resources->getFileSystem()->forEachFile("Textures/TopDownShooter", [this](String aPath, String aName) {
@@ -198,7 +183,7 @@ public:
 				if (aName == "feet") {
 
 					auto feetSprites = playerRenderer->feet->add(aName + "_" + bName);
-					feetSprites->rect = Rect(Vec2::Zero(), Vec2(100.0f));
+					feetSprites->rect = Rect(Vec2::Zero(), Vec2(CUBE_SIZE));
 
 					for (auto spriteImage : spriteImages) {
 						auto texture = game->resources->loadTexture(stringSplit(spriteImage, '.')[0], spriteImage);
@@ -207,7 +192,7 @@ public:
 				}
 				else {
 					auto bodySprites = playerRenderer->body->add(aName + "_" + bName);
-					bodySprites->rect = Rect(Vec2::Zero(), Vec2(25.0f));
+					bodySprites->rect = Rect(Vec2::Zero(), Vec2(CUBE_SIZE));
 
 					for (auto spriteImage : spriteImages) {
 						auto texture = game->resources->loadTexture(stringSplit(spriteImage, '.')[0], spriteImage);
@@ -225,10 +210,14 @@ public:
 
 	void onSystemUpdate(double dt) {
 
-		Vec2 mousePos = game->input.keyboardMouse.mouse.position;
-		mousePos[1] = game->window->size[1] - mousePos[1];
-		mousePos += (player->transform->position.resize<2>() - game->window->size * 0.5);
-		auto delta = mousePos.resize<3>() - player->transform->position;
+		Vec2 mousePos, screenPos;
+
+		screenPos = game->input.keyboardMouse.mouse.position;
+		screenPos[1] = game->window->size[1] - screenPos[1];
+		mousePos = screenPos.copy();
+		mousePos = orth->getGamePos(player->transform, mousePos / PIXELS_PER_METER);
+
+		auto delta = mousePos.resize<3>() - player->transform->getPosition();
 		auto dotProd = delta.normalized().dot(game->input.keyboardMouse.lAxis.resize<3>());
 
 		player->transform->setRotation(Quat(atan2(-delta[1], delta[0]), Vec3::Back()));
@@ -237,6 +226,10 @@ public:
 		auto right = player->transform->bottom();
 
 		playerController->update(game->input.keyboardMouse.lAxis, !game->input.keyboardMouse.b, dt);
+		
+		ImGui::Begin("Player Controller");
+		playerController->renderUI();
+		ImGui::End();
 
 		float t;
 
@@ -264,13 +257,13 @@ public:
 		auto pixelShader = game->resources->getShaderProgram("color");
 		pixelShader->use();
 		pixelShader->setMVP(Mat4::Identity(), Mat4::Identity(), scene->projMat);
-		// hagame::graphics::drawLine(hagame::graphics::Line(player->transform->position, mousePos.resize<3>(), hagame::graphics::Color::blue()), pixelShader);
+		// hagame::graphics::drawLine(hagame::graphics::Line(player->transform->getPosition(), mousePos.resize<3>(), hagame::graphics::Color::blue()), pixelShader);
 
-		hagame::math::Ray ray = hagame::math::Ray(player->transform->position, (mousePos.resize<3>() - player->transform->position) * 1000000);
+		hagame::math::Ray ray = hagame::math::Ray(player->transform->getPosition(), (mousePos.resize<3>() - player->transform->getPosition()) * 1000000);
 
 		hagame::graphics::drawRect(Rect(
-			mousePos.resize<2>() - Vec2(5.0f),
-			Vec2(10.0f)
+			mousePos.resize<2>() - Vec2(0.5f),
+			Vec2(CUBE_SIZE * 0.25f)
 		), hagame::graphics::Color::blue(), game->resources->getShaderProgram("color"));
 
 		auto rayHit = game->collisions.raycast(player, ray, t, {"bullet"});
@@ -280,18 +273,18 @@ public:
 			auto point = ray.getPointOnLine(t).resize<2>();
 
 			auto spread = inventory->activeWeapon().value()->weapon.bullet.value().spread * 200;
-			auto size = tan(spread) * (player->transform->position.resize<2>() - point).magnitude();
+			auto size = tan(spread) * (player->transform->getPosition().resize<2>() - point).magnitude();
 
 			/*hagame::graphics::drawRect(Rect(
 				point - Vec2(size / 2),
 				Vec2(size)
 			), hagame::graphics::Color::red(), game->resources->getShaderProgram("color"));
 			*/
-			hagame::graphics::drawRect(Rect(
+			/*hagame::graphics::drawRect(Rect(
 				point - Vec2(spread / 2),
 				Vec2(spread)
 			), hagame::graphics::Color::red(), game->resources->getShaderProgram("color"));
-
+			*/
 		}
 
 		timer.reset();
@@ -326,7 +319,7 @@ public:
 			if ((weapon.value()->weapon.automatic && game->input.keyboardMouse.mouse.left) || 
 				(!weapon.value()->weapon.automatic && game->input.keyboardMouse.mouse.leftPressed))
 			{
-				scene->getSystem<WeaponSystem>()->fire(player, player->transform->position, delta, weapon.value());
+				scene->getSystem<WeaponSystem>()->fire(player, player->transform->getPosition(), delta, weapon.value());
 			}			
 		}
 
@@ -349,10 +342,12 @@ public:
 
 		playerRenderer->shader->use();
 		playerRenderer->shader->setMVP(
-			Mat4::Translation(player->transform->position) * Mat4::Rotation(player->transform->rotation) * Mat4::Scale(playerRenderer->size.resize<3>()),
-			Mat4::Identity(),
+			Mat4::Translation(player->transform->getPosition()) * Mat4::Rotation(player->transform->getRotation()) * Mat4::Scale(playerRenderer->size.resize<3>()),
+			scene->viewMat,
 			scene->projMat
 		);
+
+		std::cout << player->transform->getPosition().toString() << "\n";
 
 		if (playerRenderer->feet->hasActive()) {
 			playerRenderer->feet->active()->draw(playerRenderer->shader);
@@ -363,6 +358,7 @@ public:
 			playerRenderer->body->active()->draw(playerRenderer->shader);
 			playerRenderer->body->active()->update(dt);
 		}
+		
 	}
 };
 

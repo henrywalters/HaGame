@@ -14,7 +14,7 @@ namespace hagame {
 			float zFar = 500.0f;
 
 			Mat4 getViewMatrix(hagame::Transform *transform) {
-				return Mat4::LookAt(transform->position, transform->position + transform->face(), Vec3::Top());
+				return Mat4::LookAt(transform->getPosition(), transform->getPosition() + transform->face(), Vec3::Top());
 			}
 
 			Mat4 getProjMatrix(hagame::Transform* transform) {

@@ -27,7 +27,7 @@ namespace hagame {
 		class Collisions {
 		public:
 
-			Publisher<CollisionEvent> events;
+			// Publisher<CollisionEvent> events;
 
 			utils::SpatialMap<ecs::Entity, float> entityMap;
 
@@ -51,7 +51,7 @@ namespace hagame {
 						throw new std::exception("SphereCollider must have boundingSphere defined");
 					}
 					auto bs = collider->boundingSphere.value();
-					return Sphere(entity->transform->position + bs.center, bs.radius);
+					return Sphere(entity->transform->getPosition() + bs.center, bs.radius);
 				}
 				else if (collider->type == hagame::physics::ColliderType::BoxCollider) {
 					if (!collider->boundingCube.has_value()) {
@@ -59,7 +59,7 @@ namespace hagame {
 					}
 					auto bc = collider->boundingCube.value();
 					auto radius = (max(bc.size[0], max(bc.size[1], bc.size[2])) / 2.0f) * SQRT_2;
-					return Sphere(entity->transform->position, radius);
+					return Sphere(entity->transform->getPosition(), radius);
 				}
 				else {
 					throw new std::exception("getBoundingSphere does not have support for this collider type");
@@ -79,7 +79,7 @@ namespace hagame {
 
 						if (nCollider->type == ColliderType::BoxCollider) {
 							auto cube = nCollider->boundingCube.value();
-							cube.pos += neighbor->transform->position;
+							cube.pos += neighbor->transform->getPosition();
 							if (ray.checkCube(cube, currT) && (currT < t || !entity.has_value())) {
 								t = currT;
 								entity = neighbor;
@@ -87,7 +87,7 @@ namespace hagame {
 						}
 						else if (nCollider->type == ColliderType::SphereCollider) {
 							auto sphere = nCollider->boundingSphere.value();
-							sphere.center += neighbor->transform->position;
+							sphere.center += neighbor->transform->getPosition();
 							if (ray.checkSphere(sphere, currT) && (currT < t || !entity.has_value())) {
 								t = currT;
 								entity = neighbor;
@@ -131,7 +131,7 @@ namespace hagame {
 					float collisionT;
 					//for (auto& [key, neighborhood] : entityMap.map)
 					//{
-					for (auto neighbor : entityMap.get(entity->transform->position + velocity * dt)) {
+					for (auto neighbor : entityMap.get(entity->transform->getPosition() + velocity * dt)) {
 						//for (auto neighbor : neighborhood) {
 							if (neighbor->id == entity->id || hasElement(collider->ignoreEntities, neighbor->id) || neighbor->hasTag(collider->ignoreTags))
 								continue;
@@ -140,7 +140,7 @@ namespace hagame {
 
 							if (nCollider->type == ColliderType::BoxCollider) {
 								auto cube = nCollider->boundingCube.value();
-								cube.pos += neighbor->transform->position;
+								cube.pos += neighbor->transform->getPosition();
 
 								for (int i = 0; i < 3; i++) {
 									if (rays[i].checkCube(cube, collisionT)) {
@@ -155,7 +155,7 @@ namespace hagame {
 							}
 							else if (nCollider->type == ColliderType::SphereCollider) {
 								auto sphere = nCollider->boundingSphere.value();
-								sphere.center += neighbor->transform->position;
+								sphere.center += neighbor->transform->getPosition();
 
 								for (int i = 0; i < 3; i++) {
 									if (rays[i].checkSphere(sphere, collisionT)) {
@@ -176,7 +176,7 @@ namespace hagame {
 						CollisionEvent e;
 						e.collider = entity;
 						e.target = collidedWith;
-						events.emit(e);
+						// events.emit(e);
 						return collidedWith;
 					}
 				}

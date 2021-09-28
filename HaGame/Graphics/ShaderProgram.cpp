@@ -1,6 +1,7 @@
 #include "ShaderProgram.h"
 
-hagame::graphics::ShaderProgram::ShaderProgram(hagame::graphics::Shader vertex, hagame::graphics::Shader fragment): vertexShader(vertex), fragmentShader(fragment) {
+hagame::graphics::ShaderProgram::ShaderProgram(String _name, hagame::graphics::Shader vertex, hagame::graphics::Shader fragment): vertexShader(vertex), fragmentShader(fragment) {
+	name = _name;
 	id = glCreateProgram();
 	glAttachShader(id, vertexShader.id);
 	glAttachShader(id, fragmentShader.id);

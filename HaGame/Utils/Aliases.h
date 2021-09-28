@@ -1,6 +1,7 @@
 #ifndef ALIASES
 #define ALIASES
 
+#include <any>
 #include <iostream>
 #include <vector>
 #include <queue>
@@ -10,6 +11,7 @@
 #include <tuple>
 #include <memory>
 #include <optional>
+#include <list>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
@@ -17,6 +19,7 @@
 #include "../Math/Matrix.h"
 #include "../Math/Hypercube.h"
 #include "../Math/NSphere.h"
+#include "./../Vendor/json.hpp"
 
 #ifndef DEBUG_MODE
 #define DEBUG_MODE false
@@ -32,7 +35,14 @@
 
 typedef void (*voidfunc_t)();
 
+
+// Override this to provide your own custom data structures
+#ifndef HAGAME_STD_ALIASES
+#define HAGAME_STD_ALIASES
+
 // Standard Library aliases
+
+using Any = std::any;
 
 template <class T>
 using Optional = std::optional<T>;
@@ -48,6 +58,11 @@ using UniqPtr = std::unique_ptr<T>;
 
 template <class T>
 using Array = std::vector<T>;
+
+template <class T>
+using List = std::list<T>;
+
+#endif
 
 template <class T>
 bool hasElement(Array<T> arr, T el) {
@@ -87,11 +102,23 @@ bool hasKey(Map<K, V> map, K key) {
 	return map.find(key) != map.end();
 }
 
+template <class K, class V>
+Map<K, Any> make_any(Map<K, V> map) {
+	Map<K, Any> out;
+	for (auto& [key, value] : map) {
+		out.insert(std::make_pair(key, value));
+	}
+	return out;
+}
+
 template <class T>
 using Queue = std::deque<T>;
 
+using JSON = nlohmann::json;
+
 // Math aliases
 const float EPSILON = 0.1f;
+const float E = 2.7182818f;
 const float PI = 3.141592f;
 const float SQRT_2 = 1.414213;
 const float SQRT_3 = 1.732051;

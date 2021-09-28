@@ -22,6 +22,13 @@ public:
 		game->resources->loadTexture("bullethole", "Textures/bullethole.png");
 		game->resources->loadTexture("target", "Textures/target.png");
 		game->resources->loadTexture("turret", "Textures/turret.png");
+		game->resources->loadTexture("wood", "Textures/wood_floor.png");
+		game->resources->loadTexture("grey", "Textures/grey.png");
+		game->resources->loadTexture("cobblestone", "Textures/cobblestone.jpg");
+		game->resources->loadTexture("audio_texture", "Textures/HaGame/ui/audio.png");
+		game->resources->loadTexture("font_texture", "Textures/HaGame/ui/font.png");
+		game->resources->loadTexture("shader_texture", "Textures/HaGame/ui/shader.png");
+		game->resources->loadTexture("mesh_texture", "Textures/HaGame/ui/mesh.png");
 	}
 
 	void loadAudio() {

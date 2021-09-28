@@ -20,7 +20,7 @@ struct Bullet {
 
 const Bullet HANDGUN_BULLET{
 	10.0f,
-	800.0f,
+	8.0f,
 	5.0f * DEG_TO_RAD,
 	0.0f,
 	false,
@@ -29,7 +29,7 @@ const Bullet HANDGUN_BULLET{
 
 const Bullet SHOTGUN_PELLET{
 	8.0f,
-	1000.0f,
+	10.0f,
 	15.0f * DEG_TO_RAD,
 	0.0f,
 	false,
@@ -38,7 +38,7 @@ const Bullet SHOTGUN_PELLET{
 
 const Bullet RIFLE_BULLET{
 	17.5f,
-	1000.0f,
+	10.0f,
 	5.0f * DEG_TO_RAD,
 	0.0f,
 	false,
@@ -47,19 +47,19 @@ const Bullet RIFLE_BULLET{
 
 const Bullet PLASMA_BLOB{
 	20.0f,
-	1000.0f,
+	10.0f,
 	2.5f * DEG_TO_RAD,
 	0.0f,
 	false,
 	ProjectileDef{
 		"plasma_ball",
-		Vec2({10, 10})
+		Vec2({0.1, 0.1})
 	}
 };
 
 const Bullet ROCKET{
 	100.0f,
-	500.0f,
+	5.0f,
 	0.0f * DEG_TO_RAD,
 	20.0f,
 	true,

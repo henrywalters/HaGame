@@ -17,6 +17,21 @@ class Sandbox : public hagame::Scene {
 		addSystem<WeaponSystem>();
 		addSystem<EnemySystem>();
 		addSystem<ActorSystem>();
+
+		// Setup Dear ImGui context
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO(); (void)io;
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+		// Setup Dear ImGui style
+		ImGui::StyleColorsDark();
+		//ImGui::StyleColorsClassic();
+
+		// Setup Platform/Renderer backends
+		ImGui_ImplSDL2_InitForOpenGL(game->window->window, game->window->gl);
+		ImGui_ImplOpenGL3_Init("#version 330 core");
 	}
 };
 

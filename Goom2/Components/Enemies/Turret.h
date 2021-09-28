@@ -23,7 +23,7 @@ const ActorDef TURRET {
 			auto target = ctx.scene->ecs.entities.get(ctx.actor->targetId.value());
 
 			if (ctx.actor->inSight(entity, target, true, { "bullet", "turret" })) {
-				auto angle = entity->transform->top().angleBetween(target->transform->position - entity->transform->position);
+				auto angle = entity->transform->top().angleBetween(target->transform->getPosition() - entity->transform->getPosition());
 				if (abs(angle) > 0.01) {
 					entity->transform->rotate(Quat(TURRET_SPEED * dt * sign(angle), Vec3::Face()));
 				}
@@ -39,15 +39,15 @@ const ActorDef TURRET {
 		else {
 			auto target = ctx.scene->ecs.entities.get(ctx.actor->targetId.value());
 			if (ctx.actor->inSight(entity, target, true, { "bullet", "turret" })) {
-				auto angle = entity->transform->top().angleBetween(target->transform->position - entity->transform->position);
+				auto angle = entity->transform->top().angleBetween(target->transform->getPosition() - entity->transform->getPosition());
 				if (abs(angle) > 0.01) {
 					ctx.actor->state = "AIM";
 				}
 				else {
 					ctx.scene->getSystem<WeaponSystem>()->fire(
 						entity,
-						entity->transform->position,
-						target->transform->position - entity->transform->position,
+						entity->transform->getPosition(),
+						target->transform->getPosition() - entity->transform->getPosition(),
 						ctx.actor->weapon
 					);
 				}

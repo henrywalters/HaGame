@@ -68,11 +68,11 @@ struct Actor {
 
 	// Checks to see if the actor entity can see the target
 	bool inSight(Ptr<hagame::ecs::Entity> entity, Ptr<hagame::ecs::Entity> target, bool draw = false, Array<String> ignoreTags = {}) {
-		Vec3 delta = target->transform->position - entity->transform->position;
+		Vec3 delta = target->transform->getPosition() - entity->transform->getPosition();
 		float angle = entity->transform->top().angleBetween(delta);
 		float t;
 
-		hagame::math::Ray ray(entity->transform->position, delta.normalized() * def.sightDistance);
+		hagame::math::Ray ray(entity->transform->getPosition(), delta.normalized() * def.sightDistance);
 		Optional<Ptr<hagame::ecs::Entity>> inSight;
 		inSight = game->collisions.raycast(entity, ray, t, ignoreTags);
 		if (!inSight.has_value())
@@ -80,7 +80,7 @@ struct Actor {
 
 		if (draw) {
 			hagame::graphics::drawLine(hagame::graphics::Line(
-				entity->transform->position,
+				entity->transform->getPosition(),
 				ray.getPointOnLine(t),
 				hagame::graphics::Color(1.0f, 0.0f, 0.0f, 0.2f)
 			), game->resources->getShaderProgram("color"));
@@ -105,7 +105,7 @@ struct Actor {
 		for (int i = 0; i < raycasts; i++) {
 			angle = (-def.fov / 2.0f) + i * gapRadius;
 
-			hagame::math::Ray ray(entity->transform->position, Quat(angle, Vec3::Face()).rotatePoint(targetPoint));
+			hagame::math::Ray ray(entity->transform->getPosition(), Quat(angle, Vec3::Face()).rotatePoint(targetPoint));
 
 			Optional<Ptr<hagame::ecs::Entity>> inSight;
 			inSight = game->collisions.raycast(entity, ray, t, ignoreTags);
@@ -119,7 +119,7 @@ struct Actor {
 
 			if (draw) {
 				hagame::graphics::drawLine(hagame::graphics::Line(
-					entity->transform->position,
+					entity->transform->getPosition(),
 					ray.getPointOnLine(t),
 					hagame::graphics::Color(0.0f, 1.0f, 1.0f, 0.2f)
 				), game->resources->getShaderProgram("color"));

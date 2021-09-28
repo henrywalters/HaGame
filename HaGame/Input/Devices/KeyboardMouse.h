@@ -6,6 +6,7 @@
 #include "../../Math/Functions.h"
 #include "../../Utils/Aliases.h"
 #include "../../Vendor/imgui/imgui.h"
+#include "../../Vendor/imgui/backends/imgui_impl_sdl.h"
 #include "SDL.h"
 
 namespace hagame {
@@ -145,6 +146,8 @@ namespace hagame {
 
 				void handleEvent(SDL_Event event) {
 
+					ImGui_ImplSDL2_ProcessEvent(&event);
+
 					switch (event.type) {
 					case SDL_MOUSEMOTION:
 						mouse.position[0] = event.motion.x;
@@ -179,7 +182,6 @@ namespace hagame {
 						break;
 					case SDL_MOUSEWHEEL:
 						mouse.wheel = event.wheel.y;
-						std::cout << event.wheel.y << "\n";
 						break;
 					}
 				}

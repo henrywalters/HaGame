@@ -12,8 +12,7 @@
 #include "../Audio/Sample.h"
 
 namespace hagame {
-	class ResourceManager {
-	private:
+	struct ResourceManager {
 		Ptr<hagame::utils::FileSystem> fs;
 
 		Map<String, Ptr<hagame::graphics::ShaderProgram>> shaderPrograms;
@@ -28,8 +27,6 @@ namespace hagame {
 		// Perform preprocessing steps on a shaders source code. For now, this just means resolving #include statements
 		String processShaderFile(hagame::utils::File file);
 
-
-	public:
 		ResourceManager(String basePath);
 
 		void setBasePath(String basePath);

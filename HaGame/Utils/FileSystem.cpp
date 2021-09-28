@@ -32,6 +32,11 @@ hagame::utils::File hagame::utils::FileSystem::getFile(std::string path)
 	return File(basePath, path);
 }
 
+hagame::utils::File hagame::utils::FileSystem::getFileOrCreate(std::string path)
+{
+	return File(basePath, path);
+}
+
 hagame::utils::File hagame::utils::FileSystem::getGlobalFile(std::string path)
 {
 	if (!isGlobalFile(path)) {

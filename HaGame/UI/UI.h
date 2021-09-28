@@ -5,6 +5,7 @@
 
 #include "./Editable.h"
 #include "./FileTree.h"
-
+#include "./EntityTree.h"
+#include "./ResourceBrowser.h"
 
 #endif

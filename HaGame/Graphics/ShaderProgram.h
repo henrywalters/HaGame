@@ -15,10 +15,11 @@ namespace hagame {
 		class ShaderProgram {
 		public:
 			GLuint id;
+			String name;
 			hagame::graphics::Shader vertexShader;
 			hagame::graphics::Shader fragmentShader;
 
-			ShaderProgram(hagame::graphics::Shader vertex, hagame::graphics::Shader fragment);
+			ShaderProgram(String _name, hagame::graphics::Shader vertex, hagame::graphics::Shader fragment);
 
 			std::string getProgramLog();
 

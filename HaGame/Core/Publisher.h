@@ -5,16 +5,17 @@
 #include "./Subscriber.h"
 
 namespace hagame {
-	template <class EventType>
+	template <class EventId, class EventType>
 	class Publisher {
-		Map<uint32_t, Ptr<Subscriber<EventType>>> subscribers;
+		Map<uint32_t, Ptr<Subscriber<EventId, EventType>>> subscribers;
 		uint32_t subCount = 0;
 		uint32_t activeSubCount = 0;
 	public:
 
-		Ptr<Subscriber<EventType>> subscribe(std::function<void(EventType)> onEventFn) {
-			Ptr<Subscriber<EventType>> subscriber = std::make_shared<Subscriber<EventType>>();
+		Ptr<Subscriber<EventId, EventType>> subscribe(EventId eventId, std::function<void(EventType)> onEventFn) {
+			Ptr<Subscriber<EventId, EventType>> subscriber = std::make_shared<Subscriber<EventId, EventType>>();
 			subscriber->onEvent = onEventFn;
+			subscriber->eventId = eventId;
 			subscriber->id = subCount;
 			subCount++;
 			activeSubCount++;
@@ -22,14 +23,16 @@ namespace hagame {
 			return subscriber;
 		}
 
-		void unsubscribe(Ptr<Subscriber<EventType>> subscriber) {
+		void unsubscribe(Ptr<Subscriber<EventId, EventType>> subscriber) {
 			subscribers.erase(subscriber->id);
 			subscriber.reset();
 		}
 
-		void emit(EventType e) {
+		void emit(EventId eventId, EventType e) {
 			for (auto& [id, subscriber] : subscribers) {
-				subscriber->onEvent(e);
+				if (subscriber->eventId == eventId) {
+					subscriber->onEvent(e);
+				}	
 			}
 		}
 	};

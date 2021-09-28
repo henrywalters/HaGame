@@ -22,12 +22,9 @@ namespace hagame {
 		// Provides a set with a fixed size (N) of type T and functions for common mathematical formulas. The onFull callback is triggered when the set is full.
 		template<class T, size_t N>
 		class Sample {
-		private:
-
-			Queue<T> set;
-
 		public:
 			
+			Queue<T> set;
 			std::function<void()> onFull;
 			size_t size;
 

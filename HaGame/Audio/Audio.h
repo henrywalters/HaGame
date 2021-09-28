@@ -15,7 +15,7 @@ namespace hagame {
 			}
 
 			void play(Sample* sample) {
-				soloud->play(sample->wav);
+				soloud->play(sample->wav, 0.2f);
 			}
 		};
 	}

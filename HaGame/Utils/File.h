@@ -14,7 +14,10 @@ namespace hagame {
 			String dir;
 			String name;
 
-			File(String _dir, String _name) : dir(_dir), name(_name) {}
+			File(String _dir, String _name) : dir(_dir), name(_name) {
+				std::ofstream stream(dir + "/" + name);
+				stream.close();
+			}
 
 			String read();
 			Array<String> readLines();

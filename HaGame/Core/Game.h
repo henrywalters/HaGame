@@ -55,6 +55,8 @@ namespace hagame {
 		virtual void onGameStart() {};
 		virtual void onGameEnd() {};
 		virtual void onGameUpdate(double dt) {};
+		virtual void onGameBeforeUpdate() {};
+		virtual void onGameAfterUpdate() {};
 
 		Ptr<Scene> addScene(String sceneName) {
 			Ptr<Scene> scene = scenes.add(sceneName);

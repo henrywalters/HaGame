@@ -1860,7 +1860,7 @@ namespace entt {
     template<typename Type>
     Type* any_cast(any* data) ENTT_NOEXCEPT {
         // last attempt to make wrappers for const references return their values
-        return (data->type() == type_id<Type>() ? static_cast<Type*>(static_cast<constness_as_t<any, Type>*>(data)->data()) : nullptr);
+        return (data->type() == type_id<Type>() ? static_cast<Type*>(static_cast<constness_as_t<any, Type> *>(data)->data()) : nullptr);
     }
 
 
@@ -6334,7 +6334,7 @@ namespace entt {
         [[nodiscard]] auto wrap(Type&, std::index_sequence<Index...>) ENTT_NOEXCEPT {
             return [](const void* payload, Args... args) -> Ret {
                 [[maybe_unused]] const auto arguments = std::forward_as_tuple(std::forward<Args>(args)...);
-                Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type>*>(payload));
+                Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type> *>(payload));
                 return static_cast<Ret>(std::invoke(Candidate, *curr, std::forward<type_list_element_t<Index, type_list<Args...>>>(std::get<Index>(arguments))...));
             };
         }
@@ -6343,7 +6343,7 @@ namespace entt {
         [[nodiscard]] auto wrap(Type*, std::index_sequence<Index...>) ENTT_NOEXCEPT {
             return [](const void* payload, Args... args) -> Ret {
                 [[maybe_unused]] const auto arguments = std::forward_as_tuple(std::forward<Args>(args)...);
-                Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type>*>(payload));
+                Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type> *>(payload));
                 return static_cast<Ret>(std::invoke(Candidate, curr, std::forward<type_list_element_t<Index, type_list<Args...>>>(std::get<Index>(arguments))...));
             };
         }
@@ -6435,7 +6435,7 @@ namespace entt {
 
             if constexpr (std::is_invocable_r_v<Ret, decltype(Candidate), Type&, Args...>) {
                 fn = [](const void* payload, Args... args) -> Ret {
-                    Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type>*>(payload));
+                    Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type> *>(payload));
                     return Ret(std::invoke(Candidate, *curr, std::forward<Args>(args)...));
                 };
             }
@@ -6460,7 +6460,7 @@ namespace entt {
 
             if constexpr (std::is_invocable_r_v<Ret, decltype(Candidate), Type*, Args...>) {
                 fn = [](const void* payload, Args... args) -> Ret {
-                    Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type>*>(payload));
+                    Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type> *>(payload));
                     return Ret(std::invoke(Candidate, curr, std::forward<Args>(args)...));
                 };
             }
@@ -12263,7 +12263,7 @@ namespace entt {
     template<typename Type>
     Type* any_cast(any* data) ENTT_NOEXCEPT {
         // last attempt to make wrappers for const references return their values
-        return (data->type() == type_id<Type>() ? static_cast<Type*>(static_cast<constness_as_t<any, Type>*>(data)->data()) : nullptr);
+        return (data->type() == type_id<Type>() ? static_cast<Type*>(static_cast<constness_as_t<any, Type> *>(data)->data()) : nullptr);
     }
 
 
@@ -14014,7 +14014,7 @@ namespace entt {
         };
 
         [[nodiscard]] const basic_sparse_set<Entity>* candidate() const ENTT_NOEXCEPT {
-            return (std::min)({ static_cast<const basic_sparse_set<entity_type>*>(std::get<storage_type<Component>*>(pools))... }, [](const auto* lhs, const auto* rhs) {
+            return (std::min)({ static_cast<const basic_sparse_set<entity_type> *>(std::get<storage_type<Component>*>(pools))... }, [](const auto* lhs, const auto* rhs) {
                 return lhs->size() < rhs->size();
                 });
         }
@@ -14041,8 +14041,8 @@ namespace entt {
             if (*this) {
                 if constexpr (std::is_same_v<typename storage_type<Comp>::storage_category, empty_storage_tag>) {
                     for (const auto entt : static_cast<const basic_sparse_set<entity_type>&>(*std::get<storage_type<Comp>*>(pools))) {
-                        if (((std::is_same_v<Comp, Component> || std::get<storage_type<Component>*>(pools)->contains(entt)) && ...)
-                            && !(std::get<const storage_type<Exclude>*>(filter)->contains(entt) || ...))
+                        if (((std::is_same_v<Comp, Component> || std::get<storage_type<Component> *>(pools)->contains(entt)) && ...)
+                            && !(std::get<const storage_type<Exclude> *>(filter)->contains(entt) || ...))
                         {
                             if constexpr (is_applicable_v < Func, decltype(std::tuple_cat(std::tuple<entity_type>{}, std::declval<basic_view>().get({}))) > ) {
                                 std::apply(func, std::tuple_cat(std::make_tuple(entt), get(entt)));
@@ -14057,8 +14057,8 @@ namespace entt {
                     auto it = std::get<storage_type<Comp>*>(pools)->begin();
 
                     for (const auto entt : static_cast<const basic_sparse_set<entity_type>&>(*std::get<storage_type<Comp>*>(pools))) {
-                        if (((std::is_same_v<Comp, Component> || std::get<storage_type<Component>*>(pools)->contains(entt)) && ...)
-                            && !(std::get<const storage_type<Exclude>*>(filter)->contains(entt) || ...))
+                        if (((std::is_same_v<Comp, Component> || std::get<storage_type<Component> *>(pools)->contains(entt)) && ...)
+                            && !(std::get<const storage_type<Exclude> *>(filter)->contains(entt) || ...))
                         {
                             if constexpr (is_applicable_v < Func, decltype(std::tuple_cat(std::tuple<entity_type>{}, std::declval<basic_view>().get({}))) > ) {
                                 std::apply(func, std::tuple_cat(std::make_tuple(entt), dispatch_get<Component>(it, entt)...));
@@ -14850,16 +14850,16 @@ namespace entt {
 
             if (auto&& pdata = pools[index]; !pdata.pool) {
                 pdata.pool.reset(new storage_type<Component>());
-                pdata.poly = std::ref(*static_cast<storage_type<Component>*>(pdata.pool.get()));
+                pdata.poly = std::ref(*static_cast<storage_type<Component> *>(pdata.pool.get()));
             }
 
-            return static_cast<storage_type<Component>*>(pools[index].pool.get());
+            return static_cast<storage_type<Component> *>(pools[index].pool.get());
         }
 
         template<typename Component>
         [[nodiscard]] const storage_type<Component>* assure() const {
             const auto index = type_seq<Component>::value();
-            return (!(index < pools.size()) || !pools[index].pool) ? nullptr : static_cast<const storage_type<Component>*>(pools[index].pool.get());
+            return (!(index < pools.size()) || !pools[index].pool) ? nullptr : static_cast<const storage_type<Component> *>(pools[index].pool.get());
         }
 
         Entity generate_identifier() {
@@ -16854,7 +16854,7 @@ namespace entt {
         [[nodiscard]] auto wrap(Type&, std::index_sequence<Index...>) ENTT_NOEXCEPT {
             return [](const void* payload, Args... args) -> Ret {
                 [[maybe_unused]] const auto arguments = std::forward_as_tuple(std::forward<Args>(args)...);
-                Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type>*>(payload));
+                Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type> *>(payload));
                 return static_cast<Ret>(std::invoke(Candidate, *curr, std::forward<type_list_element_t<Index, type_list<Args...>>>(std::get<Index>(arguments))...));
             };
         }
@@ -16863,7 +16863,7 @@ namespace entt {
         [[nodiscard]] auto wrap(Type*, std::index_sequence<Index...>) ENTT_NOEXCEPT {
             return [](const void* payload, Args... args) -> Ret {
                 [[maybe_unused]] const auto arguments = std::forward_as_tuple(std::forward<Args>(args)...);
-                Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type>*>(payload));
+                Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type> *>(payload));
                 return static_cast<Ret>(std::invoke(Candidate, curr, std::forward<type_list_element_t<Index, type_list<Args...>>>(std::get<Index>(arguments))...));
             };
         }
@@ -16955,7 +16955,7 @@ namespace entt {
 
             if constexpr (std::is_invocable_r_v<Ret, decltype(Candidate), Type&, Args...>) {
                 fn = [](const void* payload, Args... args) -> Ret {
-                    Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type>*>(payload));
+                    Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type> *>(payload));
                     return Ret(std::invoke(Candidate, *curr, std::forward<Args>(args)...));
                 };
             }
@@ -16980,7 +16980,7 @@ namespace entt {
 
             if constexpr (std::is_invocable_r_v<Ret, decltype(Candidate), Type*, Args...>) {
                 fn = [](const void* payload, Args... args) -> Ret {
-                    Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type>*>(payload));
+                    Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type> *>(payload));
                     return Ret(std::invoke(Candidate, curr, std::forward<Args>(args)...));
                 };
             }
@@ -18307,7 +18307,7 @@ namespace entt {
             constexpr auto requires_registry = type_list_contains_v<typename resource_type::args, basic_registry<entity_type>>;
 
             callback_type* callback = +[](const void* payload, basic_registry<entity_type>& reg) {
-                Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type>*>(payload));
+                Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type> *>(payload));
                 std::apply(Candidate, std::tuple_cat(std::forward_as_tuple(*curr), to_args(reg, typename resource_type::args{})));
             };
 
@@ -18631,16 +18631,16 @@ namespace entt {
 
             if (auto&& pdata = pools[index]; !pdata.pool) {
                 pdata.pool.reset(new storage_type<Component>());
-                pdata.poly = std::ref(*static_cast<storage_type<Component>*>(pdata.pool.get()));
+                pdata.poly = std::ref(*static_cast<storage_type<Component> *>(pdata.pool.get()));
             }
 
-            return static_cast<storage_type<Component>*>(pools[index].pool.get());
+            return static_cast<storage_type<Component> *>(pools[index].pool.get());
         }
 
         template<typename Component>
         [[nodiscard]] const storage_type<Component>* assure() const {
             const auto index = type_seq<Component>::value();
-            return (!(index < pools.size()) || !pools[index].pool) ? nullptr : static_cast<const storage_type<Component>*>(pools[index].pool.get());
+            return (!(index < pools.size()) || !pools[index].pool) ? nullptr : static_cast<const storage_type<Component> *>(pools[index].pool.get());
         }
 
         Entity generate_identifier() {
@@ -22737,7 +22737,7 @@ namespace entt {
         };
 
         [[nodiscard]] const basic_sparse_set<Entity>* candidate() const ENTT_NOEXCEPT {
-            return (std::min)({ static_cast<const basic_sparse_set<entity_type>*>(std::get<storage_type<Component>*>(pools))... }, [](const auto* lhs, const auto* rhs) {
+            return (std::min)({ static_cast<const basic_sparse_set<entity_type> *>(std::get<storage_type<Component>*>(pools))... }, [](const auto* lhs, const auto* rhs) {
                 return lhs->size() < rhs->size();
                 });
         }
@@ -22764,8 +22764,8 @@ namespace entt {
             if (*this) {
                 if constexpr (std::is_same_v<typename storage_type<Comp>::storage_category, empty_storage_tag>) {
                     for (const auto entt : static_cast<const basic_sparse_set<entity_type>&>(*std::get<storage_type<Comp>*>(pools))) {
-                        if (((std::is_same_v<Comp, Component> || std::get<storage_type<Component>*>(pools)->contains(entt)) && ...)
-                            && !(std::get<const storage_type<Exclude>*>(filter)->contains(entt) || ...))
+                        if (((std::is_same_v<Comp, Component> || std::get<storage_type<Component> *>(pools)->contains(entt)) && ...)
+                            && !(std::get<const storage_type<Exclude> *>(filter)->contains(entt) || ...))
                         {
                             if constexpr (is_applicable_v < Func, decltype(std::tuple_cat(std::tuple<entity_type>{}, std::declval<basic_view>().get({}))) > ) {
                                 std::apply(func, std::tuple_cat(std::make_tuple(entt), get(entt)));
@@ -22780,8 +22780,8 @@ namespace entt {
                     auto it = std::get<storage_type<Comp>*>(pools)->begin();
 
                     for (const auto entt : static_cast<const basic_sparse_set<entity_type>&>(*std::get<storage_type<Comp>*>(pools))) {
-                        if (((std::is_same_v<Comp, Component> || std::get<storage_type<Component>*>(pools)->contains(entt)) && ...)
-                            && !(std::get<const storage_type<Exclude>*>(filter)->contains(entt) || ...))
+                        if (((std::is_same_v<Comp, Component> || std::get<storage_type<Component> *>(pools)->contains(entt)) && ...)
+                            && !(std::get<const storage_type<Exclude> *>(filter)->contains(entt) || ...))
                         {
                             if constexpr (is_applicable_v < Func, decltype(std::tuple_cat(std::tuple<entity_type>{}, std::declval<basic_view>().get({}))) > ) {
                                 std::apply(func, std::tuple_cat(std::make_tuple(entt), dispatch_get<Component>(it, entt)...));
@@ -27635,7 +27635,7 @@ namespace entt {
     template<typename Type>
     Type* any_cast(any* data) ENTT_NOEXCEPT {
         // last attempt to make wrappers for const references return their values
-        return (data->type() == type_id<Type>() ? static_cast<Type*>(static_cast<constness_as_t<any, Type>*>(data)->data()) : nullptr);
+        return (data->type() == type_id<Type>() ? static_cast<Type*>(static_cast<constness_as_t<any, Type> *>(data)->data()) : nullptr);
     }
 
 
@@ -28315,7 +28315,7 @@ namespace entt {
                     return any_cast<Type>(&storage);
                 }
                 else if (const auto* base = internal::find_if<&internal::meta_type_node::base>([info](const auto* curr) { return curr->type()->info == info; }, node); base) {
-                    return static_cast<Type*>(const_cast<constness_as_t<void, Type>*>(base->cast(static_cast<constness_as_t<any, Type>&>(storage).data())));
+                    return static_cast<Type*>(const_cast<constness_as_t<void, Type> *>(base->cast(static_cast<constness_as_t<any, Type> &>(storage).data())));
                 }
             }
 
@@ -31653,7 +31653,7 @@ namespace entt {
                     return any_cast<Type>(&storage);
                 }
                 else if (const auto* base = internal::find_if<&internal::meta_type_node::base>([info](const auto* curr) { return curr->type()->info == info; }, node); base) {
-                    return static_cast<Type*>(const_cast<constness_as_t<void, Type>*>(base->cast(static_cast<constness_as_t<any, Type>&>(storage).data())));
+                    return static_cast<Type*>(const_cast<constness_as_t<void, Type> *>(base->cast(static_cast<constness_as_t<any, Type> &>(storage).data())));
                 }
             }
 
@@ -35710,7 +35710,7 @@ namespace entt {
     template<typename Type>
     Type* any_cast(any* data) ENTT_NOEXCEPT {
         // last attempt to make wrappers for const references return their values
-        return (data->type() == type_id<Type>() ? static_cast<Type*>(static_cast<constness_as_t<any, Type>*>(data)->data()) : nullptr);
+        return (data->type() == type_id<Type>() ? static_cast<Type*>(static_cast<constness_as_t<any, Type> *>(data)->data()) : nullptr);
     }
 
 
@@ -39556,7 +39556,7 @@ namespace entt {
         [[nodiscard]] auto wrap(Type&, std::index_sequence<Index...>) ENTT_NOEXCEPT {
             return [](const void* payload, Args... args) -> Ret {
                 [[maybe_unused]] const auto arguments = std::forward_as_tuple(std::forward<Args>(args)...);
-                Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type>*>(payload));
+                Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type> *>(payload));
                 return static_cast<Ret>(std::invoke(Candidate, *curr, std::forward<type_list_element_t<Index, type_list<Args...>>>(std::get<Index>(arguments))...));
             };
         }
@@ -39565,7 +39565,7 @@ namespace entt {
         [[nodiscard]] auto wrap(Type*, std::index_sequence<Index...>) ENTT_NOEXCEPT {
             return [](const void* payload, Args... args) -> Ret {
                 [[maybe_unused]] const auto arguments = std::forward_as_tuple(std::forward<Args>(args)...);
-                Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type>*>(payload));
+                Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type> *>(payload));
                 return static_cast<Ret>(std::invoke(Candidate, curr, std::forward<type_list_element_t<Index, type_list<Args...>>>(std::get<Index>(arguments))...));
             };
         }
@@ -39657,7 +39657,7 @@ namespace entt {
 
             if constexpr (std::is_invocable_r_v<Ret, decltype(Candidate), Type&, Args...>) {
                 fn = [](const void* payload, Args... args) -> Ret {
-                    Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type>*>(payload));
+                    Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type> *>(payload));
                     return Ret(std::invoke(Candidate, *curr, std::forward<Args>(args)...));
                 };
             }
@@ -39682,7 +39682,7 @@ namespace entt {
 
             if constexpr (std::is_invocable_r_v<Ret, decltype(Candidate), Type*, Args...>) {
                 fn = [](const void* payload, Args... args) -> Ret {
-                    Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type>*>(payload));
+                    Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type> *>(payload));
                     return Ret(std::invoke(Candidate, curr, std::forward<Args>(args)...));
                 };
             }
@@ -40536,7 +40536,7 @@ namespace entt {
         [[nodiscard]] auto wrap(Type&, std::index_sequence<Index...>) ENTT_NOEXCEPT {
             return [](const void* payload, Args... args) -> Ret {
                 [[maybe_unused]] const auto arguments = std::forward_as_tuple(std::forward<Args>(args)...);
-                Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type>*>(payload));
+                Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type> *>(payload));
                 return static_cast<Ret>(std::invoke(Candidate, *curr, std::forward<type_list_element_t<Index, type_list<Args...>>>(std::get<Index>(arguments))...));
             };
         }
@@ -40545,7 +40545,7 @@ namespace entt {
         [[nodiscard]] auto wrap(Type*, std::index_sequence<Index...>) ENTT_NOEXCEPT {
             return [](const void* payload, Args... args) -> Ret {
                 [[maybe_unused]] const auto arguments = std::forward_as_tuple(std::forward<Args>(args)...);
-                Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type>*>(payload));
+                Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type> *>(payload));
                 return static_cast<Ret>(std::invoke(Candidate, curr, std::forward<type_list_element_t<Index, type_list<Args...>>>(std::get<Index>(arguments))...));
             };
         }
@@ -40637,7 +40637,7 @@ namespace entt {
 
             if constexpr (std::is_invocable_r_v<Ret, decltype(Candidate), Type&, Args...>) {
                 fn = [](const void* payload, Args... args) -> Ret {
-                    Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type>*>(payload));
+                    Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type> *>(payload));
                     return Ret(std::invoke(Candidate, *curr, std::forward<Args>(args)...));
                 };
             }
@@ -40662,7 +40662,7 @@ namespace entt {
 
             if constexpr (std::is_invocable_r_v<Ret, decltype(Candidate), Type*, Args...>) {
                 fn = [](const void* payload, Args... args) -> Ret {
-                    Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type>*>(payload));
+                    Type* curr = static_cast<Type*>(const_cast<constness_as_t<void, Type> *>(payload));
                     return Ret(std::invoke(Candidate, curr, std::forward<Args>(args)...));
                 };
             }
@@ -41431,7 +41431,7 @@ namespace entt {
                 pools[index].reset(new pool_handler<Event>{});
             }
 
-            return static_cast<pool_handler<Event>&>(*pools[index]);
+            return static_cast<pool_handler<Event> &>(*pools[index]);
         }
 
     public:
@@ -41742,13 +41742,13 @@ namespace entt {
                 pools[index].reset(new pool_handler<Event>{});
             }
 
-            return static_cast<pool_handler<Event>*>(pools[index].get());
+            return static_cast<pool_handler<Event> *>(pools[index].get());
         }
 
         template<typename Event>
         [[nodiscard]] const pool_handler<Event>* assure() const {
             const auto index = type_seq<Event>::value();
-            return (!(index < pools.size()) || !pools[index]) ? nullptr : static_cast<const pool_handler<Event>*>(pools[index].get());
+            return (!(index < pools.size()) || !pools[index]) ? nullptr : static_cast<const pool_handler<Event> *>(pools[index].get());
         }
 
     public:

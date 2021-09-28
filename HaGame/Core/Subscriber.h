@@ -5,9 +5,10 @@
 #include <cstdint>
 
 namespace hagame {
-	template <class EventType>
+	template <class EventId, class EventType>
 	struct Subscriber {
 		uint32_t id;
+		EventId eventId;
 		std::function<void(EventType)> onEvent;
 	};
 }

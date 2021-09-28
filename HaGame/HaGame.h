@@ -101,6 +101,8 @@
 #include "Core/Subscriber.h"
 #include "Core/Publisher.h"
 
+#include "Vendor/json.hpp"
+
 #include "Vendor/entt/entt.hpp"
 
 #include "Vendor/stb/stb_image.cpp"

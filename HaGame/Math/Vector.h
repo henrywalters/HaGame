@@ -6,14 +6,32 @@
 #include <vector>
 #include <cmath>
 #include "./../Core/Object.h"
+#include "./../Vendor/json.hpp"
+
+using JSON = nlohmann::json;
 
 namespace hagame {
 	namespace math {
-		
+/*
+		template<size_t size, class T>
+		void to_json(JSON& json, const Vector<size, T>& vect) {
+			json = JSON{ vector };
+		}
+
+		template<size_t size, class T>
+		void from_json(const JSON& json, Vector<size, T>& vect) {
+			for (int i = 0; i < size; i++) {
+				json.at(i).get_to(vect[i]);
+			}
+		}
+		*/
 		// Highly generic vector class that can be extended to fit any needs.
 		template<size_t size, class T>
 		class Vector {
 		public:
+
+			NLOHMANN_DEFINE_TYPE_INTRUSIVE(Vector, vector);
+
 			T vector[size];
 
 			Vector(std::vector<T> vect) {
@@ -161,7 +179,7 @@ namespace hagame {
 				return out;
 			}
 
-			T magnitude() {
+			const T magnitude() {
 				T sum = 0;
 				for (int i = 0; i < size; i++) { sum += vector[i] * vector[i]; }
 				return sqrt(sum);
@@ -188,14 +206,29 @@ namespace hagame {
 				
 			}
 
-			Vector rounded() {
+			Vector rounded(float step = 1.0f) {
 				Vector copy = *this;
-				for (int i = 0; i < size; i++) { copy[i] = std::round(copy[i]); }
+				for (int i = 0; i < size; i++) { 
+					copy[i] = std::round(copy[i]); 
+					//copy[i] = (float)std::floor(copy[i] * step + 0.5f) / step;
+				}
 				return copy;
 			}
 
 			void round() {
 				for (int i = 0; i < size; i++) { vector[i] = std::round(vector[i]); }
+			}
+
+			Vector floor() {
+				Vector copy = *this;
+				for (int i = 0; i < size; i++) { copy[i] = std::floor(copy[i]); }
+				return copy;
+			}
+
+			Vector ceil() {
+				Vector copy = *this;
+				for (int i = 0; i < size; i++) { copy[i] = std::ceil(copy[i]); }
+				return copy;
 			}
 
 			T dot(Vector vect) {
@@ -279,6 +312,53 @@ namespace hagame {
 				return copy;
 			}
 
+			T min() {
+				T val;
+				bool first = true;
+				for (int i = 0; i < size; i++) {
+					if (first) {
+						val = vector[i];
+						first = false;
+					}
+					else if (vector[i] < val)
+						val = vector[i];
+				}
+				return val;
+			}
+
+			T max() {
+				T val;
+				bool first = true;
+				for (int i = 0; i < size; i++) {
+					if (first) {
+						val = vector[i];
+						first = false;
+					}
+					else if (vector[i] > val)
+						val = vector[i];
+				}
+				return val;
+			}
+
+			Vector bounded(Vector by) {
+				auto out = copy();
+				float maxDim = max();
+				float byMaxDim = by.max();
+				float scale = maxDim / byMaxDim;
+
+				if (scale > 1) {
+					out *= 1 / scale;
+				}
+
+				return out;
+			}
+
+			Vector fill(Vector to) {
+				auto out = copy();
+				float scale = max() / to.max();
+				return out * (1 / scale);
+			}
+
 			// Operator Overloads
 
 			T operator[](int i) const {
@@ -307,6 +387,18 @@ namespace hagame {
 					if (vector[i] != vect[i]) return true;
 				}
 				return false;
+			}
+
+			bool operator<(const Vector& vect) const noexcept {
+				T magA, magB = 0.0f;
+				for (int i = 0; i < size; i++) {
+					magA += vector[i] * vector[i];
+					magB += vect[i] * vect[i];
+				}
+				magA = sqrt(magA);
+				magB = sqrt(magB);
+
+				return magA < magB;
 			}
 
 			Vector operator+(const Vector& vect) {

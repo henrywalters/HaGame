@@ -42,6 +42,7 @@ namespace hagame {
 			std::string getFullPath(std::string path);
 
 			File getFile(std::string path);
+			File getFileOrCreate(std::string path);
 			File getGlobalFile(std::string path);
 			std::string readFile(std::string path);
 			std::vector<std::string> listAll(std::string path, std::function<bool(std::string fileA, std::string fileB)> compFn = DEFAULT_FILE_SORT);
