@@ -72,7 +72,7 @@ namespace hagame {
 			}
 
 			void startAll() {
-				forAll([](Ptr<ecs::System> system) { system->start(); });
+				forAll([](Ptr<ecs::System> system) { std::cout << system->getSystemName();  system->start(); });
 			}
 
 			void stopAll() {

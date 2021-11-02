@@ -17,10 +17,10 @@ namespace hagame {
 		// Manage a path in a simpler way than dealing with raw strings
 		class Path {
 
+		public:
+
 			Array<String> parts;
 
-		public:
-			
 			Path(String path) : parts(stringSplit(path, PATH_DELIMITER)) {}
 			Path(Array<String> pathParts) : parts(pathParts) {}
 			Path() : parts({}) {}

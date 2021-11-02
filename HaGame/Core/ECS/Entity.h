@@ -5,6 +5,7 @@
 #include <string>
 #include "./Component.h"
 #include "../../Vendor/entt/entt.hpp"
+#include "../../Utils/UUID.h"
 
 namespace hagame {
 
@@ -29,11 +30,12 @@ namespace hagame {
 			Ptr<Transform> transform;
 
 			uint32_t entt_id;
-			uint32_t id;
+			utils::UUID id;
+			utils::UUID uuid;
 			std::string name;
 
-			Entity(uint32_t _entt_id, uint32_t _id) : id(_id), entt_id(_entt_id) {
-				name = "Entity_" + std::to_string(_id);
+			Entity(uint32_t _entt_id, uint32_t entityCount) : id(hagame::utils::UUID()), entt_id(_entt_id) {
+				name = "Entity_" + std::to_string(entityCount);
 			}
 
 			~Entity() {

@@ -10,6 +10,7 @@ struct TestEvent {
 };
 
 struct Data {
+	NLOHMANN_DEFINE_TYPE_INTRUSIVE(Data, pos);
 	Vec3 pos;
 };
 
@@ -24,15 +25,11 @@ int main() {
 	window.create();
 	Goom2 goom = Goom2(&window);
 
-	//Vec3 data = Vec3({ 1.0f, 2.0f, 3.0f });
-	//nlohmann::json j = data;
+	hagame::utils::UUID id1, id2, id3, id4;
 
-	hagame::utils::FileSystem fs;
-	//fs.getFile("test_data.json").write(j.dump());
+	std::cout << id1 << "\n" << id2 << "\n" << id4 << "\n";
 
-	auto pos = JSON::parse(fs.getFile("test_data.json").read()).get<Vec3>();
-
-	//goom.run();
+	goom.run();
 
 	return 0;
 }

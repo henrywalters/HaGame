@@ -120,9 +120,9 @@ namespace hagame {
 					// collider->shader->use();
 
 					if (collider->display) {
-						hagame::graphics::drawLine(hagame::graphics::Line(rays[1].origin, rays[1].origin + rays[1].direction, hagame::graphics::Color::blue()), collider->shader);
-						hagame::graphics::drawLine(hagame::graphics::Line(rays[0].origin, rays[0].origin + rays[0].direction, hagame::graphics::Color::blue()), collider->shader);
-						hagame::graphics::drawLine(hagame::graphics::Line(rays[2].origin, rays[2].origin + rays[2].direction, hagame::graphics::Color::blue()), collider->shader);
+						//hagame::graphics::drawLine(hagame::graphics::Line(rays[1].origin, rays[1].origin + rays[1].direction, hagame::graphics::Color::blue()), collider->shader);
+						//hagame::graphics::drawLine(hagame::graphics::Line(rays[0].origin, rays[0].origin + rays[0].direction, hagame::graphics::Color::blue()), collider->shader);
+						//hagame::graphics::drawLine(hagame::graphics::Line(rays[2].origin, rays[2].origin + rays[2].direction, hagame::graphics::Color::blue()), collider->shader);
 					}
 
 					bool collided = false;

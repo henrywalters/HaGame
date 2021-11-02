@@ -30,9 +30,7 @@ namespace hagame {
 
 			bool active = true;
 
-			virtual String getSystemName() {
-				throw new std::exception("getSystemName unimplemented for this system");
-			}
+			virtual String getSystemName() = 0;
 
 			virtual void onSystemInit() {}
 			virtual void onSystemStart() {}
@@ -63,7 +61,6 @@ namespace hagame {
 				if (active) {
 					timer.reset();
 					onSystemStart();
-					DEBUG_LOG_VAR(timer.elapsed());
 				}
 			}
 

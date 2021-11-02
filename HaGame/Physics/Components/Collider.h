@@ -41,7 +41,7 @@ namespace hagame {
 			std::optional<Sphere> boundingSphere = std::nullopt;
 
 			// Ignore collisions with any of these specific entities
-			Array<uint32_t> ignoreEntities;
+			Array<hagame::utils::UUID> ignoreEntities;
 
 			// Ignore collisions with any entity that has any of these tags
 			Array<String> ignoreTags;

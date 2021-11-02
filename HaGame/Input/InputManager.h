@@ -5,6 +5,7 @@
 #include "Devices/KeyboardMouse.h"
 #include "Devices/Gamepad.h"
 #include "../Utils/Aliases.h"
+#include "../Core/Publisher.h"
 
 namespace hagame {
 	namespace input {

@@ -193,6 +193,14 @@ namespace hagame {
 				removeBuffers();
 			}
 
+			void update(Array<Vertex> _vertices, Array<unsigned int> _indices) {
+				// TODO: Update buffers instead of regenerating. Need to track if size is increased
+				vertices = _vertices;
+				indices = _indices;
+				removeBuffers();
+				initializeForGL();
+			}
+
 			MeshDefinition getDefinition() {
 				return MeshDefinition{
 					vertices,

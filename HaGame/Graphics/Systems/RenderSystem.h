@@ -14,6 +14,8 @@
 #include "../Components/Text3dRenderer.h"
 #include "../Components/SpriteRenderer.h"
 #include "../Components/AnimatedSpriteRenderer.h"
+#include "../../Utils/Timer.h"
+#include "../../Math/Sample.h"
 #include <cstddef>
 
 namespace hagame {
@@ -21,6 +23,8 @@ namespace hagame {
 		class RenderSystem : public hagame::ecs::System {
 
 			Ptr<Mesh> cube;
+			math::Sample<float, 10000> meshRenders;
+			utils::Timer timer;
 
 		public:
 			String getSystemName() {
@@ -29,17 +33,26 @@ namespace hagame {
 
 			void onSystemStart() {
 				cube = std::make_shared<Mesh>(CubeMesh);
+				meshRenders.onFull = [this]() {
+					std::cout << meshRenders.average() << "\n";
+					meshRenders.clear();
+				};
 			}
 
 			void onSystemUpdate(double dt) {
 
 				forEach<MeshRenderer>([this, dt](MeshRenderer* r, Ptr<ecs::Entity> entity) {
-					auto model = entity->transform->getModelMatrix();
+
+					timer.reset();
+
 					r->shader->use();
-					r->shader->setMVP(model, scene->viewMat, scene->projMat);
-					r->shader->setMat4("normal", model.inverted());
+					
+					r->shader->setMat4("model", entity->transform->model);
+					r->shader->setMVP(entity->transform->model, scene->viewMat, scene->projMat);
+					r->shader->setMat4("normal", entity->transform->modelInverse);
 					r->shader->setVec4("color", r->color);
-					// r->shader->setMaterial("material", r->material);
+					r->shader->setMaterial("material", r->material);
+					
 					
 					if (r->texture) {
 						glActiveTexture(GL_TEXTURE0 + 0);
@@ -66,6 +79,8 @@ namespace hagame {
 					}
 
 					r->mesh->draw(r->shader);
+
+					meshRenders.insert(timer.elapsed());
 				});
 
 				forEach<RigidBodyRenderer>([this](RigidBodyRenderer* r, Ptr<ecs::Entity> entity) {
@@ -108,8 +123,13 @@ namespace hagame {
 				forEach<SpriteRenderer>([this](SpriteRenderer* r, Ptr<ecs::Entity> entity) {
 					if (entity != NULL && r->sprite->texture != NULL && r->shader != NULL) {
 						r->shader->use();
+
+						auto translation = Mat4::Translation(entity->transform->getPosition() + r->sprite->rect.pos.resize<3>());
+						auto rotation = Mat4::Rotation(entity->transform->getRotation() * Quat(r->sprite->rotation, Vec3::Face()));
+						auto scale = Mat4::Scale(r->sprite->rect.size.resize<3>());
+
 						r->shader->setMVP(
-							Mat4::Translation(entity->transform->getPosition() + r->sprite->rect.pos.resize<3>()) * Mat4::Rotation(entity->transform->getRotation()) * Mat4::Scale(r->sprite->rect.size.resize<3>()),
+							translation * rotation * scale,
 							scene->viewMat,
 							scene->projMat
 						);

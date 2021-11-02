@@ -3,6 +3,7 @@
 
 #include "../../HaGame/HaGame.h"
 #include "./Components/PlayerController.h"
+#include "./../Systems/ResourceSystem.h"
 #include "./../Systems/PlayerSystem.h"
 #include "./../Systems/WeaponSystem.h"
 #include "./../Systems/EnemySystem.h"
@@ -13,6 +14,9 @@ class Sandbox : public hagame::Scene {
 	void onSceneInit() {
 		std::cout << "Initializing Sandbox\n";
 
+		addSystem<ResourceSystem>();
+		addSystem<hagame::graphics::RenderSystem>();
+		addSystem<hagame::physics::CollisionSystem>();
 		addSystem<PlayerSystem>();
 		addSystem<WeaponSystem>();
 		addSystem<EnemySystem>();

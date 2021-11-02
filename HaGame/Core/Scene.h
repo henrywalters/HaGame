@@ -50,12 +50,14 @@ namespace hagame {
 
 		void initialize() {
 			onSceneInit();
+			std::cout << "Initializing all systems\n";
 			ecs.systems.initAll();
 		}
 
 		void activate() {
 			timer.reset();
 			onSceneBeforeActivate();
+			std::cout << "Starting all systems\n";
 			ecs.systems.startAll();
 			onSceneActivate();
 			onSceneAfterActivate();

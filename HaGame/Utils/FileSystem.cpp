@@ -20,6 +20,7 @@ std::string hagame::utils::FileSystem::GetRelativePath (std::string path) {
 }
 
 std::string hagame::utils::FileSystem::getFullPath(std::string path) {
+	// TODO: Fix this and make it cross platform
 	return basePath + "\\" + path;
 }
 

@@ -35,6 +35,7 @@ namespace hagame {
 			FileSystem();
 			FileSystem(std::string _basePath);
 
+			static std::vector<std::string> GetLogicalDrives();
 			static std::string GetWorkingDirectory();
 
 			std::string GetRelativePath(std::string path);

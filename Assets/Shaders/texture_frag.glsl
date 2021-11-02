@@ -46,8 +46,6 @@ void main()
     vec3 result = ambient + diffuse + specular;
 
     FragColor = vec4(result, texture(ourTexture, TexCoord).a);
-    // FragColor = vec4(result, texture(opacTexture, TexCoord).x);
 
-    //FragColor = texture(ourTexture, TexCoord);
-    // FragColor[3] = texture(opacityTexture, TexCoord)[0];
+    // FragColor = vec4(1.0);
 }

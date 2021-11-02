@@ -52,6 +52,9 @@ target_link_libraries(Demos ${LIBS})
 add_executable(Goom2 Goom2/Goom2.cpp "Goom2/Goom2.cpp" "Goom2/Goom2.h"   "Goom2/Systems/ResourceSystem.h" "Goom2/Scenes/MainMenu.h" "Goom2/Systems/PlayerSystem.h" "Goom2/Components/PlayerController.h" "Goom2/Scenes/MapBuilder.h" "Goom2/Components/PlayerRenderer.h" "Goom2/Components/Bullet.h"  "Goom2/Components/Weapon.h" "Goom2/Components/Inventory.h" "Goom2/Components/Projectile.h" "Goom2/Systems/WeaponSystem.h" "Goom2/Components/Target.h" "Goom2/Systems/EnemySystem.h" "Goom2/Components/Health.h" "Goom2/Components/Enemy.h" "Goom2/Components/Enemies/Turret.h" "Goom2/Components/Actor.h" "Goom2/Systems/ActorSystem.h")
 target_link_libraries(Goom2 ${LIBS})
 
+add_executable(ImSim ImSim/ImSim.cpp)
+target_link_libraries(ImSim ${LIBS})
+
 if (MSVC_VERSION GREATER_EQUAL "1900")
     include(CheckCXXCompilerFlag)
     CHECK_CXX_COMPILER_FLAG("/std:c++latest" _cpp_latest_flag_supported)
@@ -60,6 +63,7 @@ if (MSVC_VERSION GREATER_EQUAL "1900")
         target_compile_options(HaGameEditor PRIVATE "/std:c++17")
         target_compile_options(Demos PRIVATE "/std:c++17")
         target_compile_options(Goom2 PRIVATE "/std:c++17")
+        target_compile_options(ImSim PRIVATE "/std:c++17")
     endif()
 endif() 
 

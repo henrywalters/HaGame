@@ -10,6 +10,7 @@ namespace hagame {
 	namespace math {
 
 		struct Triangle {
+
 			Vec3 a;
 			Vec3 b;
 			Vec3 c;
@@ -39,6 +40,16 @@ namespace hagame {
 				return true;
 			}
 		};
+
+		void to_json(JSON& json, const Triangle& tri) {
+			json = { tri.a, tri.b, tri.c };
+		}
+
+		void from_json(const JSON& json, Triangle& tri) {
+			json.at(0).get_to(tri.a);
+			json.at(1).get_to(tri.b);
+			json.at(2).get_to(tri.c);
+		}
 	}
 }
 

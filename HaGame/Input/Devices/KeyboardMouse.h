@@ -36,6 +36,11 @@ namespace hagame {
 			struct KeyboardState {
 				bool numbers[10];
 				bool numbersPressed[10];
+
+				bool lCtrl, lCtrlPressed = false;
+				bool rCtrl, rCtrlPressed = false;
+				bool lShift, lShiftPressed = false;
+				bool rShift, rShiftPressed = false;
 			};
 
 			// Defines a mapping from a keyboard to generic device
@@ -155,8 +160,8 @@ namespace hagame {
 						mouse.delta[0] = event.motion.xrel;
 						mouse.delta[1] = event.motion.yrel;
 
-						rAxis[0] = -mouse.delta[0] / 10.0f;
-						rAxis[1] = mouse.delta[1] / 10.0f;
+						rAxis[0] = -mouse.delta[0];
+						rAxis[1] = mouse.delta[1];
 						break;
 					case SDL_MOUSEBUTTONDOWN:
 						if (event.button.button == SDL_BUTTON_MIDDLE) {
@@ -211,6 +216,9 @@ namespace hagame {
 					updateBtnState(start, startPressed, isKeyDown(SDLK_ESCAPE));
 					updateBtnState(a, aPressed, isKeyDown(SDLK_SPACE));
 					updateBtnState(b, bPressed, isKeyDown(SDLK_LSHIFT));
+
+					updateBtnState(keyboard.lCtrl, keyboard.lCtrlPressed, isKeyDown(SDLK_LCTRL));
+					updateBtnState(keyboard.rCtrl, keyboard.rCtrlPressed, isKeyDown(SDLK_RCTRL));
 
 					for (int i = 0; i < 10; i++) {
 						updateBtnState(keyboard.numbers[i], keyboard.numbersPressed[i], isKeyDown(SDLK_0 + i));

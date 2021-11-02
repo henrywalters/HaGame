@@ -15,7 +15,7 @@ namespace hagame {
 			String name;
 
 			File(String _dir, String _name) : dir(_dir), name(_name) {
-				std::ofstream stream(dir + "/" + name);
+				std::ofstream stream(dir + "/" + name, std::ios::app);
 				stream.close();
 			}
 

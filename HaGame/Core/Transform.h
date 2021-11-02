@@ -20,6 +20,7 @@ namespace hagame {
 
 
 		Mat4 model;
+		Mat4 modelInverse;
 		bool cacheModel = true;
 
 		ecs::Entity* entity;
@@ -45,7 +46,8 @@ namespace hagame {
 		void lookAt(Vec3 point);
 
 		void updateModel() {
-			if (cacheModel) model = getModelMatrix();
+			model = getModelMatrix();
+			modelInverse = model.inverted();
 		}
 
 		Mat4 getTranslationMatrix();

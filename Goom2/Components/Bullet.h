@@ -47,8 +47,8 @@ const Bullet RIFLE_BULLET{
 
 const Bullet PLASMA_BLOB{
 	20.0f,
-	10.0f,
-	2.5f * DEG_TO_RAD,
+	30.0f,
+	5.0f * DEG_TO_RAD,
 	0.0f,
 	false,
 	ProjectileDef{

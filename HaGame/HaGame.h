@@ -32,6 +32,10 @@
 #include "Graphics/Shader.cpp"
 #include "Graphics/ShaderProgram.cpp"
 #include "Graphics/Mesh.h"
+#include "Graphics/Triangle.hpp"
+#include "Graphics/Quad.hpp"
+#include "Graphics/RectPrism.hpp"
+#include "Graphics/Cylinder.hpp"
 #include "Graphics/Camera.h"
 #include "Graphics/PerspectiveCamera.hpp"
 #include "Graphics/OrthographicCamera.hpp"
@@ -68,6 +72,7 @@
 #include "Input/Devices/Gamepad.h"
 #include "Input/Devices/KeyboardMouse.h"
 
+#include "Utils/UUID.h"
 #include "Utils/Path.h"
 #include "Utils/File.cpp"
 #include "Utils/FileSystem.cpp"

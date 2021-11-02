@@ -6,6 +6,7 @@
 namespace hagame {
 	namespace math {
 		struct Line {
+
 			Vec3 a;
 			Vec3 b;
 
@@ -26,6 +27,16 @@ namespace hagame {
 				return a + ab * t;
 			}
 		};
+
+		void to_json(JSON& json, const Line& line) {
+			json["a"] = line.a;
+			json["b"] = line.b;
+		}
+
+		void from_json(const JSON& json, Line& line) {
+			json.at("a").get_to(line.a);
+			json.at("b").get_to(line.b);
+		}
 	}
 }
 

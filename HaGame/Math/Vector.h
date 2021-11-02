@@ -12,25 +12,12 @@ using JSON = nlohmann::json;
 
 namespace hagame {
 	namespace math {
-/*
-		template<size_t size, class T>
-		void to_json(JSON& json, const Vector<size, T>& vect) {
-			json = JSON{ vector };
-		}
 
-		template<size_t size, class T>
-		void from_json(const JSON& json, Vector<size, T>& vect) {
-			for (int i = 0; i < size; i++) {
-				json.at(i).get_to(vect[i]);
-			}
-		}
-		*/
+
 		// Highly generic vector class that can be extended to fit any needs.
 		template<size_t size, class T>
 		class Vector {
 		public:
-
-			NLOHMANN_DEFINE_TYPE_INTRUSIVE(Vector, vector);
 
 			T vector[size];
 
@@ -128,16 +115,34 @@ namespace hagame {
 			}
 
 			// Basic accessors
-			const T x() {
+			constexpr T x() {
+				assert(size >= 1);
 				return vector[0];
 			}
 
-			const T y() {
+			constexpr T y() {
+				assert(size >= 2);
 				return vector[1];
 			}
 
-			const T z() {
+			constexpr T z() {
+				assert(size >= 3);
 				return vector[2];
+			}
+
+			constexpr Vector<2, T> xy() {
+				assert(size >= 3);
+				return Vector<2, T>({ vector[0], vector[1] });
+			}
+
+			constexpr Vector<2, T> xz() {
+				assert(size >= 3);
+				return Vector<2, T>({ vector[0], vector[2] });
+			}
+
+			constexpr Vector<2, T> yz() {
+				assert(size >= 3);
+				return Vector<2, T>({ vector[1], vector[2] });
 			}
 
 			// Basic functions
@@ -467,6 +472,19 @@ namespace hagame {
 			Vector<size, T> copy = Vector<size, T>(rhs);
 			return copy * scalar;
 		}
+
+		template<size_t size, class T>
+		void to_json(JSON& json, const Vector<size, T>& vect) {
+			json = vect.vector;
+		}
+
+		template<size_t size, class T>
+		void from_json(const JSON& json, Vector<size, T>& vect) {
+			for (int i = 0; i < size; i++) {
+				json.at(i).get_to(vect[i]);
+			}
+		}
+
 	}
 }
 

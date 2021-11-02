@@ -2,6 +2,7 @@
 #define PERSPECTIVE_CAMERA_HPP
 
 #include "Camera.h"
+#include "Window.h"
 
 namespace hagame {
 	namespace graphics {
@@ -19,6 +20,10 @@ namespace hagame {
 
 			Mat4 getProjMatrix(hagame::Transform* transform) {
 				return Mat4::Perspective(fov, aspectRatio, zNear, zFar);
+			}
+
+			void setAspectRatio(Window* window) {
+				aspectRatio = (float)window->size[0] / (float)window->size[1];
 			}
 		};
 	}

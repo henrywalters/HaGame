@@ -274,6 +274,17 @@ struct PolygonComponent {
 	}
 };
 
+void to_json(JSON& json, const PolygonComponent& poly) {
+	json["vertices"] = poly.triangles;
+}
+
+void from_json(const JSON& json, PolygonComponent& poly) {
+	poly.triangles = {};
+	for (auto vertex : json.at("vertices")) {
+		poly.triangles.push_back(hagame::math::Triangle(vertex.at(0), vertex.at(1), vertex.at(2)));
+	}
+}
+
 template <>
 void ComponentEditorWidget<PolygonComponent>(hagame::Game* game, Ptr<hagame::ecs::Entity> entity) {
 	auto poly = entity->getComponent<PolygonComponent>();
@@ -386,7 +397,12 @@ class MapBuilder : public hagame::Scene {
 
 	bool resourceTabs[4] = { true, false, false, false };
 
+	Ptr<hagame::ui::FileBrowser> fileBrowser;
+
 	void onSceneInit() {
+
+		fileBrowser = std::make_shared<hagame::ui::FileBrowser>();
+		// assets = hagame::ui::AssetBrowser(game->resources->getFileSystem()->basePath);
 
 		layout = hagame::utils::RectGrid::Columns(Rect(Vec2::Zero(), game->window->size), 12);
 		centerLayout = hagame::utils::RectGrid::Rows(layout->getColumns(2, 9), 12);
@@ -715,9 +731,15 @@ class MapBuilder : public hagame::Scene {
 
 			auto maxPerLine = (int)floor(rect.size[0] / 100.0f);
 
-			resourceBrowser.render(game);
+			
+
+			//resourceBrowser.render(game);
 
 			ImGui::End();
+		}
+
+		{
+			fileBrowser->render(game);
 		}
 
 		for (auto entId : ecs.getRegistry()->view<PlaceHolderComponent>()) {
@@ -755,6 +777,36 @@ class MapBuilder : public hagame::Scene {
 				if (poly->triangles.size() > 0) 
 					poly->render();
 			}
+		}
+
+		if (game->input.keyboardMouse.keyboard.numbersPressed[1]) {
+			hagame::utils::FileSystem fs;
+			JSON mapData;
+			Array<JSON> entities;
+
+			ecs.entities.forEach([this, &entities, fs](Ptr<hagame::ecs::Entity> entity) {
+				if (entity != NULL) {
+					JSON entityData;
+					//entityData["id"] = entity->id;
+					entityData["id"] = std::to_string(entity->id);
+					entityData["name"] = entity->name;
+
+					JSON componentData = {};
+
+					if (entity->hasComponent<PolygonComponent>()) {
+						auto poly = entity->getComponent<PolygonComponent>();
+						JSON polyData = *poly;
+						componentData["PolygonComponent"] = polyData;
+					}
+
+					entityData["components"] = componentData;
+
+					entities.push_back(entityData);
+				}
+			});
+
+			mapData["entities"] = entities;
+			fs.getFileOrCreate("map_data.json").write(mapData.dump());
 		}
 	}
 };

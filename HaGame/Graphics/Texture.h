@@ -10,6 +10,7 @@ namespace hagame {
 	namespace graphics {
 		class Texture {
 		public:
+
 			GLuint id;
 			Image image;
 

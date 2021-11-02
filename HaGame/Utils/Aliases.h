@@ -76,7 +76,7 @@ template <class T>
 using Set = std::set<T>;
 
 template <class T>
-bool hasKey(Set<T> set, T key) {
+inline bool hasKey(Set<T> set, T key) {
 	return set.find(key) != set.end();
 }
 
