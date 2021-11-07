@@ -47,12 +47,16 @@ namespace hagame {
 			}
 
 			Mat4 getProjMatrix(hagame::Transform* transform) {
+				return getProjMatrix(transform->getPosition());
+			}
+
+			Mat4 getProjMatrix(Vec3 camPos) {
 				return Mat4::Orthographic(
-					transform->getPosition()[0] - size[0] * 0.5f * zoomLog,
-					transform->getPosition()[0] + size[0] * 0.5f * zoomLog,
-					transform->getPosition()[1] - size[1] * 0.5f * zoomLog,
-					transform->getPosition()[1] + size[1] * 0.5f * zoomLog,
-					-1.0, 
+					camPos[0] - size[0] * 0.5f * zoomLog,
+					camPos[0] + size[0] * 0.5f * zoomLog,
+					camPos[1] - size[1] * 0.5f * zoomLog,
+					camPos[1] + size[1] * 0.5f * zoomLog,
+					-1.0,
 					1.0
 				);
 			}

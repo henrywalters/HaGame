@@ -4,12 +4,14 @@
 #include <SDL.h>
 #include <vector>
 #include <iostream>
+#include "./Buffer.hpp"
+#include "./VertexArray.h"
+#include "./ShaderProgram.h"
 #include "../Math/Vector.h"
 #include "../Utils/Aliases.h"
 #include "../Utils/File.h"
 #include "../Utils/String.h"
 #include "../Utils/SpatialMap.h"
-#include "../Graphics/ShaderProgram.h"
 #include "../Math/Triangle.h"
 
 namespace hagame {
@@ -51,36 +53,38 @@ namespace hagame {
 
 		private:
 
+			Ptr<VertexBuffer<Vertex>> vbo;
+			Ptr<ElementBuffer<unsigned int>> ebo;
+			Ptr<VertexArray> vao;
+
 			unsigned int VAO, VBO, EBO;
 
-			void initializeForGL() {
-				glGenVertexArrays(1, &VAO);
-				glGenBuffers(1, &VBO);
-				glGenBuffers(1, &EBO);
+			void initializeBuffers() {
+				vbo = VertexBuffer<Vertex>::Dynamic(vertices.size());
+				ebo = ElementBuffer<unsigned int>::Dynamic(indices.size());
 
-				glBindVertexArray(VAO);
+				vbo->update(0, vertices);
+				ebo->update(0, indices);
 
-				glBindBuffer(GL_ARRAY_BUFFER, VBO);
-				glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
-
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-				glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
-
-				glEnableVertexAttribArray(0);
-				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-
-				glEnableVertexAttribArray(1);
-				glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
-
-				glEnableVertexAttribArray(2);
-				glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoords));
-
+				vao = std::make_shared<VertexArray>();
+				ebo->bind();
+				vao->initialize();
+				vao->bind();
+				vao->defineAttribute<Vertex>(vbo.get(), DataType::Float, 0, 3, offsetof(Vertex, position));
+				vao->defineAttribute<Vertex>(vbo.get(), DataType::Float, 1, 3, offsetof(Vertex, normal));
+				vao->defineAttribute<Vertex>(vbo.get(), DataType::Float, 2, 3, offsetof(Vertex, texCoords));
 				glBindVertexArray(0);
+			}
 
-				glDisableVertexAttribArray(0);
-				//glDisableVertexAttribArray(1);
-				//glDisableVertexAttribArray(2);
-
+			void updateBuffers() {
+				if (vertices.size() > vbo->max) {
+					vbo->resize(vertices.size());
+					ebo->resize(indices.size());
+				}
+				vao->bind();
+				vbo->update(0, vertices);
+				ebo->update(0, indices);
+				glBindVertexArray(0);
 			}
 
 			void removeBuffers() {
@@ -96,6 +100,7 @@ namespace hagame {
 			Mesh() {
 				vertices = Array<Vertex>();
 				indices = Array<unsigned int>();
+				initializeBuffers();
 			}
 
 			Mesh(hagame::utils::File* file) {
@@ -105,11 +110,11 @@ namespace hagame {
 			}
 
 			Mesh(Array<Vertex> _vertices, Array<unsigned int> _indices): vertices(_vertices), indices(_indices) {
-				initializeForGL();
+				initializeBuffers();
 			}
 
 			Mesh(MeshDefinition definition) : vertices(definition.vertices), indices(definition.indices) {
-				initializeForGL();
+				initializeBuffers();
 			}
 
 			Mesh(Array<ConcatMeshDefinition> meshDefs) {
@@ -184,9 +189,7 @@ namespace hagame {
 					
 				}
 
-				std::cout << "\nRemoved " << culled << ".\n";
-
-				initializeForGL();
+				initializeBuffers();
 			}
 
 			~Mesh() {
@@ -197,8 +200,8 @@ namespace hagame {
 				// TODO: Update buffers instead of regenerating. Need to track if size is increased
 				vertices = _vertices;
 				indices = _indices;
-				removeBuffers();
-				initializeForGL();
+				//removeBuffers();
+				updateBuffers();
 			}
 
 			MeshDefinition getDefinition() {
@@ -210,7 +213,9 @@ namespace hagame {
 
 			void draw(ShaderProgram* shader) {
 				shader->use();
-				glBindVertexArray(VAO);
+				//glBindVertexArray(VAO);
+				vao->bind();
+				ebo->bind();
 				glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
 			}
@@ -239,6 +244,36 @@ namespace hagame {
 				}
 
 				return Cube(min, max - min);
+			}
+
+			Rect getScreenBounds(Mat4 model, Mat4 view, Mat4 proj, Vec2 screenSize, float padding = 0.0f) {
+				float minX, minY, maxX, maxY;
+				bool initialized = false;
+				for (auto vertex : vertices) {
+
+					auto screenPos = WorldToScreen(model, view, proj, vertex.position);
+
+					if (!initialized) {
+						minX = screenPos[0];
+						minY = screenPos[1];
+						maxX = screenPos[0];
+						maxY = screenPos[1];
+						initialized = true;
+					}
+
+					if (screenPos[0] < minX) { minX = screenPos[0]; }
+					else if (screenPos[0] > maxX) { maxX = screenPos[0]; }
+
+					if (screenPos[1] < minY) { minY = screenPos[1]; }
+					else  if (screenPos[1] > maxY) { maxY = screenPos[1]; }
+				}
+
+				minX = mapToDomain<float>(-1, 1, 0, screenSize[0], minX);
+				minY = mapToDomain<float>(-1, 1, 0, screenSize[1], minY);
+				maxX = mapToDomain<float>(-1, 1, 0, screenSize[0], maxX);
+				maxY = mapToDomain<float>(-1, 1, 0, screenSize[1], maxY);
+
+				return Rect(Vec2({ minX - padding, minY - padding }), Vec2({ maxX - minX + padding * 2, maxY - minY + padding * 2 }));
 			}
 
 
@@ -305,7 +340,7 @@ namespace hagame {
 						}
 					}
 				}
-				initializeForGL();
+				initializeBuffers();
 			}
 		};
 	}

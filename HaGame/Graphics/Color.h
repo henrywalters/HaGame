@@ -58,7 +58,7 @@ namespace hagame {
 				vector[3] = a;
 			}
 
-			Color(hagame::graphics::RGB rgb) {
+			Color(RGB rgb) {
 				vector[0] = rgb.r;
 				vector[1] = rgb.g;
 				vector[2] = rgb.b;

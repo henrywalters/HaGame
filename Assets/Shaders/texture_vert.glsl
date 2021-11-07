@@ -13,9 +13,13 @@ out vec2 TexCoord;
 out vec3 Normal;
 out vec3 FragPos;
 
+out vec4 Color;
+uniform vec4 color;
+
 void main() {
 	gl_Position = projection * view * model * vec4(a_vertex, 1.0);
 	Normal = mat3(normal) * a_normal;
 	FragPos = vec3(model * vec4(a_vertex, 1.0));
 	TexCoord = a_texCoord;
+	Color = color;
 }

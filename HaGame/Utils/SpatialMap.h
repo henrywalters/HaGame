@@ -59,9 +59,13 @@ namespace hagame {
 				return output;
 			}
 
-			//Array<Ptr<DataType>> get(hagame::math::Ray ray) {
+			void remove(hagame::math::Vector<3, SpatialDataType> position) {
+				map.erase(hashPosition(position));
+			}
 
-			//}
+			bool has(hagame::math::Vector<3, SpatialDataType> position) {
+				return map.find(hashPosition(position)) != map.end();
+			}
 
 			// Hashing function based on "Optimized Spatial Hashing for Collision Detection of Deformable Objects." Read more: http://www.beosil.com/download/CollisionDetectionHashing_VMV03.pdf
 			long hashPosition(hagame::math::Vector<3, SpatialDataType> position) {

@@ -7,6 +7,7 @@ out vec4 FragColor;
 in vec2 TexCoord;
 in vec3 Normal;
 in vec3 FragPos;
+in vec4 Color;
 
 layout (binding=0) uniform sampler2D ourTexture;
 layout (binding=1) uniform sampler2D specTexture;
@@ -28,7 +29,7 @@ void main()
 
     // ambient light
     // vec3 ambient = lightColor * material.ambient;
-    vec3 ambient = light.ambient * texture(ourTexture, TexCoord).xyz * attentuation;
+    vec3 ambient = Color.xyz * light.ambient * texture(ourTexture, TexCoord).xyz * attentuation;
 
     // diffuse light
     vec3 norm = normalize(Normal);
@@ -45,7 +46,7 @@ void main()
 
     vec3 result = ambient + diffuse + specular;
 
-    FragColor = vec4(result, texture(ourTexture, TexCoord).a);
+    FragColor = vec4(result, texture(ourTexture, TexCoord).a * Color.w);
 
-    // FragColor = vec4(1.0);
+    // FragColor = Color;
 }

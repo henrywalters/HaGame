@@ -289,4 +289,48 @@ bool linesIntersect(Vec2 a, Vec2 b, Vec2 p, Vec2 q, float& t) {
 	}
 }
 
+template <class T>
+T mapToDomain(T a, T b, T newA, T newB, T value) {
+	float scale = (b - a) / (newB - newA);
+	return ((value - a) / scale) + newA;
+}
+
+// Convert a world position to a normalized screen position
+Vec2 WorldToScreen(Mat4 model, Mat4 view, Mat4 proj, Vec3 worldPos) {
+	auto pos = proj * view * model * worldPos.resize<4>(1.0f);
+	pos[3] = 1.0f / pos[3];
+	for (int i = 0; i < 2; i++) {
+		pos[i] *= pos[3];
+	}
+	return pos.resize<2>();
+}
+
+// Convert a normalized [-1:1, -1:1] screen position to a world position
+Vec3 ScreenToWorld(Mat4 view, Mat4 proj, Vec2 screen, float depth = 1.0f) {
+	auto pvI = (proj * view).inverted();
+	auto screen4 = screen.resize<4>();
+
+	screen4[2] = depth;
+	screen4[3] = 1.0f;
+
+	auto worldPos = pvI * screen4;
+	
+	worldPos[3] = 1.0f / worldPos[3];
+
+	for (int i = 0; i < 3; i++) {
+		worldPos[i] *= worldPos[3];
+	}
+
+	return worldPos.resize<3>();
+}
+
+// Convert raw mouse position to a world position
+Vec3 MouseToWorld(Mat4 view, Mat4 proj, Vec2 mousePos, Vec2 windowSize, float depth = 1.0f) {
+	auto mousePosNorm = Vec2({
+		mapToDomain<float>(0.0f, windowSize[0], -1.0f, 1.0f, mousePos[0]),
+		-mapToDomain<float>(0.0f, windowSize[1], -1.0f, 1.0f, mousePos[1])
+	});
+	return ScreenToWorld(view, proj, mousePosNorm, depth);
+}
+
 #endif

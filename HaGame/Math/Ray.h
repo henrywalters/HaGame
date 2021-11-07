@@ -14,10 +14,15 @@ namespace hagame {
 
 		public:
 
+			struct Hit {
+				Vec3 position;
+				Vec3 normal;
+			};
+
 			Vec3 origin;
 			Vec3 direction;
 
-			Ray() {}
+			Ray(): origin(Vec3::Zero()), direction(Vec3::Zero()) {}
 
 			Ray(Vec3 _origin, Vec3 _direction) : origin(_origin), direction(_direction) {}
 
@@ -42,7 +47,9 @@ namespace hagame {
 				}
 			}
 
-			bool checkSphere(Sphere sphere, float &t) {
+			std::optional<Hit> checkSphere(Sphere sphere, float &t) {
+				std::optional<Hit> hit;
+
 				Vec3 f = origin - sphere.center;
 				float a = dot(direction, direction);
 				float b = 2 * dot(f, direction);
@@ -51,7 +58,7 @@ namespace hagame {
 				float disc = b * b - 4 * a * c;
 
 				if (disc < 0) {
-					return false;
+					return std::nullopt;
 				}
 				else {
 					disc = sqrt(disc);
@@ -60,20 +67,28 @@ namespace hagame {
 
 					if (t1 >= 0 && t1 <= 1) {
 						t = t1;
-						return true;
 					}
 					else if (t2 >= 0 && t2 <= 1) {
 						t = t2;
-						return true;
 					}
 					else {
-						return false;
+						return std::nullopt;
 					}
+
+					Vec3 pos = getPointOnLine(t);
+					Vec3 norm = (pos - sphere.center).normalized();
+
+					hit = Hit{ pos, norm };
+
+					return hit;
 				}
 			}
 
 			// Based on the code from the absoltu Graphics Gem Excerpt: https://github.com/erich666/GraphicsGems/blob/master/gems/RayBox.c
-			bool checkCube(Cube cube, float &t) {
+			std::optional<Hit> checkCube(Cube cube, float &t) {
+
+				std::optional<Hit> hit = std::nullopt;
+
 				bool inside = true;
 				int quadrant[3];
 				int whichPlane;
@@ -102,7 +117,8 @@ namespace hagame {
 
 				if (inside) {
 					t = 0;
-					return true;
+					hit = Hit{Vec3::Zero(), Vec3::Zero()};
+					return hit;
 				}
 
 				for (i = 0; i < 3; i++)
@@ -114,18 +130,22 @@ namespace hagame {
 						whichPlane = i;
 				}
 
-				if (maxT[whichPlane] < 0.0f || maxT[whichPlane] > 1.0f) return false;
+				if (maxT[whichPlane] < 0.0f || maxT[whichPlane] > 1.0f) return std::nullopt;
 
 				for (i = 0; i < 3; i++) {
 					if (whichPlane != i) {
 						float pos = origin[i] + maxT[whichPlane] * direction[i];
 						if (pos < cubeMin[i] || pos > cubeMax[i])
-							return false;
+							return std::nullopt;
 					}
 				}
 
+				Vec3 norm;
+				norm[whichPlane] = quadrant[whichPlane] == 1 ? -1.0f : 1.0f;
+
 				t = maxT[whichPlane];
-				return true;
+				hit = Hit{getPointOnLine(t), norm};
+				return hit;
 			}
 
 			std::string toString() {

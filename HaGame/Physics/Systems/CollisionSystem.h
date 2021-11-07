@@ -17,16 +17,16 @@ namespace hagame {
 			}
 
 			void onSystemStart() {
-				forEach<Collider>([this](Collider* c, Ptr<ecs::Entity> entity) {
-					//c->updateAABB(entity->transform->getModelMatrix().resize<3, 3>(), entity->transform->position);
-				});
+				//forEach<Collider>([this](Collider* c, Ptr<ecs::Entity> entity) {
+				//	c->updateAABB(entity->transform->getModelMatrix().resize<3, 3>(), entity->transform->getPosition());
+				//});
 			}
 
 			void onSystemBeforeUpdate(double dt) {
 				game->collisions.entityMap.clear();
 				forEach<Collider>([this, dt](Collider* c, Ptr<ecs::Entity> entity) {
 					if (c->active) {
-					game->collisions.entityMap.insert(entity->transform->getPosition(), entity);
+						game->collisions.entityMap.insert(entity->transform->getPosition(), entity);
 
 						/*if (c->dynamic) {
 							// TODO: add overloads for transform bounding box with AABB to prevent conversion between cube and AABB.
@@ -37,8 +37,7 @@ namespace hagame {
 							c->shader->setMVP(Mat4::Identity(), scene->viewMat, scene->projMat);
 							c->shader->setVec4("color", hagame::graphics::Color(54, 134, 255));
 							//hagame::graphics::drawCubeOutline(c->aabb.getCube(), hagame::graphics::Color::green(), c->shader);
-						}
-						*/
+						}*/
 					}
 				});
 			}

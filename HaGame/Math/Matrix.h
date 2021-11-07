@@ -323,6 +323,22 @@ namespace hagame {
 				assign(inverted());
 			}
 
+			Matrix<M, N, T> transpose() {
+				auto out = copy();
+				if (M == N) {
+					for (int i = 0; i < M; i++) {
+						for (int j = 0; j < N; j++) {
+							std::swap(mat[Matrix::FlattenIndex(i, j)], mat[Matrix::FlattenIndex(j, i)]);
+						}
+					}
+				}
+				else {
+					throw new std::exception("Rectangular matrix transpose not implemented lol");
+				}
+
+				return out;
+			}
+
 			std::string toString() {
 				std::string out = "";
 				for (int i = 0; i < M; i++) {

@@ -10,6 +10,14 @@ int main() {
 	std::cout << test.toString() << "\n";
 	std::cout << testB.toString() << "\n";
 
+	Mat3 A = Mat3({
+		3, 0, 1,
+		2, 1, 3,
+		0, 2, 2
+	});
+
+	std::cout << A.inverted().toString() << "\n";
+
 	auto monitor = hagame::graphics::MonitorManager::GetMonitor(1);
 	auto window = hagame::graphics::Window(
 		monitor.displayBounds.pos + Vec2(50.0f),

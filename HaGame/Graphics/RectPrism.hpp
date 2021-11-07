@@ -3,10 +3,12 @@
 
 #include "./Mesh.h"
 #include "./Triangle.hpp"
+#include "./DynamicMesh.hpp"
+#include "../Vendor/imgui/imgui.h"
 
 namespace hagame {
 	namespace graphics {
-		class RectPrism {
+		class RectPrism : public DynamicMesh {
 			Ptr<Mesh> m_mesh;
 			Vec3 m_size;
 
@@ -74,6 +76,12 @@ namespace hagame {
 
 			Mesh* getMesh() {
 				return m_mesh.get();
+			}
+
+			void updateUI() {
+				if (ImGui::DragFloat3("Size", m_size.vector, 0.1, 0, 10)) {
+					computeMesh();
+				}
 			}
 		};
 	}

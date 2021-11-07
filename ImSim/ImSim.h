@@ -3,6 +3,7 @@
 
 #include "../HaGame/HaGame.h"
 #include "./Scenes/TestScene.hpp"
+#include "./Scenes/LevelEditor.hpp"
 
 class ImSim : public hagame::Game {
 public:
@@ -26,8 +27,22 @@ public:
 		resources->setBasePath("../../../Assets");
 
 		addScene<TestScene>("TestScene");
+		addScene<LevelEditor>("LevelEditor");
 
-		scenes.activate("TestScene");
+		scenes.activate("LevelEditor");
+	}
+
+	void onGameBeforeUpdate() {
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplSDL2_NewFrame(window->window);
+		ImGui::NewFrame();
+	}
+
+	void onGameAfterUpdate() {
+		// ImGui::ShowDemoWindow();
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		window->setTitle("ImSim - " + std::to_string(fps / 1000000));
 	}
 };
 

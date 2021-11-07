@@ -49,11 +49,7 @@ public:
 		scenes.activate(SANDBOX);
 	}
 
-	void onGameBeforeUpdate() {
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplSDL2_NewFrame(window->window);
-		ImGui::NewFrame();
-	}
+	
 
 	void onGameUpdate(double dt) {
 		//fpsSample.insert(fps / 1000000);
@@ -67,6 +63,12 @@ public:
 		if (input.keyboardMouse.startPressed) {
 			window->toggleRenderMode();
 		}
+	}
+
+	void onGameBeforeUpdate() {
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplSDL2_NewFrame(window->window);
+		ImGui::NewFrame();
 	}
 
 	void onGameAfterUpdate() {

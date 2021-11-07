@@ -28,8 +28,8 @@ namespace hagame {
 				for (int i = 0; i < m_divisions; i++) {
 					// Add two triangles for top and bottom of cylinder and the face between them
 
-					Vec3 centerA = Vec3({ cos(i * theta), 0.0f, sin(i * theta) });
-					Vec3 centerB = Vec3({ cos((i + 1) * theta), 0.0f, sin((i + 1) * theta) });
+					Vec3 centerA = Vec3({ cos(i * theta) * m_radius, 0.0f, sin(i * theta) * m_radius });
+					Vec3 centerB = Vec3({ cos((i + 1) * theta) * m_radius , 0.0f, sin((i + 1) * theta) * m_radius });
 
 					Vec3 a = centerA + bottom;
 					Vec3 b = centerA + top;

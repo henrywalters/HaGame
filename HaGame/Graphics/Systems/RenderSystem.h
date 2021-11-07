@@ -4,6 +4,7 @@
 #include "../../Core/ECS/System.h"
 #include "../../Core/Scene.h"
 #include "../Components/MeshRenderer.h"
+#include "../Components/DynamicMeshRenderer.h"
 #include "../../Utils/Aliases.h"
 #include "../../Core/ECS/Entity.h"
 #include "../Components/AxisRenderer.h"
@@ -34,7 +35,7 @@ namespace hagame {
 			void onSystemStart() {
 				cube = std::make_shared<Mesh>(CubeMesh);
 				meshRenders.onFull = [this]() {
-					std::cout << meshRenders.average() << "\n";
+					// std::cout << meshRenders.average() << "\n";
 					meshRenders.clear();
 				};
 			}
@@ -48,6 +49,7 @@ namespace hagame {
 					r->shader->use();
 					
 					r->shader->setMat4("model", entity->transform->model);
+					r->shader->setVec3("viewPos", scene->activeCameraEntity->transform->getPosition());
 					r->shader->setMVP(entity->transform->model, scene->viewMat, scene->projMat);
 					r->shader->setMat4("normal", entity->transform->modelInverse);
 					r->shader->setVec4("color", r->color);
@@ -81,6 +83,29 @@ namespace hagame {
 					r->mesh->draw(r->shader);
 
 					meshRenders.insert(timer.elapsed());
+				});
+
+				forEach<DynamicMeshRenderer>([this, dt](DynamicMeshRenderer* r, Ptr<ecs::Entity> entity) {
+
+					r->shader->use();
+
+					r->shader->setVec3("viewPos", scene->activeCameraEntity->transform->getPosition());
+					r->shader->setMVP(entity->transform->model, scene->viewMat, scene->projMat);
+					r->shader->setMat4("normal", entity->transform->modelInverse);
+					r->shader->setVec4("color", r->color);
+					r->shader->setMaterial("material", r->material);
+
+
+					if (r->texture) {
+						glActiveTexture(GL_TEXTURE0 + 0);
+						r->texture->bind();
+						glActiveTexture(GL_TEXTURE0 + 1);
+						r->texture->bind();
+						glActiveTexture(GL_TEXTURE0 + 2);
+						r->texture->bind();
+					}
+
+					r->mesh->getMesh()->draw(r->shader);
 				});
 
 				forEach<RigidBodyRenderer>([this](RigidBodyRenderer* r, Ptr<ecs::Entity> entity) {
