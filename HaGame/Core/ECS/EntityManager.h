@@ -53,7 +53,7 @@ namespace hagame {
 				Ptr<Entity> entity = add();
 				entity->parent = parent;
 				parent->children.push_back(entity);
-				entity->transform->setPosition(parent->transform->getPosition());
+				entity->transform->setPosition(Vec3::Zero());
 				return entity;
 			}
 
@@ -71,6 +71,7 @@ namespace hagame {
 
 				child->transform->setPosition(child->transform->getPosition() - parent->transform->getPosition());
 				child->parent = parent;
+				child->transform->entity = child.get();
 				parent->children.push_back(child);
 				return child;
 			}

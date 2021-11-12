@@ -11,7 +11,7 @@ namespace hagame {
 
 			float fov = PI / 3;
 			float aspectRatio = 1.0f;
-			float zNear = 0.01f;
+			float zNear = 0.1f;
 			float zFar = 100.0f;
 
 			Mat4 getViewMatrix(hagame::Transform *transform) {

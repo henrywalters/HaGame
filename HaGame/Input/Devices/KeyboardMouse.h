@@ -41,6 +41,9 @@ namespace hagame {
 				bool rCtrl, rCtrlPressed = false;
 				bool lShift, lShiftPressed = false;
 				bool rShift, rShiftPressed = false;
+
+				bool esc, escPressed = false;
+				bool del, delPressed = false;
 			};
 
 			// Defines a mapping from a keyboard to generic device
@@ -219,6 +222,8 @@ namespace hagame {
 
 					updateBtnState(keyboard.lCtrl, keyboard.lCtrlPressed, isKeyDown(SDLK_LCTRL));
 					updateBtnState(keyboard.rCtrl, keyboard.rCtrlPressed, isKeyDown(SDLK_RCTRL));
+					updateBtnState(keyboard.esc, keyboard.escPressed, isKeyDown(SDLK_ESCAPE));
+					updateBtnState(keyboard.del, keyboard.delPressed, isKeyDown(SDLK_DELETE));
 
 					for (int i = 0; i < 10; i++) {
 						updateBtnState(keyboard.numbers[i], keyboard.numbersPressed[i], isKeyDown(SDLK_0 + i));

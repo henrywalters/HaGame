@@ -105,7 +105,16 @@ namespace hagame {
 						r->texture->bind();
 					}
 
-					r->mesh->getMesh()->draw(r->shader);
+					r->mesh->getMesh()->draw(r->shader, r->displayBorder);
+
+					if (r->displayBorder) {
+						auto model = entity->transform->getTranslationMatrix() * entity->transform->getRotationMatrix() * Mat4::Scale(entity->transform->getScale() * 1.1f);
+						r->borderShader->use();
+						// r->borderShader->setVec3("viewPos", scene->activeCameraEntity->transform->getPosition());
+						r->borderShader->setMVP(model, scene->viewMat, scene->projMat);
+						r->borderShader->setVec4("color", r->borderColor);
+						r->mesh->getMesh()->drawBorder(r->borderShader, r->borderColor);
+					}
 				});
 
 				forEach<RigidBodyRenderer>([this](RigidBodyRenderer* r, Ptr<ecs::Entity> entity) {

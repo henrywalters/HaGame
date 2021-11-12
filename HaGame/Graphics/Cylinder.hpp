@@ -3,11 +3,13 @@
 
 #include "Mesh.h"
 #include "Triangle.hpp"
+#include "DynamicMesh.hpp"
+#include "./../Vendor/imgui/imgui.h"
 #include <cstdint>
 
 namespace hagame {
 	namespace graphics {
-		class Cylinder {
+		class Cylinder : public DynamicMesh {
 			
 			Ptr<Mesh> m_mesh;
 			int m_divisions;
@@ -93,6 +95,14 @@ namespace hagame {
 
 			Mesh* getMesh() {
 				return m_mesh.get();
+			}
+
+			void updateUI() {
+				if (ImGui::DragFloat("Radius", &m_radius, 0.1f, 0.0f, 10.0f))
+					computeMesh();
+
+				if (ImGui::DragFloat("Height", &m_height, 0.1f, 0.0f, 10.0f))
+					computeMesh();
 			}
 		};
 	}

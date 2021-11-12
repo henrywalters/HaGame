@@ -16,7 +16,7 @@ public:
 	void onSceneBeforeActivate() {
 		loadResources();
 
-		addSystem<CameraMovement>();
+		addSystem<ImSimMovementSystem>();
 		addSystem<RenderSystem>();
 		addSystem<LightingSystem>();
 		addSystem<TestSystem>();

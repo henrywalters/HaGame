@@ -2,7 +2,7 @@
 #define TEST_SCENE_HPP
 
 #include "../../HaGame/HaGame.h"
-#include "../Systems/CameraMovement.hpp"
+#include "../Systems/Movement.hpp"
 
 using namespace hagame::physics;
 using namespace hagame::graphics;
@@ -179,7 +179,7 @@ class TestScene : public hagame::Scene {
 
 		loadResources();
 
-		addSystem<CameraMovement>();
+		addSystem<MovementSystem>();
 		addSystem<RenderSystem>();
 		addSystem<LightingSystem>();
 		addSystem<TestSystem>();

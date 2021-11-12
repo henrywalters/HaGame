@@ -3,10 +3,11 @@
 
 #include "./Mesh.h"
 #include "./Triangle.hpp"
+#include "./DynamicMesh.hpp"
 
 namespace hagame {
 	namespace graphics {
-		class Quad {
+		class Quad : public DynamicMesh {
 			Ptr<Mesh> m_mesh;
 			float m_width, m_height;
 
@@ -21,6 +22,9 @@ namespace hagame {
 
 				Triangle triA = Triangle(a, b, c);
 				Triangle triB = Triangle(a, c, d);
+
+				triA.setTextures({ Vec2({0, 0}), Vec2({0, 1}), Vec2({1, 1}) });
+				triB.setTextures({ Vec2({0, 0}), Vec2({ 1, 1 }), Vec2({ 1, 0 }) });
 
 				triA.insert(vertices, indices);
 				triB.insert(vertices, indices);
@@ -47,6 +51,10 @@ namespace hagame {
 
 			Mesh* getMesh() {
 				return m_mesh.get();
+			}
+
+			void updateUI() {
+
 			}
 		};
 	}

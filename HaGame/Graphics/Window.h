@@ -45,7 +45,8 @@ namespace hagame {
 
 		class Window {
 		private:
-			void initGL();
+			void initGLAttribs();
+			void initGLContext();
 			Rect _viewport;
 			WindowRenderMode renderMode;
 			

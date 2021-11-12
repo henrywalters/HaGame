@@ -35,6 +35,7 @@
 #include "Graphics/Triangle.hpp"
 #include "Graphics/Quad.hpp"
 #include "Graphics/RectPrism.hpp"
+#include "Graphics/Circle.hpp"
 #include "Graphics/Cylinder.hpp"
 #include "Graphics/Sphere.hpp"
 #include "Graphics/Camera.h"
@@ -125,6 +126,7 @@
 #include "Vendor/imgui/backends/imgui_impl_sdl.cpp"
 #include "Vendor/imgui/backends/imgui_impl_opengl3.h"
 #include "Vendor/imgui/backends/imgui_impl_opengl3.cpp"
+
 
 // #include "Vendor/soloud/soloud.h"
 // #include "Vendor/soloud/soloud_wav.h"

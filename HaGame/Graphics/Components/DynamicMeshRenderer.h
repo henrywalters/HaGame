@@ -15,6 +15,10 @@ namespace hagame {
 			hagame::graphics::Color color;
 			Ptr<hagame::graphics::DynamicMesh> mesh;
 			hagame::graphics::Texture* texture;
+
+			hagame::graphics::ShaderProgram* borderShader;
+			hagame::graphics::Color borderColor;
+			bool displayBorder = false;
 		};
 	}
 }

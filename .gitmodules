@@ -2,3 +2,6 @@
 	path = HaGame/Vendor/imgui
 	url = git@github.com:ocornut/imgui.git
 
+[submodule "HaGame/Vendor/ImGuizmo"]
+	path = HaGame/Vendor/ImGuizmo
+	url = https://github.com/CedricGuillemet/ImGuizmo.git

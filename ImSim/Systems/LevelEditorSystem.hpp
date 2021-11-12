@@ -41,6 +41,8 @@ public:
 
 	std::optional<Ptr<Entity>> selected;
 
+	std::optional<Ptr<Entity>> hovered;
+
 	String getSystemName() {
 		return "LevelEditor";
 	}
@@ -86,9 +88,6 @@ public:
 			auto mesh = selected.value()->getComponent<DynamicMeshRenderer>()->mesh;
 			mesh->updateUI();
 			selected.value()->getComponent<Collider>()->boundingCube = mesh->getMesh()->getBoundingCube();
-
-			Rect bounds = mesh->getMesh()->getScreenBounds(selected.value()->transform->getModelMatrix(), scene->viewMat, scene->projMat, game->window->size, 5.0f);
-			drawScreenRect(bounds, Color::green());
 		}
 	}
 
@@ -97,19 +96,53 @@ public:
 		std::optional<Hit> rayHit = game->collisions.raycast(scene->activeCameraEntity, mouseWorldRay, t);
 
 		if (rayHit.has_value()) {
+
 			DynamicMeshRenderer* dMesh = rayHit.value().entity->getComponent<DynamicMeshRenderer>();
+
 			if (dMesh != NULL) {
 
-				if (!selected.has_value() || (selected.has_value() && selected.value()->uuid != rayHit.value().entity->uuid)) {
-					Rect bounds = dMesh->mesh->getMesh()->getScreenBounds(rayHit.value().entity->transform->getModelMatrix(), scene->viewMat, scene->projMat, game->window->size, 5.0f);
-					drawScreenRect(bounds, Color::red());
-				}
+				auto hit = rayHit.value().entity;
 
 				if (game->input.keyboardMouse.mouse.leftPressed) {
-					selected = rayHit.value().entity;
+					setSelected(hit);
+				}
+				else {
+					setHovered(hit);
+				}
+			}
+			else {
+				if (hovered.has_value()) {
+					hovered.value()->getComponent<DynamicMeshRenderer>()->displayBorder = false;
 				}
 			}
 		}
+		
+	}
+
+	void setHovered(Ptr<Entity> entity) {
+		if (!selected.has_value() || selected.value()->uuid != entity->uuid) {
+
+			if (hovered.has_value() && hovered.value()->uuid != entity->uuid) {
+				hovered.value()->getComponent<DynamicMeshRenderer>()->displayBorder = false;
+			}
+
+			auto dMesh = entity->getComponent<DynamicMeshRenderer>();
+			dMesh->displayBorder = true;
+			dMesh->borderColor = Color::white();
+			hovered = entity;
+		}
+	}
+
+	void setSelected(Ptr<Entity> entity) {
+		if (selected.has_value() && selected.value()->uuid != entity->uuid) {
+			selected.value()->getComponent<DynamicMeshRenderer>()->displayBorder = false;
+		}
+
+		auto dMesh = entity->getComponent<DynamicMeshRenderer>();
+		dMesh->displayBorder = true;
+		dMesh->borderColor = Color("#ff9900");
+
+		selected = entity;
 	}
 
 	void handleCubeAdding() {
@@ -198,6 +231,11 @@ public:
 		meshRenderer->shader = game->resources->getShaderProgram("texture");
 		meshRenderer->color = Color::white();
 		meshRenderer->material = Material::greenRubber();
+
+		meshRenderer->displayBorder = false;
+		meshRenderer->borderShader = game->resources->getShaderProgram("color");
+		meshRenderer->borderColor = Color("#ff9900");
+
 		auto collider = cube->addComponent<Collider>();
 		collider->boundingCube = Cube(CELL_SIZE * -0.5f, CELL_SIZE);
 

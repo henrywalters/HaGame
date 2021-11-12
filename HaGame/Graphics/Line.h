@@ -41,6 +41,7 @@ namespace hagame {
 			void draw(ShaderProgram* shader) {
 				shader->use();
 				glBindVertexArray(VAO);
+				glLineWidth(width);
 				glDrawArrays(GL_LINES, 0, 2);
 				glBindVertexArray(0);
 			}

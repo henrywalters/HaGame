@@ -48,5 +48,5 @@ void main()
 
     FragColor = vec4(result, texture(ourTexture, TexCoord).a * Color.w);
 
-    // FragColor = Color;
+    //FragColor = Color;
 }

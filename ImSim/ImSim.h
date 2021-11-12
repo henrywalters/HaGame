@@ -4,6 +4,7 @@
 #include "../HaGame/HaGame.h"
 #include "./Scenes/TestScene.hpp"
 #include "./Scenes/LevelEditor.hpp"
+#include "./Scenes/Level1.hpp"
 
 class ImSim : public hagame::Game {
 public:
@@ -28,8 +29,9 @@ public:
 
 		addScene<TestScene>("TestScene");
 		addScene<LevelEditor>("LevelEditor");
+		addScene<Level1>("Level1");
 
-		scenes.activate("LevelEditor");
+		scenes.activate("Level1");
 	}
 
 	void onGameBeforeUpdate() {

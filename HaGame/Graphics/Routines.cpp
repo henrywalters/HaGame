@@ -106,6 +106,21 @@ void hagame::graphics::drawCubeOutline(Cube cube, Color color, ShaderProgram* sh
 	drawLine(hagame::graphics::Line(cube.pos + cube.size.prod(Vec3::Face()) + cube.size.prod(Vec3::Right()), cube.pos + cube.size.prod(Vec3::Top()) + cube.size.prod(Vec3::Face()) + cube.size.prod(Vec3::Right()), color), shader);
 }
 
+void hagame::graphics::drawSphereOutline(Vec3 position, float radius, Color color, ShaderProgram* shader)
+{
+	shader->use();
+	shader->setVec4("color", color);
+	shader->setMat4("model", Mat4::Translation(position));
+	auto circle = getCircleCache();
+	circle->setRadius(radius);
+	auto mesh = circle->getMesh();
+	mesh->draw(shader);
+	shader->setMat4("model", Mat4::Translation(position) * Mat4::Rotation(Quat(PI / 2.0f, Vec3::Face())));
+	mesh->draw(shader);
+	shader->setMat4("model", Mat4::Translation(position) * Mat4::Rotation(Quat(PI / 2.0f, Vec3::Right())));
+	mesh->draw(shader);
+}
+
 void hagame::graphics::drawText(ShaderProgram* shader, Font* font, String message, Color color, Vec3 pos, float maxLength)
 {
 	shader->use();

@@ -12,7 +12,9 @@ using JSON = nlohmann::json;
 
 namespace hagame {
 	namespace math {
-
+		
+		template <class T>
+		class Quaternion;
 
 		// Highly generic vector class that can be extended to fit any needs.
 		template<size_t size, class T>
@@ -190,6 +192,11 @@ namespace hagame {
 				return sqrt(sum);
 			}
 
+			const T magnitudeSq() {
+				T mag = magnitude();
+				return mag * mag;
+			}
+
 			Vector normalized() {
 				Vector copy = *this;
 				T mag = copy.magnitude();
@@ -246,6 +253,34 @@ namespace hagame {
 
 			T angleBetween(Vector vect) {
 				return atan2(cross(vect).dot(Vec3::Face()), dot(vect));
+			}
+
+			Quaternion<T> rotationBetween(Vector vect) {
+				float dotProd = dot(vect);
+				float k = sqrt(magnitudeSq() * vect.magnitudeSq());
+
+				if (dotProd / k == -1) {
+					// TODO: fix this
+					return Quaternion<T>(0, orth().normalized());
+				}
+
+				Quaternion q = Quaternion(0.5f * PI * (dotProd + k), cross(vect));
+				q.normalize();
+
+				return q;
+			}
+
+			// Compute an orthaganol vector
+			Vector orth() {
+				if (*this != Vector::Top()) {
+					return cross(Vector::Top());
+				}
+				else if (*this != Vector::Right()) {
+					return cross(Vector::Right());
+				}
+				else {
+					return cross(Vector::Face());
+				}
 			}
 
 			// Return the vector such that V.prod(V.inverse()) = V.Identity();

@@ -211,13 +211,39 @@ namespace hagame {
 				};
 			}
 
-			void draw(ShaderProgram* shader) {
+			void draw(ShaderProgram* shader, bool drawBorder = false) {
 				shader->use();
-				//glBindVertexArray(VAO);
+
+				if (drawBorder) {
+					glStencilFunc(GL_ALWAYS, 1, 0xFF);
+					glStencilMask(0xFF);
+				}
+				else {
+					glStencilMask(0x00);
+				}
+
 				vao->bind();
 				ebo->bind();
 				glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
+			}
+
+			void drawBorder(ShaderProgram* shader, Color color) {
+				
+				glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+				glStencilMask(0x00);
+				// glDisable(GL_DEPTH_TEST);
+
+				shader->use();
+				vao->bind();
+				ebo->bind();
+				glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+				glBindVertexArray(0);
+
+				glStencilMask(0xFF);
+				glStencilFunc(GL_ALWAYS, 0, 0xFF);
+				glEnable(GL_DEPTH_TEST);
+				glClear(GL_STENCIL_BUFFER_BIT);
 			}
 
 			Cube getBoundingCube() {

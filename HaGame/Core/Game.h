@@ -74,7 +74,7 @@ namespace hagame {
 		}
 
 		static void initializeSDL() {
-			if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_HAPTIC | SDL_INIT_AUDIO) < 0) {
+			if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
 				throw new std::exception("Failed to initialize SDL");
 			}
 		}

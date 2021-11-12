@@ -4,11 +4,13 @@
 #include "Window.h"
 #include "Monitors.h"
 
-void hagame::graphics::Window::initGL() {
+void hagame::graphics::Window::initGLAttribs() {
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32);
+	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
 	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
@@ -18,6 +20,14 @@ void hagame::graphics::Window::initGL() {
 
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
 
+}
+
+void hagame::graphics::Window::initGLContext() {
+
+	//if (SDL_GL_SetSwapInterval(-1) < 0) {
+	// 	throw new std::exception("Failed to set VSync");
+	//}
+
 	glewExperimental = GL_TRUE;
 
 	gl = SDL_GL_CreateContext(window);
@@ -25,6 +35,10 @@ void hagame::graphics::Window::initGL() {
 	if (gl == NULL) {
 		throw new std::exception("Failed to initialize OpenGL");
 	}
+
+	int k;
+	SDL_GL_GetAttribute(SDL_GL_STENCIL_SIZE, &k);
+	printf("Stencil size %d\n", k);
 
 	glewExperimental = GL_TRUE;
 	GLenum glewError = glewInit();
@@ -34,10 +48,6 @@ void hagame::graphics::Window::initGL() {
 	}
 
 	glewGetErrorString(glewError);
-
-	//if (SDL_GL_SetSwapInterval(-1) < 0) {
-	// 	throw new std::exception("Failed to set VSync");
-	//}
 
 	glEnable(GL_DEBUG_OUTPUT);
 	glDebugMessageCallback(glErrorHandler, 0);
@@ -90,6 +100,8 @@ hagame::graphics::Window hagame::graphics::Window::ForMonitor(Monitor monitor)
 
 void hagame::graphics::Window::create() {
 	
+	initGLAttribs();
+
 	Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
 	int x = 0, y = 0, w = 0, h = 0;
 
@@ -119,7 +131,7 @@ void hagame::graphics::Window::create() {
 		std::cout << "Failed to create SDL Window: " << SDL_GetError() << "\n";
 	}
 
-	initGL();
+	initGLContext();
 }
 
 void hagame::graphics::Window::destroy() {
@@ -127,6 +139,7 @@ void hagame::graphics::Window::destroy() {
 }
 
 void hagame::graphics::Window::clear() {
+	glStencilMask(0xFF);
 	glClearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	glEnable(GL_STENCIL_TEST);
@@ -138,7 +151,9 @@ void hagame::graphics::Window::clear() {
 	glFrontFace(GL_CCW);
 	glCullFace(GL_BACK);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glDepthFunc(GL_LEQUAL);
+	glDepthFunc(GL_LESS);
+	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 }
 
 void hagame::graphics::Window::render() {
