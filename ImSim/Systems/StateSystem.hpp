@@ -5,13 +5,18 @@
 
 struct State {
 	bool debug = false;
+	bool lockMouse = false;
+	bool vsync = false;
 };
 
 enum StateEvents {
 	DebugChange,
+	LockMouseChange,
+	VSyncChange,
 };
 
 class StateSystem : public hagame::ecs::System {
+
 
 public:
 
@@ -32,9 +37,19 @@ public:
 			game->running = false;
 		}
 
-		if (game->input.keyboardMouse.keyboard.delPressed) {
+		if (game->input.keyboardMouse.keyboard.lettersPressed[getCharIndex('p')]) {
 			state->debug = !state->debug;
 			events->emit(StateEvents::DebugChange, state);
+		}
+
+		if (game->input.keyboardMouse.keyboard.lettersPressed[getCharIndex('l')]) {
+			state->lockMouse = !state->lockMouse;
+			events->emit(StateEvents::LockMouseChange, state);
+		}
+
+		if (game->input.keyboardMouse.keyboard.lettersPressed[getCharIndex('v')]) {
+			state->vsync = !state->vsync;
+			events->emit(StateEvents::VSyncChange, state);
 		}
 	}
 };

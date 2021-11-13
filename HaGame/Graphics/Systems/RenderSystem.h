@@ -47,11 +47,14 @@ namespace hagame {
 					timer.reset();
 
 					r->shader->use();
+
+					auto model = entity->transform->getModelMatrix();
+					auto modelInverse = model.inverted();
 					
 					r->shader->setMat4("model", entity->transform->model);
 					r->shader->setVec3("viewPos", scene->activeCameraEntity->transform->getPosition());
-					r->shader->setMVP(entity->transform->model, scene->viewMat, scene->projMat);
-					r->shader->setMat4("normal", entity->transform->modelInverse);
+					r->shader->setMVP(model, scene->viewMat, scene->projMat);
+					r->shader->setMat4("normal", modelInverse);
 					r->shader->setVec4("color", r->color);
 					r->shader->setMaterial("material", r->material);
 					
@@ -89,9 +92,12 @@ namespace hagame {
 
 					r->shader->use();
 
+					auto model = entity->transform->getModelMatrix();
+					auto modelInverse = model.inverted();
+
 					r->shader->setVec3("viewPos", scene->activeCameraEntity->transform->getPosition());
-					r->shader->setMVP(entity->transform->model, scene->viewMat, scene->projMat);
-					r->shader->setMat4("normal", entity->transform->modelInverse);
+					r->shader->setMVP(model, scene->viewMat, scene->projMat);
+					r->shader->setMat4("normal", modelInverse);
 					r->shader->setVec4("color", r->color);
 					r->shader->setMaterial("material", r->material);
 

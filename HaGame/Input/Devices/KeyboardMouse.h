@@ -8,6 +8,7 @@
 #include "../../Vendor/imgui/imgui.h"
 #include "../../Vendor/imgui/backends/imgui_impl_sdl.h"
 #include "SDL.h"
+#include <bitset>
 
 namespace hagame {
 	namespace input {
@@ -36,6 +37,8 @@ namespace hagame {
 			struct KeyboardState {
 				bool numbers[10];
 				bool numbersPressed[10];
+				bool letters[26];
+				bool lettersPressed[26];
 
 				bool lCtrl, lCtrlPressed = false;
 				bool rCtrl, rCtrlPressed = false;
@@ -92,8 +95,9 @@ namespace hagame {
 						SDL_GetCurrentDisplayMode(0, &dm);
 						screenSize[0] = dm.w;
 						screenSize[1] = dm.h;
-						std::cout << "Screen Size: " << screenSize.toString() << "\n";
 						screenCenter = screenSize * 0.5;
+
+						keyboardState = SDL_GetKeyboardState(NULL);
 					}
 				}
 
@@ -194,20 +198,24 @@ namespace hagame {
 					}
 				}
 
-				void pollDevice() {
-					init();
+				void reset() {
 					mouse.delta = Vec2::Zero();
-					//handleMouse();
 
 					mouse.wheel = 0;
 					mouse.leftPressed = false;
 					mouse.rightPressed = false;
 					mouse.middlePressed = false;
 
-					keyboardState = SDL_GetKeyboardState(NULL);
 					rAxis = Vec2::Zero();
 					lAxis = Vec2::Zero();
 					dPad = Vec2::Zero();
+				}
+
+				void pollDevice() {
+
+					init();
+
+					SDL_PumpEvents();
 
 					lAxis[0] = handleAxis(isKeyDown(SDLK_d), isKeyDown(SDLK_a));
 					lAxis[1] = handleAxis(isKeyDown(SDLK_w), isKeyDown(SDLK_s));
@@ -224,9 +232,15 @@ namespace hagame {
 					updateBtnState(keyboard.rCtrl, keyboard.rCtrlPressed, isKeyDown(SDLK_RCTRL));
 					updateBtnState(keyboard.esc, keyboard.escPressed, isKeyDown(SDLK_ESCAPE));
 					updateBtnState(keyboard.del, keyboard.delPressed, isKeyDown(SDLK_DELETE));
+					updateBtnState(keyboard.lShift, keyboard.lShiftPressed, isKeyDown(SDLK_LSHIFT));
+					updateBtnState(keyboard.rShift, keyboard.rShiftPressed, isKeyDown(SDLK_RSHIFT));
 
 					for (int i = 0; i < 10; i++) {
 						updateBtnState(keyboard.numbers[i], keyboard.numbersPressed[i], isKeyDown(SDLK_0 + i));
+					}
+
+					for (int i = 0; i < 26; i++) {
+						updateBtnState(keyboard.letters[i], keyboard.lettersPressed[i], isKeyDown(SDLK_a + i));
 					}
 				}
 

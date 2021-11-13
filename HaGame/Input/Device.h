@@ -43,6 +43,7 @@ namespace hagame {
 			}
 		public:
 			virtual void pollDevice() = 0;
+			virtual void reset() = 0;
 			virtual void handleEvent(SDL_Event event) {};
 		};
 	}

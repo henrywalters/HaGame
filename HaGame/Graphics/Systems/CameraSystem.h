@@ -34,7 +34,7 @@ namespace hagame {
 					cam->pitch = clamp(cam->pitch, cam->minPitch, cam->maxPitch);
 					
 					entity->transform->setRotation(Quat(cam->yaw, Vec3::Top()));
-					camera->transform->setRotation(Quat(cam->yaw, Vec3::Top()) * Quat(cam->roll, Vec3::Face()) * Quat(cam->pitch, Vec3::Right()));
+					camera->transform->setRotation(Quat(cam->roll, Vec3::Face()) * Quat(cam->pitch, Vec3::Right()));
 
 					// ((hagame::graphics::PerspectiveCamera*) camera)->fov = params.zoomed ? PI / 5 : PI / 3;
 				});

@@ -73,6 +73,8 @@ public:
 		cameraEntity->transform->move(Vec3::Top(2.0f));
 
 		debugCameraEntity = addEntity();
+		debugCameraEntity->transform->move(Vec3({ 5, 5, 5 }));
+		debugCameraEntity->transform->lookAt(player->transform->getPosition());
 		debugCameraEntity->addComponent<DebugCamera>();
 		camera = debugCameraEntity->addComponent<CameraComponent>();
 		perspectiveCam = std::make_shared<PerspectiveCamera>();
@@ -103,18 +105,34 @@ public:
 
 		stateSystem->events->subscribe(StateEvents::DebugChange, [this](Ptr<State> state) {
 			if (state->debug) {
-				game->input.keyboardMouse.captureMouseOff();
-				game->input.keyboardMouse.showCursor();
 				cameraSystem->active = false;
 				debugCameraEntity->getComponent<CameraComponent>()->active = true;
 				cameraEntity->getComponent<CameraComponent>()->active = false;
 			}
 			else {
-				game->input.keyboardMouse.captureMouseOn();
-				game->input.keyboardMouse.hideCursor();
 				cameraSystem->active = true;
 				debugCameraEntity->getComponent<CameraComponent>()->active = false;
 				cameraEntity->getComponent<CameraComponent>()->active = true;
+			}
+		});
+
+		stateSystem->events->subscribe(StateEvents::LockMouseChange, [this](Ptr<State> state) {
+			if (state->lockMouse) {
+				game->input.keyboardMouse.captureMouseOn();
+				game->input.keyboardMouse.hideCursor();
+			}
+			else {
+				game->input.keyboardMouse.captureMouseOff();
+				game->input.keyboardMouse.showCursor();
+			}
+		});
+
+		stateSystem->events->subscribe(StateEvents::VSyncChange, [this](Ptr<State> state) {
+			if (state->vsync) {
+				game->window->turnOnVSync();
+			}
+			else {
+				game->window->turnOffVSync();
 			}
 		});
 	}
@@ -142,7 +160,7 @@ public:
 			redDot->transform->setPosition(Vec3(-10000.0f));
 		}
 
-		drawSphereOutline(player->transform->getPosition(), 1.5f, Color::blue(), colorShader);
+		//drawSphereOutline(player->transform->getPosition(), 1.5f, Color::blue(), colorShader);
 
 		ImGui::End();
 	}

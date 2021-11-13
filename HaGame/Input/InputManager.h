@@ -23,10 +23,10 @@ namespace hagame {
 			void pollEvents() {
 				SDL_Event event;
 
-				keyboardMouse.pollDevice();
+				keyboardMouse.reset();
 
 				for (auto gamepad : gamepads) {
-					gamepad.pollDevice();
+					gamepad.reset();
 				}
 
 				while (SDL_PollEvent(&event)) {
@@ -39,6 +39,12 @@ namespace hagame {
 					for (auto gamepad : gamepads) {
 						gamepad.handleEvent(event);
 					}
+				}
+
+				keyboardMouse.pollDevice();
+
+				for (auto gamepad : gamepads) {
+					gamepad.pollDevice();
 				}
 			}
 		};

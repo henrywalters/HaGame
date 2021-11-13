@@ -12,6 +12,7 @@
 #include <memory>
 #include <optional>
 #include <list>
+#include <tuple>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
@@ -61,6 +62,9 @@ using Array = std::vector<T>;
 
 template <class T>
 using List = std::list<T>;
+
+template <class A, class B>
+using Tuple = std::tuple<A, B>;
 
 #endif
 
@@ -115,6 +119,13 @@ template <class T>
 using Queue = std::deque<T>;
 
 using JSON = nlohmann::json;
+
+// General aliases
+const char ALPHABET[] = { 'a', 'b', 'c', 'd', 'e', 'f', 'g','h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
+
+int getCharIndex(char letter) {
+	return letter - 'a';
+}
 
 // Math aliases
 const float EPSILON = 0.1f;

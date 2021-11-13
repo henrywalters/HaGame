@@ -10,7 +10,7 @@ namespace hagame {
 	namespace graphics {
 		class Circle : public DynamicMesh {
 			float m_radius;
-			float m_thickness = .1f;
+			float m_thickness = .025f;
 			int m_divisions = 16;
 			Ptr<Mesh> m_mesh;
 

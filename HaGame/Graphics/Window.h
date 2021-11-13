@@ -99,6 +99,10 @@ namespace hagame {
 			// Toggle between wireframe and filled
 			void toggleRenderMode();
 
+			void turnOnVSync();
+
+			void turnOffVSync();
+
 			void setTitle(String title);
 
 			void setViewport(Rect viewport);

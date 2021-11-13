@@ -24,10 +24,6 @@ void hagame::graphics::Window::initGLAttribs() {
 
 void hagame::graphics::Window::initGLContext() {
 
-	//if (SDL_GL_SetSwapInterval(-1) < 0) {
-	// 	throw new std::exception("Failed to set VSync");
-	//}
-
 	glewExperimental = GL_TRUE;
 
 	gl = SDL_GL_CreateContext(window);
@@ -53,6 +49,10 @@ void hagame::graphics::Window::initGLContext() {
 	glDebugMessageCallback(glErrorHandler, 0);
 
 	hagame::graphics::textBuffer.initializeForGL();
+
+	//if (SDL_GL_SetSwapInterval(-1) < 0) {
+	//	throw new std::exception("Failed to set VSync");
+	//}
 }
 
 hagame::graphics::Window::Window()
@@ -176,6 +176,20 @@ void hagame::graphics::Window::toggleRenderMode() {
 		turnOnFilledMode();
 	} else {
 		turnOnWireframeMode();
+	}
+}
+
+void hagame::graphics::Window::turnOnVSync()
+{
+	if (SDL_GL_SetSwapInterval(-1) < 0) {
+		throw new std::exception("Failed to set VSync");
+	}
+}
+
+void hagame::graphics::Window::turnOffVSync()
+{
+	if (SDL_GL_SetSwapInterval(0) < 0) {
+		throw new std::exception("Failed to set VSync");
 	}
 }
 

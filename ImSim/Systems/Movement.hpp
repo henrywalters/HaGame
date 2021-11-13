@@ -65,33 +65,59 @@ public:
 			forEach<PlayerMovement>([this, dt](PlayerMovement* pm, Ptr<Entity> entity) {
 				bool running = game->input.keyboardMouse.keyboard.lShift;
 				float accel = running ? pm->runAccel : pm->walkAccel;
-				float speed = running ? pm->runSpeed : pm->walkSpeed;
 				float strafeAccel = running ? pm->runStrafeAccel : pm->walkStrafeAccel;
-				float strafeSpeed = running ? pm->runStrafeSpeed : pm->walkStrafeSpeed;
+				float dragCoef = pm->groundDrag;
+
+				Vec3 movementDir = Vec3({ -game->input.keyboardMouse.lAxis[0], 0.0f, game->input.keyboardMouse.lAxis[1] });
+
+				if (movementDir.magnitude() > 0.0f)
+					movementDir.normalize();
 
 				ImGui::Begin("Player movement");
 
-				ImGui::Text(pm->accel.toString().c_str());
-				ImGui::Text(game->input.keyboardMouse.lAxis.toString().c_str());
+				pm->drawUI();
 
-				if (game->input.keyboardMouse.lAxis[1] != 0) {
-					pm->vel += entity->transform->face() * accel * dt;
-				}
-
-				if (game->input.keyboardMouse.lAxis[0] != 0) {
-					pm->vel += entity->transform->right() * strafeAccel * dt;
-				}
-
-				if (pm->vel.magnitude() > EPSILON) {
-					pm->vel -= pm->vel.normalized() * pm->groundDrag * dt;
-				}
-				else {
-					pm->vel = Vec3::Zero();
-				}
+				ImGui::Text(("Velocity: " + pm->vel.toString()).c_str());
+				ImGui::Text(std::to_string(dt).c_str());
+				ImGui::Text(("Movement dir: " + movementDir.toString()).c_str());
+				ImGui::Text(("Face: " + entity->transform->face().toString()).c_str());
+				ImGui::Text(("RAxis: " + game->input.keyboardMouse.rAxis.toString()).c_str());
 
 				entity->transform->move(pm->vel * dt);
 
+				Vec3 acceleration;
+
+				if (movementDir.z() != 0) {
+					acceleration += entity->transform->face() * movementDir.z() * accel;
+				}
+
+				if (movementDir.x() != 0) {
+					acceleration += entity->transform->right() * movementDir.x() * strafeAccel;
+				}
+
+				//entity->transform->move(
+				//	((entity->transform->right().prod(game->input.keyboardMouse.lAxis[0]) * -1) +
+				//	entity->transform->face().prod(game->input.keyboardMouse.lAxis[1])) * dt
+				//);
+
+				pm->vel += acceleration * dt;
+
+				auto velMag = pm->vel.magnitude();
+
+				if (velMag > 0) {
+					for (int i = 0; i < 3; i++) {
+						float velSq = pm->vel[i] * pm->vel[i];
+						float drag = velSq * dragCoef * -sign(pm->vel[i]);
+						pm->vel[i] += drag * dt;
+
+						if (abs(pm->vel[i]) < pm->minSpeed && movementDir[i] == 0.0f) {
+							pm->vel[i] = 0.0f;
+						}
+					}
+				}
+
 				ImGui::End();
+
 			});
 		}
 	}
