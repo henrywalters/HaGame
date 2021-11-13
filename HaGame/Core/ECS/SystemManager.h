@@ -87,6 +87,10 @@ namespace hagame {
 				forAll([dt](Ptr<ecs::System> system) { system->update(dt); });
 			}
 
+			void physicsUpdateAll(double dt) {
+				forAll([dt](Ptr<ecs::System> system) { system->physicsUpdate(dt); });
+			}
+
 			void afterUpdateAll(double dt) {
 				forAll([dt](Ptr<ecs::System> system) { system->afterUpdate(dt); });
 			}

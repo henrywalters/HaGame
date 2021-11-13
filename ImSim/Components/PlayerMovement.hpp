@@ -5,13 +5,13 @@
 
 struct PlayerMovement {
 
-	float walkAccel = 150.0f;
-	float runAccel = 300.0f;
-	float walkStrafeAccel = 200.0f;
-	float runStrafeAccel = 400.0f;
+	float walkAccel = 30.0f;
+	float runAccel = 80.0f;
+	float walkStrafeAccel = 35.0f;
+	float runStrafeAccel = 100.0f;
 	float minSpeed = 0.1f;
 	float jumpHeight = 1.0f;
-	float groundDrag = 25.0f;
+	float groundDrag = 8.0f;
 	float airDrag = 10.0f;
 
 	Vec3 vel;

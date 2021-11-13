@@ -12,20 +12,45 @@ struct DebugCamera {
 	Vec3 pos;
 	Vec2 euler = Vec2::Zero();
 	float movementSpeed = 5.0f;
-	float dragSpeed = 0.01f;
-	float lookSpeed = 0.005f;
-	float zoomSpeed = 0.05f;
+	float dragSpeed = 0.1f;
+	float lookSpeed = 0.5f;
+	float zoomSpeed = 0.5f;
 };
 
 class ImSimMovementSystem : public hagame::ecs::System {
+
+	double physicsDt;
 
 public:
 
 	String getSystemName() {
 		return "Movement SYstem";
 	}
-	
+
+	void onSystemBeforeUpdate() {
+		ImGui::Begin("Player movement");
+	}
+
+	void onSystemAfterUpdate() {
+		ImGui::End();
+	}
+
 	void onSystemUpdate(double dt) {
+
+		forEach<PlayerMovement>([this, dt](PlayerMovement* pm, Ptr<Entity> entity) {
+
+			pm->drawUI();
+
+			ImGui::Text(("DT = " + std::to_string(physicsDt)).c_str());
+			ImGui::Text(("Velocity: " + pm->vel.toString()).c_str());
+			ImGui::Text(("Position: " + entity->transform->getPosition().toString()).c_str());
+			ImGui::Text(("Face: " + entity->transform->face().toString()).c_str());
+			ImGui::Text(("RAxis: " + game->input.keyboardMouse.rAxis.toString()).c_str());
+		});
+
+	}
+	
+	void onSystemPhysicsUpdate(double dt) {
 
 		if (scene->getSystem<StateSystem>()->state->debug) {
 
@@ -47,12 +72,12 @@ public:
 					auto delta = entity->transform->top() * dummy->dragSpeed * game->input.keyboardMouse.rAxis[1] +
 						entity->transform->right() * dummy->dragSpeed * -game->input.keyboardMouse.rAxis[0];
 
-					entity->transform->move(delta);
+					entity->transform->move(delta * dt);
 				}
 
 				if (game->input.keyboardMouse.mouse.right) {
 
-					dummy->euler += game->input.keyboardMouse.rAxis * dummy->lookSpeed;
+					dummy->euler += game->input.keyboardMouse.rAxis * dummy->lookSpeed * dt;
 					dummy->euler[1] = clamp(dummy->euler[1], -PI / 2.0f, PI / 2.0f);
 				}
 
@@ -63,7 +88,10 @@ public:
 		}
 		else {
 			forEach<PlayerMovement>([this, dt](PlayerMovement* pm, Ptr<Entity> entity) {
-				bool running = game->input.keyboardMouse.keyboard.lShift;
+
+				physicsDt = dt;
+
+				bool running = !game->input.keyboardMouse.keyboard.lShift;
 				float accel = running ? pm->runAccel : pm->walkAccel;
 				float strafeAccel = running ? pm->runStrafeAccel : pm->walkStrafeAccel;
 				float dragCoef = pm->groundDrag;
@@ -72,16 +100,6 @@ public:
 
 				if (movementDir.magnitude() > 0.0f)
 					movementDir.normalize();
-
-				ImGui::Begin("Player movement");
-
-				pm->drawUI();
-
-				ImGui::Text(("Velocity: " + pm->vel.toString()).c_str());
-				ImGui::Text(std::to_string(dt).c_str());
-				ImGui::Text(("Movement dir: " + movementDir.toString()).c_str());
-				ImGui::Text(("Face: " + entity->transform->face().toString()).c_str());
-				ImGui::Text(("RAxis: " + game->input.keyboardMouse.rAxis.toString()).c_str());
 
 				entity->transform->move(pm->vel * dt);
 
@@ -95,11 +113,6 @@ public:
 					acceleration += entity->transform->right() * movementDir.x() * strafeAccel;
 				}
 
-				//entity->transform->move(
-				//	((entity->transform->right().prod(game->input.keyboardMouse.lAxis[0]) * -1) +
-				//	entity->transform->face().prod(game->input.keyboardMouse.lAxis[1])) * dt
-				//);
-
 				pm->vel += acceleration * dt;
 
 				auto velMag = pm->vel.magnitude();
@@ -107,7 +120,7 @@ public:
 				if (velMag > 0) {
 					for (int i = 0; i < 3; i++) {
 						float velSq = pm->vel[i] * pm->vel[i];
-						float drag = velSq * dragCoef * -sign(pm->vel[i]);
+						float drag = pm->vel[i] * dragCoef * -1;
 						pm->vel[i] += drag * dt;
 
 						if (abs(pm->vel[i]) < pm->minSpeed && movementDir[i] == 0.0f) {
@@ -115,8 +128,6 @@ public:
 						}
 					}
 				}
-
-				ImGui::End();
 
 			});
 		}

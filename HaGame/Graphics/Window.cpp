@@ -14,7 +14,7 @@ void hagame::graphics::Window::initGLAttribs() {
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
 	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 16);
 
 	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 
@@ -126,6 +126,13 @@ void hagame::graphics::Window::create() {
 	}
 
 	window = SDL_CreateWindow(title.c_str(), x, y, w, h, flags);
+
+	//int width, height;
+
+	//SDL_GetWindowSize(window, &width, &height);
+
+	//size[0] = (float)width;
+	//size[1] = (float)height;
 
 	if (window == NULL) {
 		std::cout << "Failed to create SDL Window: " << SDL_GetError() << "\n";

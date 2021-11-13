@@ -18,7 +18,7 @@ int main() {
 
 	std::cout << A.inverted().toString() << "\n";
 
-	auto monitor = hagame::graphics::MonitorManager::GetMonitor(0);
+	auto monitor = hagame::graphics::MonitorManager::GetMonitor(1);
 	auto window = hagame::graphics::Window(
 		monitor.displayBounds.pos + Vec2(50.0f),
 		monitor.displayBounds.size - Vec2({ 100, 100 }), 

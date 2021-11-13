@@ -31,7 +31,7 @@ public:
 		mouseWorldRay.direction = (mouseWorldPos - scene->activeCameraEntity->transform->getPosition()).normalized() * CAMERA_RAY_DISTANCE;
 
 		float t;
-		rayHit = game->collisions.raycast(scene->activeCameraEntity, mouseWorldRay, t);
+		rayHit = game->collisions.raycast(scene->activeCameraEntity, mouseWorldRay, t, { "player" });
 	}
 };
 

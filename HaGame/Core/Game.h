@@ -29,9 +29,11 @@ namespace hagame {
 		physics::Collisions collisions;
 
 		const long TICKS_PER_SECOND = 1000000;
+		const long PHYSICS_TICK_RATE = 16000;
 
 		bool running;
 		long lastTick;
+		long lastPhysicsTick;
 		double secondsElapsed;
 		double fps;
 		Ptr<utils::Logger> logger;
@@ -44,6 +46,7 @@ namespace hagame {
 		{
 			running = false;
 			lastTick = utils::Clock::Now();
+			lastPhysicsTick = utils::Clock::Now();
 			secondsElapsed = 0;
 			logger = std::make_shared<utils::loggers::ConsoleLogger>();
 			Game::input.onQuit([this]() {
@@ -55,6 +58,7 @@ namespace hagame {
 		virtual void onGameStart() {};
 		virtual void onGameEnd() {};
 		virtual void onGameUpdate(double dt) {};
+		virtual void onGamePhysicsUpdate(double dt) {};
 		virtual void onGameBeforeUpdate() {};
 		virtual void onGameAfterUpdate() {};
 

@@ -35,6 +35,7 @@ public:
 		auto stateSystem = addSystem<StateSystem>();
 
 		player = addEntity();
+		player->addTag("player");
 		player->transform->move(Vec3::Top(2.5f));
 		
 		player->addComponent<PlayerMovement>();
@@ -70,7 +71,7 @@ public:
 			return params;
 		};
 
-		cameraEntity->transform->move(Vec3::Top(2.0f));
+		cameraEntity->transform->move(Vec3::Top(1.0f));
 
 		debugCameraEntity = addEntity();
 		debugCameraEntity->transform->move(Vec3({ 5, 5, 5 }));

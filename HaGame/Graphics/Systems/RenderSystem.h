@@ -24,8 +24,6 @@ namespace hagame {
 		class RenderSystem : public hagame::ecs::System {
 
 			Ptr<Mesh> cube;
-			math::Sample<float, 10000> meshRenders;
-			utils::Timer timer;
 
 		public:
 			String getSystemName() {
@@ -34,17 +32,11 @@ namespace hagame {
 
 			void onSystemStart() {
 				cube = std::make_shared<Mesh>(CubeMesh);
-				meshRenders.onFull = [this]() {
-					// std::cout << meshRenders.average() << "\n";
-					meshRenders.clear();
-				};
 			}
 
 			void onSystemUpdate(double dt) {
 
 				forEach<MeshRenderer>([this, dt](MeshRenderer* r, Ptr<ecs::Entity> entity) {
-
-					timer.reset();
 
 					r->shader->use();
 
@@ -84,8 +76,6 @@ namespace hagame {
 					}
 
 					r->mesh->draw(r->shader);
-
-					meshRenders.insert(timer.elapsed());
 				});
 
 				forEach<DynamicMeshRenderer>([this, dt](DynamicMeshRenderer* r, Ptr<ecs::Entity> entity) {

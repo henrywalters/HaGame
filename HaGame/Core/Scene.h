@@ -46,6 +46,7 @@ namespace hagame {
 		virtual void onSceneActivate() {}
 		virtual void onSceneAfterActivate() {}
 		virtual void onSceneUpdate(double dt) {}
+		virtual void onScenePhysicsUpdate(double dt) {}
 		virtual void onSceneDeactivate() {}
 
 		void initialize() {
@@ -79,6 +80,11 @@ namespace hagame {
 			onSceneUpdate(dt);
 			ecs.systems.afterUpdateAll(dt);
 			//DEBUG_LOG("Scene update", timer.elapsed());
+		}
+
+		void updatePhysics(double dt) {
+			onScenePhysicsUpdate(dt);
+			ecs.systems.physicsUpdateAll(dt);
 		}
 
 	public:

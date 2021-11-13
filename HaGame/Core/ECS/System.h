@@ -36,6 +36,7 @@ namespace hagame {
 			virtual void onSystemStart() {}
 			virtual void onSystemBeforeUpdate(double dt) {}
 			virtual void onSystemUpdate(double dt) {}
+			virtual void onSystemPhysicsUpdate(double dt) {}
 			virtual void onSystemAfterUpdate(double dt) {}
 			virtual void onSystemStop() {}
 
@@ -73,6 +74,12 @@ namespace hagame {
 			void update(double dt) {
 				if (active) {
 					onSystemUpdate(dt);
+				}
+			}
+
+			void physicsUpdate(double dt) {
+				if (active) {
+					onSystemPhysicsUpdate(dt);
 				}
 			}
 
