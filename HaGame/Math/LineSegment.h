@@ -1,5 +1,5 @@
 #ifndef LINE_SEGMENT_PRIMITIVE_H
-#define LINE_SEGMEWNT_PRIMITIVE_H
+#define LINE_SEGMENT_PRIMITIVE_H
 
 #include "../Utils/Aliases.h"
 #include "./Functions.h"

@@ -25,6 +25,7 @@
 #include "Math/Ray.h"
 #include "Math/Plane.h"
 #include "Math/NSphere.h"
+#include "Math/Collisions.cpp"
 
 #include "Graphics/OpenGL.cpp"
 #include "Graphics/Monitors.h"
@@ -35,8 +36,10 @@
 #include "Graphics/Triangle.hpp"
 #include "Graphics/Quad.hpp"
 #include "Graphics/RectPrism.hpp"
+#include "Graphics/TriangularPrism.hpp"
 #include "Graphics/Circle.hpp"
 #include "Graphics/Cylinder.hpp"
+#include "Graphics/Cone.hpp"
 #include "Graphics/Sphere.hpp"
 #include "Graphics/Camera.h"
 #include "Graphics/PerspectiveCamera.hpp"

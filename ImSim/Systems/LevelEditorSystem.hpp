@@ -197,7 +197,11 @@ public:
 		mouseGridPosNorm = mouseGridPosIndex.cast<float>().prod(CELL_SIZE);
 
 		float t;
-		std::optional<hagame::math::Ray::Hit> rayHit = mouseWorldRay.checkCube(Cube(Vec3({ -(float)GRID_COLS / 2.0f, 0.0f, -(float)GRID_COLS / 2.0f }), Vec3({ (float)GRID_COLS, 0.0f, (float)GRID_ROWS })), t);
+		auto rayHit = hagame::math::collisions::checkRayAgainstCube(
+			mouseWorldRay,
+			Cube(Vec3({ -(float)GRID_COLS / 2.0f, 0.0f, -(float)GRID_COLS / 2.0f }), Vec3({ (float)GRID_COLS, 0.0f, (float)GRID_ROWS })),
+			t
+		);
 
 		if (rayHit.has_value()) {
 			mouseGridPos = rayHit.value().position;
@@ -257,14 +261,16 @@ public:
 		Vec3 min = Vec3({ pos[0] - cellSize[0] * (float)cols * 0.5f, pos[1], pos[2] - cellSize[1] * (float)rows * 0.5f });
 		for (int i = 0; i <= rows; i++) {
 			drawLine(
-				Line(min + Vec3({ 0, 0, cellSize[1] * i }), min + Vec3({ gridSize[0], 0.0f, cellSize[1] * i }), color),
+				hagame::math::Line(min + Vec3({ 0, 0, cellSize[1] * i }), min + Vec3({ gridSize[0], 0.0f, cellSize[1] * i })),
+				color,
 				colorShader
 			);
 		}
 
 		for (int j = 0; j <= cols; j++) {
 			drawLine(
-				Line(min + Vec3({ cellSize[0] * j, 0, 0.0f }), min + Vec3({ cellSize[0] * j, 0, gridSize[2] }), color),
+				hagame::math::Line(min + Vec3({ cellSize[0] * j, 0, 0.0f }), min + Vec3({ cellSize[0] * j, 0, gridSize[2] })),
+				color,
 				colorShader
 			);
 		}

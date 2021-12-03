@@ -14,6 +14,8 @@ namespace hagame {
 
 			Plane(Vec3 _normal, float _distance) : normal(_normal), distance(_distance) {}
 
+			Plane(Vec3 _normal, Vec3 point) : normal(_normal), distance(dot(_normal, point)) {}
+
 			Plane(Vec3 a, Vec3 b, Vec3 c) {
 				normal = cross(b - a, c - a);
 				distance = dot(normal, a);

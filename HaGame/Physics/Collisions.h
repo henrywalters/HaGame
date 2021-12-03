@@ -7,6 +7,7 @@
 #include "../Math/AABB.h"
 #include "../Math/Ray.h"
 #include "../Math/Plane.h"
+#include "../Math/Collisions.h"
 #include "./Components/Collider.h"
 #include "./../Core/Publisher.h"
 #include <tuple>
@@ -87,7 +88,8 @@ namespace hagame {
 						if (nCollider->type == ColliderType::BoxCollider) {
 							auto cube = nCollider->boundingCube.value();
 							cube.pos += neighbor->transform->getPosition();
-							auto rayHit = ray.checkCube(cube, currT);
+							//auto rayHit = ray.checkCube(cube, currT);
+							auto rayHit = hagame::math::collisions::checkRayAgainstCube(ray, cube, currT);
 							if (rayHit.has_value() && (currT < t || !hit.has_value())) {
 								t = currT;
 								hit = Hit{ neighbor, rayHit.value().position, rayHit.value().normal };
@@ -96,7 +98,7 @@ namespace hagame {
 						else if (nCollider->type == ColliderType::SphereCollider) {
 							auto sphere = nCollider->boundingSphere.value();
 							sphere.center += neighbor->transform->getPosition();
-							auto rayHit = ray.checkSphere(sphere, currT);
+							auto rayHit = hagame::math::collisions::checkRayAgainstSphere(ray, sphere, currT);
 							if (rayHit.has_value() && (currT < t || !hit.has_value())) {
 								t = currT;
 								hit = Hit{ neighbor, rayHit.value().position, rayHit.value().normal };
@@ -110,7 +112,7 @@ namespace hagame {
 			}
 
 			Optional<Ptr<ecs::Entity>> checkCollisions(Ptr<ecs::Entity> entity, Collider* collider, Vec3 velocity, double dt, float &t) {
-				if (collider != NULL && collider->dynamic && velocity.magnitude() > 0) {
+				if (collider != NULL && collider->dynamic) {
 					auto bs = getBoundingSphere(entity, collider);
 					auto velNorm = velocity.normalized();
 					// math::Ray velRay = math::Ray(bs.center + velNorm * bs.radius, velocity * dt);
@@ -142,7 +144,8 @@ namespace hagame {
 							cube.pos += neighbor->transform->getPosition();
 
 							for (int i = 0; i < 3; i++) {
-								if (rays[i].checkCube(cube, collisionT)) {
+								auto rayHit = hagame::math::collisions::checkRayAgainstCube(rays[i], cube, collisionT);
+								if (rayHit.has_value()) {
 									// TODO: add fine grain collision check here but it seems to work great.
 									if (collisionT < tMin || !collided) {
 										tMin = collisionT;
@@ -157,7 +160,8 @@ namespace hagame {
 							sphere.center += neighbor->transform->getPosition();
 
 							for (int i = 0; i < 3; i++) {
-								if (rays[i].checkSphere(sphere, collisionT)) {
+								auto rayHit = hagame::math::collisions::checkRayAgainstSphere(rays[i], sphere, collisionT);
+								if (rayHit.has_value()) {
 									if (collisionT < tMin || !collided) {
 										tMin = collisionT;
 										collidedWith = neighbor;

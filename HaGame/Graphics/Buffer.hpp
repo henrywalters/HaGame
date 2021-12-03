@@ -4,7 +4,7 @@
 namespace hagame {
 	namespace graphics {
 
-		template <class DataType, GLuint Type>
+		template <class DataType, unsigned int Type>
 		class Buffer {
 		public:
 

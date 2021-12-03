@@ -234,6 +234,8 @@ namespace hagame {
 					updateBtnState(keyboard.del, keyboard.delPressed, isKeyDown(SDLK_DELETE));
 					updateBtnState(keyboard.lShift, keyboard.lShiftPressed, isKeyDown(SDLK_LSHIFT));
 					updateBtnState(keyboard.rShift, keyboard.rShiftPressed, isKeyDown(SDLK_RSHIFT));
+					updateBtnState(lTrigger, lTriggerPressed, mouse.right);
+					updateBtnState(rTrigger, rTriggerPressed, mouse.left);
 
 					for (int i = 0; i < 10; i++) {
 						updateBtnState(keyboard.numbers[i], keyboard.numbersPressed[i], isKeyDown(SDLK_0 + i));

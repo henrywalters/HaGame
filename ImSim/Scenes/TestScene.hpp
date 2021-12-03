@@ -35,7 +35,7 @@ class TestScene : public hagame::Scene {
 	Ptr<Quad> quad;
 	Ptr<Cylinder> cylinder;
 	Ptr<RectPrism> rect;
-	Ptr<hagame::graphics::Sphere> sphere;
+	Ptr<hagame::graphics::SphereMesh> sphere;
 	Ptr<hagame::Transform> orthTrans;
 
 	Ptr<Entity> light;
@@ -64,7 +64,7 @@ class TestScene : public hagame::Scene {
 		quad = std::make_shared<Quad>(100.0f, 10.0f);
 		cylinder = std::make_shared<Cylinder>(1.0f, 2.0f, 10);
 		rect = std::make_shared<RectPrism>(Vec3({ 1, 2, 1 }));
-		sphere = std::make_shared<hagame::graphics::Sphere>(sRadius, sMeridians, sParallels);
+		sphere = std::make_shared<hagame::graphics::SphereMesh>(sRadius, sMeridians, sParallels);
 
 		game->resources->loadMesh("cube", "Models/Cube.obj");
 		game->resources->loadMesh("triangle", Triangle(Vec3({ 0, 0, 0 }), Vec3({ 0, 1, 0 }), Vec3({1, 0, 0 })).getMesh());
@@ -256,7 +256,7 @@ class TestScene : public hagame::Scene {
 		if (hit.has_value()) {
 			//drawCubeOutline(Cube(mouseRay.getPointOnLine(t), Vec3(0.1f)), Color::red(), shader);
 
-			drawLine(hagame::graphics::Line(hit.value().point, hit.value().point + hit.value().normal * 0.5f, Color::blue()), shader);
+			drawLine(hagame::math::Line(hit.value().point, hit.value().point + hit.value().normal * 0.5f), Color::blue(), shader);
 
 			if (game->input.keyboardMouse.mouse.leftPressed) {
 				selected = hit.value().entity;

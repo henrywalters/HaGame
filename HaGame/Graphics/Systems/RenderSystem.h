@@ -3,6 +3,7 @@
 
 #include "../../Core/ECS/System.h"
 #include "../../Core/Scene.h"
+#include "../../Core/Game.h"
 #include "../Components/MeshRenderer.h"
 #include "../Components/DynamicMeshRenderer.h"
 #include "../../Utils/Aliases.h"
@@ -14,7 +15,9 @@
 #include "../Components/TextRenderer.h"
 #include "../Components/Text3dRenderer.h"
 #include "../Components/SpriteRenderer.h"
+#include "../Components/Sprite3DRenderer.h"
 #include "../Components/AnimatedSpriteRenderer.h"
+#include "../Components/ParticleEmitterRenderer.h"
 #include "../../Utils/Timer.h"
 #include "../../Math/Sample.h"
 #include <cstddef>
@@ -78,6 +81,9 @@ namespace hagame {
 					r->mesh->draw(r->shader);
 				});
 
+
+				scene->ecs.entities.sortByDistance<DynamicMeshRenderer>(scene->activeCameraEntity->transform->getPosition());
+
 				forEach<DynamicMeshRenderer>([this, dt](DynamicMeshRenderer* r, Ptr<ecs::Entity> entity) {
 
 					r->shader->use();
@@ -101,15 +107,15 @@ namespace hagame {
 						r->texture->bind();
 					}
 
-					r->mesh->getMesh()->draw(r->shader, r->displayBorder);
+					r->mesh->getMesh()->draw(r->displayBorder);
 
 					if (r->displayBorder) {
-						auto model = entity->transform->getTranslationMatrix() * entity->transform->getRotationMatrix() * Mat4::Scale(entity->transform->getScale() * 1.1f);
+						auto model = entity->transform->getTranslationMatrix() * entity->transform->getRotationMatrix() * Mat4::Scale(entity->transform->getScale() * 1.025f);
 						r->borderShader->use();
 						// r->borderShader->setVec3("viewPos", scene->activeCameraEntity->transform->getPosition());
 						r->borderShader->setMVP(model, scene->viewMat, scene->projMat);
 						r->borderShader->setVec4("color", r->borderColor);
-						r->mesh->getMesh()->drawBorder(r->borderShader, r->borderColor);
+						r->mesh->getMesh()->drawBorder(r->borderColor);
 					}
 				});
 
@@ -117,8 +123,8 @@ namespace hagame {
 					auto rb = entity->getComponent<hagame::physics::RigidBody>();
 					if (rb) {
 						r->shader->setMVP(entity->transform->getModelMatrix(), scene->viewMat, scene->projMat);
-						hagame::graphics::drawLine(hagame::graphics::Line(Vec3::Zero(), entity->transform->getRotation().inverse().rotatePoint(rb->vel * r->velLen), r->velColor), r->shader);
-						hagame::graphics::drawLine(hagame::graphics::Line(Vec3::Zero(), entity->transform->getRotation().inverse().rotatePoint(rb->accel * r->accelLen), r->accelColor), r->shader);
+						hagame::graphics::drawLine(hagame::math::Line(Vec3::Zero(), entity->transform->getRotation().inverse().rotatePoint(rb->vel * r->velLen)), r->velColor, r->shader);
+						hagame::graphics::drawLine(hagame::math::Line(Vec3::Zero(), entity->transform->getRotation().inverse().rotatePoint(rb->accel * r->accelLen)), r->accelColor, r->shader);
 					}
 				});
 
@@ -130,9 +136,9 @@ namespace hagame {
 
 				forEach<AxisRenderer>([this](AxisRenderer* r, Ptr<ecs::Entity> entity) {
 					r->shader->setMVP(Mat4::Identity(), scene->viewMat, scene->projMat);
-					hagame::graphics::drawLine(hagame::graphics::Line(entity->transform->getPosition(), entity->transform->getPosition() + (entity->transform->face() * r->axisLength), r->zColor), r->shader);
-					hagame::graphics::drawLine(hagame::graphics::Line(entity->transform->getPosition(), entity->transform->getPosition() + (entity->transform->right() * r->axisLength), r->xColor), r->shader);
-					hagame::graphics::drawLine(hagame::graphics::Line(entity->transform->getPosition(), entity->transform->getPosition() + (entity->transform->top() * r->axisLength), r->yColor), r->shader);
+					hagame::graphics::drawLine(hagame::math::Line(entity->transform->getPosition(), entity->transform->getPosition() + (entity->transform->face() * r->axisLength)), r->zColor, r->shader);
+					hagame::graphics::drawLine(hagame::math::Line(entity->transform->getPosition(), entity->transform->getPosition() + (entity->transform->right() * r->axisLength)), r->xColor, r->shader);
+					hagame::graphics::drawLine(hagame::math::Line(entity->transform->getPosition(), entity->transform->getPosition() + (entity->transform->top() * r->axisLength)), r->yColor, r->shader);
 				});
 
 				forEach<SkyboxRenderer>([this](SkyboxRenderer* r) {
@@ -149,6 +155,9 @@ namespace hagame {
 					r->shader->setMVP(entity->transform->getModelMatrix() * Mat4::Scale(Vec3(r->font->getScale())), scene->viewMat, scene->projMat);
 					drawText(r->shader, r->font, r->message, r->color, Vec3::Zero(), r->maxLength);
 				});
+
+				scene->ecs.entities.sortByDistance<SpriteRenderer>(scene->activeCameraEntity->transform->getPosition());
+				scene->ecs.entities.sortByDistance<Sprite3DRenderer>(scene->activeCameraEntity->transform->getPosition());
 
 				forEach<SpriteRenderer>([this](SpriteRenderer* r, Ptr<ecs::Entity> entity) {
 					if (entity != NULL && r->sprite->texture != NULL && r->shader != NULL) {
@@ -168,8 +177,37 @@ namespace hagame {
 					
 				});
 
+				forEach<Sprite3DRenderer>([this](Sprite3DRenderer* r, Ptr<ecs::Entity> entity) {
+					if (entity != NULL && r->sprite->texture != NULL && r->shader != NULL) {
+						r->shader->use();
+
+						auto translation = Mat4::Translation(entity->transform->getPosition() + r->sprite->pos);
+			
+						r->shader->setVec3("cameraUp", scene->activeCameraEntity->transform->top());
+						r->shader->setVec3("cameraRight", scene->activeCameraEntity->transform->right());
+						r->shader->setVec3("pos", entity->transform->getPosition());
+						r->shader->setVec2("size", Vec2({ r->sprite->quad->getWidth(), r->sprite->quad->getHeight() }));
+						r->shader->setMVP(translation, scene->viewMat, scene->projMat);
+
+
+
+						r->sprite->draw();
+					}
+				});
+
+				forEach<ParticleEmitterRenderer>([this](ParticleEmitterRenderer* r, Ptr<ecs::Entity> entity) {
+					r->emitter->update(scene->game->secondsElapsed);
+					r->emitter->sortByDistance(entity->transform->getPosition(), scene->activeCameraEntity->transform->getPosition());
+					r->shader->use();
+					r->shader->setVec3("cameraUp", scene->activeCameraEntity->transform->top());
+					r->shader->setVec3("cameraRight", scene->activeCameraEntity->transform->right());
+					r->shader->setVec3("pos", entity->transform->getPosition());
+					r->shader->setMVP(Mat4::Identity(), scene->viewMat, scene->projMat);
+					r->emitter->drawUI();
+					r->emitter->draw();
+				});
+
 				forEach<BoxRenderer>([this](BoxRenderer* r, Ptr<ecs::Entity> entity) {
-					std::cout << entity->id << "\n";
 					r->shader->use();
 					r->shader->setMat4("view", scene->viewMat);
 					r->shader->setMat4("projection", scene->projMat);
@@ -183,7 +221,6 @@ namespace hagame {
 
 				forEach<AnimatedSpriteRenderer>([this, dt](AnimatedSpriteRenderer* r, Ptr<ecs::Entity> entity) {
 					if (r->sprites->hasActive()) {
-						std::cout << r->sprites->active()->rect.size.toString() << "\n";
 						r->sprites->active()->update(dt);
 						r->shader->use();
 						r->shader->setMVP(

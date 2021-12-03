@@ -7,6 +7,8 @@ struct State {
 	bool debug = false;
 	bool lockMouse = false;
 	bool vsync = false;
+	Vec2 mouseSensitivity = Vec2(0.5f);
+	Vec2 gamepadSensitivity = Vec2(2.0f);
 };
 
 enum StateEvents {
@@ -32,7 +34,7 @@ public:
 		return "StateSystem";
 	}
 
-	void onSystemUpdate(double dt) {
+	void onSystemBeforeUpdate(double dt) {
 		if (game->input.keyboardMouse.keyboard.escPressed) {
 			game->running = false;
 		}
@@ -51,6 +53,7 @@ public:
 			state->vsync = !state->vsync;
 			events->emit(StateEvents::VSyncChange, state);
 		}
+
 	}
 };
 

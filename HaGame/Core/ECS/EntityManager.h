@@ -104,6 +104,14 @@ namespace hagame {
 				registry->clear();
 			}
 
+			template <class T>
+			void sortByDistance(Vec3 pos) {
+				registry->sort<T>([this, pos](const uint32_t lhs, const uint32_t rhs) {
+					return (enttMap[lhs]->transform->getPosition() - pos).magnitude()
+						> (enttMap[rhs]->transform->getPosition() - pos).magnitude();
+				});
+			}
+
 		};
 	}
 }

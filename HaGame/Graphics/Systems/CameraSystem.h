@@ -32,6 +32,8 @@ namespace hagame {
 					cam->yaw += params.look[0] * dt * cam->xSensitivity;
 					cam->pitch += params.look[1] * dt * cam->ySensitivity;
 					cam->pitch = clamp(cam->pitch, cam->minPitch, cam->maxPitch);
+
+					
 					
 					entity->transform->setRotation(Quat(cam->yaw, Vec3::Top()));
 					camera->transform->setRotation(Quat(cam->roll, Vec3::Face()) * Quat(cam->pitch, Vec3::Right()));

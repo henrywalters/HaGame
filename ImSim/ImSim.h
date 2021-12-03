@@ -30,8 +30,8 @@ public:
 		addScene<TestScene>("TestScene");
 		addScene<LevelEditor>("LevelEditor");
 		addScene<Level1>("Level1");
-
-		scenes.activate("Level1");
+		scenes.setActive("Level1");
+		//scenes.activate("Level1");
 	}
 
 	void onGameBeforeUpdate() {

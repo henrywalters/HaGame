@@ -146,6 +146,11 @@ namespace hagame {
 				assert(size >= 3);
 				return Vector<2, T>({ vector[1], vector[2] });
 			}
+			
+			constexpr Vector<3, T> xyz() {
+				assert(size >= 3);
+				return Vector<3, T>({ vector[0], vector[1], vector[2] });
+			}
 
 			// Basic functions
 
@@ -256,6 +261,7 @@ namespace hagame {
 			}
 
 			Quaternion<T> rotationBetween(Vector vect) {
+
 				float dotProd = dot(vect);
 				float k = sqrt(magnitudeSq() * vect.magnitudeSq());
 
@@ -272,10 +278,10 @@ namespace hagame {
 
 			// Compute an orthaganol vector
 			Vector orth() {
-				if (*this != Vector::Top()) {
+				if (dot(Vector::Top()) == 0.0) {
 					return cross(Vector::Top());
 				}
-				else if (*this != Vector::Right()) {
+				else if (dot(Vector::Right()) == 0.0) {
 					return cross(Vector::Right());
 				}
 				else {

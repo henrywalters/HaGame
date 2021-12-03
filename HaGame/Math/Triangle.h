@@ -39,6 +39,22 @@ namespace hagame {
 					return false;
 				return true;
 			}
+
+			Vec3 calcNormal() {
+				return cross(b - a, c - a).normalized();
+			}
+
+			static Triangle Equilateral(Vec3 pos, float radius) {
+				return Triangle(pos + Vec3({ 0, radius, 0 }), pos + Vec3({ radius, -radius, 0 }), pos + Vec3({ -radius, -radius, 0 }));
+			}
+
+			Triangle transformed(Mat4 transform) {
+				return Triangle(
+					(transform * a.resize<4>(1.0f)).resize<3>(),
+					(transform * b.resize<4>(1.0f)).resize<3>(),
+					(transform * c.resize<4>(1.0f)).resize<3>()
+				);
+			}
 		};
 
 		void to_json(JSON& json, const Triangle& tri) {

@@ -21,6 +21,7 @@ namespace hagame {
 			float ySensitivity = 1.0f;
 			float xSensitivity = 1.0f;
 			float zSensitivity = 1.0f;
+			float tiltSensitivity = 1.0f;
 			Camera* camera;
 			std::function<FPSCameraControllerParams(void)> inputFn;
 		};

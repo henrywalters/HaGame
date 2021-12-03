@@ -6,7 +6,7 @@
 
 namespace hagame {
 	namespace graphics {
-		class Sphere {
+		class SphereMesh {
 			Ptr<Mesh> m_mesh;
 			float m_radius;
 			int m_parallels;
@@ -62,7 +62,7 @@ namespace hagame {
 
 		public:
 
-			Sphere(float radius, int parallels = 10, int meridians = 10) :
+			SphereMesh(float radius, int parallels = 10, int meridians = 10) :
 				m_radius(radius),
 				m_parallels(parallels),
 				m_meridians(meridians) {

@@ -13,6 +13,7 @@
 #include "../Utils/String.h"
 #include "../Utils/SpatialMap.h"
 #include "../Math/Triangle.h"
+#include "../Math/Surface.h"
 
 namespace hagame {
 	namespace graphics {
@@ -72,7 +73,7 @@ namespace hagame {
 				vao->bind();
 				vao->defineAttribute<Vertex>(vbo.get(), DataType::Float, 0, 3, offsetof(Vertex, position));
 				vao->defineAttribute<Vertex>(vbo.get(), DataType::Float, 1, 3, offsetof(Vertex, normal));
-				vao->defineAttribute<Vertex>(vbo.get(), DataType::Float, 2, 3, offsetof(Vertex, texCoords));
+				vao->defineAttribute<Vertex>(vbo.get(), DataType::Float, 2, 2, offsetof(Vertex, texCoords));
 				glBindVertexArray(0);
 			}
 
@@ -211,9 +212,7 @@ namespace hagame {
 				};
 			}
 
-			void draw(ShaderProgram* shader, bool drawBorder = false) {
-				shader->use();
-
+			void draw(bool drawBorder = false) {
 				if (drawBorder) {
 					glStencilFunc(GL_ALWAYS, 1, 0xFF);
 					glStencilMask(0xFF);
@@ -228,13 +227,12 @@ namespace hagame {
 				glBindVertexArray(0);
 			}
 
-			void drawBorder(ShaderProgram* shader, Color color) {
+			void drawBorder(Color color) {
 				
 				glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 				glStencilMask(0x00);
 				// glDisable(GL_DEPTH_TEST);
 
-				shader->use();
 				vao->bind();
 				ebo->bind();
 				glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
@@ -302,6 +300,16 @@ namespace hagame {
 				return Rect(Vec2({ minX - padding, minY - padding }), Vec2({ maxX - minX + padding * 2, maxY - minY + padding * 2 }));
 			}
 
+			math::Surface getSurface() {
+				math::Surface surface;
+				
+				for (int i = 0; i < indices.size() / 3; i++) {
+					auto idx = i * 3;
+					surface.triangles.push_back(math::Triangle(vertices[indices[idx]].position, vertices[indices[idx + 1]].position, vertices[indices[idx + 2]].position));
+				}
+
+				return surface;
+			}
 
 			void loadOBJ(utils::File* file) {
 				Array<Vec3> positions = Array<Vec3>();
@@ -368,6 +376,11 @@ namespace hagame {
 				}
 				initializeBuffers();
 			}
+
+			VertexArray* getVAO() {
+				return vao.get();
+			}
+
 		};
 	}
 }

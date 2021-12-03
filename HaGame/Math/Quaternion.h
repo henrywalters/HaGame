@@ -32,6 +32,8 @@ namespace hagame {
 				vector[3] = k;
 			}
 
+			Quaternion(Vector<3, T> euler) : Quaternion(euler[0], euler[1], euler[2]) {}
+
 			Quaternion(T roll, T pitch, T yaw) {
 				T cy = cos(yaw * 0.5);
 				T sy = sin(yaw * 0.5);

@@ -45,6 +45,8 @@ namespace hagame {
 		virtual void onSceneBeforeActivate() {}
 		virtual void onSceneActivate() {}
 		virtual void onSceneAfterActivate() {}
+		virtual void onSceneBeforeUpdate() {}
+		virtual void onSceneAfterUpdate() {}
 		virtual void onSceneUpdate(double dt) {}
 		virtual void onScenePhysicsUpdate(double dt) {}
 		virtual void onSceneDeactivate() {}
@@ -75,10 +77,12 @@ namespace hagame {
 		void update(double dt) {
 			timer.reset();
 			setActiveCamera();
+			onSceneBeforeUpdate();
 			ecs.systems.beforeUpdateAll(dt);
 			ecs.systems.updateAll(dt);
 			onSceneUpdate(dt);
 			ecs.systems.afterUpdateAll(dt);
+			onSceneAfterUpdate();
 			//DEBUG_LOG("Scene update", timer.elapsed());
 		}
 

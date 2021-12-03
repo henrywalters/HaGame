@@ -1,0 +1,106 @@
+#ifndef CONE_HPP
+#define CONE_HPP
+
+#include "Mesh.h"
+#include "Triangle.hpp"
+#include "DynamicMesh.hpp"
+#include "./../Vendor/imgui/imgui.h"
+#include <cstdint>
+
+namespace hagame {
+	namespace graphics {
+		class Cone : public DynamicMesh {
+
+			Ptr<Mesh> m_mesh;
+			int m_divisions;
+			float m_radius;
+			float m_height;
+
+			void computeMesh() {
+				Array<Vertex> vertices;
+				Array<unsigned int> indices;
+				unsigned int idx = 0;
+
+				float theta = (2 * PI) / m_divisions;
+				float width = (1.0f / m_divisions) * 2 * PI * m_radius;
+
+				Vec3 top = Vec3({ 0.0f, m_height / 2.0f, 0.0f });
+				Vec3 bottom = Vec3({ 0.0f, -m_height / 2.0f, 0.0f });
+
+				for (int i = 0; i < m_divisions; i++) {
+					// Add two triangles for top and bottom of cylinder and the face between them
+
+					Vec3 centerA = Vec3({ cos(i * theta) * m_radius, 0.0f, sin(i * theta) * m_radius });
+					Vec3 centerB = Vec3({ cos((i + 1) * theta) * m_radius , 0.0f, sin((i + 1) * theta) * m_radius });
+
+					Vec3 a = centerA + bottom;
+					Vec3 b = centerB + bottom;
+
+					Triangle triA = Triangle(a, top, b);
+					Triangle triB = Triangle(b, bottom, a);
+
+					triA.setTextures({ Vec2({width * i, 0}), Vec2({width * i, 1}), Vec2({(i + 1) * width, 1}) });
+					triB.setTextures({ Vec2({width * i, 0}), Vec2({(i + 1) * width, 1}), Vec2({(i + 1) * width, 0}) });
+
+					triA.insert(vertices, indices);
+					triB.insert(vertices, indices);
+				}
+
+				m_mesh->update(vertices, indices);
+			}
+
+		public:
+
+			Cone(float radius, float height, int divisions = 100) :
+				m_radius(radius),
+				m_height(height),
+				m_divisions(divisions)
+			{
+				m_mesh = std::make_shared<Mesh>();
+				computeMesh();
+			}
+
+			int getDivisions() {
+				return m_divisions;
+			}
+
+			void setDivisions(int divisions) {
+				m_divisions = divisions;
+				computeMesh();
+			}
+
+			float getRadius() {
+				return m_radius;
+			}
+
+			void setRadius(float radius) {
+				m_radius = radius;
+				computeMesh();
+			}
+
+			float getHeight() {
+				return m_height;
+			}
+
+			void setHeight(float height) {
+				m_height = height;
+				computeMesh();
+			}
+
+			Mesh* getMesh() {
+				return m_mesh.get();
+			}
+
+			void updateUI() {
+				if (ImGui::DragFloat("Radius", &m_radius, 0.1f, 0.0f, 10.0f))
+					computeMesh();
+
+				if (ImGui::DragFloat("Height", &m_height, 0.1f, 0.0f, 10.0f))
+					computeMesh();
+			}
+		};
+	}
+}
+
+
+#endif

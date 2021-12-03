@@ -12,8 +12,8 @@ struct DebugCamera {
 	Vec3 pos;
 	Vec2 euler = Vec2::Zero();
 	float movementSpeed = 5.0f;
-	float dragSpeed = 0.1f;
-	float lookSpeed = 0.5f;
+	float dragSpeed = 5.0f;
+	float lookSpeed = 2.0f;
 	float zoomSpeed = 0.5f;
 };
 
@@ -36,21 +36,6 @@ public:
 	}
 
 	void onSystemUpdate(double dt) {
-
-		forEach<PlayerMovement>([this, dt](PlayerMovement* pm, Ptr<Entity> entity) {
-
-			pm->drawUI();
-
-			ImGui::Text(("DT = " + std::to_string(physicsDt)).c_str());
-			ImGui::Text(("Velocity: " + pm->vel.toString()).c_str());
-			ImGui::Text(("Position: " + entity->transform->getPosition().toString()).c_str());
-			ImGui::Text(("Face: " + entity->transform->face().toString()).c_str());
-			ImGui::Text(("RAxis: " + game->input.keyboardMouse.rAxis.toString()).c_str());
-		});
-
-	}
-	
-	void onSystemPhysicsUpdate(double dt) {
 
 		if (scene->getSystem<StateSystem>()->state->debug) {
 
@@ -84,10 +69,11 @@ public:
 				std::dynamic_pointer_cast<PerspectiveCamera>(cam->camera)->fov += game->input.keyboardMouse.mouse.wheel * dummy->zoomSpeed;
 
 				entity->transform->setRotation(Quat(dummy->euler[0], Vec3::Top()) * Quat(dummy->euler[1], Vec3::Right()));
-			});
-		}
-		else {
+				});
+		} else {
 			forEach<PlayerMovement>([this, dt](PlayerMovement* pm, Ptr<Entity> entity) {
+
+				// checkIfGrounded(entity, pm, dt);
 
 				physicsDt = dt;
 
@@ -96,9 +82,9 @@ public:
 				float strafeAccel = running ? pm->runStrafeAccel : pm->walkStrafeAccel;
 				float dragCoef = pm->groundDrag;
 
-				Vec3 movementDir = Vec3({ -game->input.keyboardMouse.lAxis[0], 0.0f, game->input.keyboardMouse.lAxis[1] });
+				Vec3 movementDir = Vec3({ -game->input.player(0).lAxis[0], 0.0f, game->input.player(0).lAxis[1] });
 
-				if (movementDir.magnitude() > 0.0f)
+				if (movementDir.magnitude() > 1.0f)
 					movementDir.normalize();
 
 				entity->transform->move(pm->vel * dt);
@@ -131,7 +117,26 @@ public:
 
 			});
 		}
+
+		forEach<PlayerMovement>([this, dt](PlayerMovement* pm, Ptr<Entity> entity) {
+
+			pm->drawUI();
+
+			ImGui::Text(("DT = " + std::to_string(physicsDt)).c_str());
+			ImGui::Text(("Velocity: " + pm->vel.toString()).c_str());
+			ImGui::Text(("Position: " + entity->transform->getPosition().toString()).c_str());
+			ImGui::Text(("Face: " + entity->transform->face().toString()).c_str());
+			ImGui::Text(("RAxis: " + game->input.keyboardMouse.rAxis.toString()).c_str());
+		});
+
 	}
+
+	void checkIfGrounded(Ptr<Entity> entity, PlayerMovement* pm, double dt) {
+		float t;
+		auto hit = game->collisions.checkCollisions(entity, pm->groundCollider, pm->vel, dt, t);
+		pm->isGrounded = hit.has_value();
+	}
+
 };
 
 #endif

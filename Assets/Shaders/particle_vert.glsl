@@ -1,25 +1,25 @@
 #version 330 core
-
-layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec3 aVel;
-layout (location = 2) in vec4 aColor;
-layout (location = 3) in float aCreated;
+layout(location = 0) in vec3 a_vertex;
+layout(location = 1) in vec3 a_normal;
+layout(location = 2) in vec2 a_texCoord;
+layout(location = 3) in vec3 a_pos;
+layout(location = 4) in vec2 a_size;
+layout(location = 5) in vec4 a_color;
 
 out vec4 ParticleColor;
 
-uniform mat4 model;
+// uniform mat4 model;
+uniform vec3 pos;
+uniform vec3 cameraUp;
+uniform vec3 cameraRight;
 uniform mat4 view;
 uniform mat4 projection;
-uniform float current;
-uniform float gravity;
-
-vec3 calcOffset() {
-	float t = current - aCreated;
-	return (aVel * t) + (0.5 * gravity * t * t);
-}
 
 void main() {
-	float scale = 10.0f;
-	ParticleColor = aColor;
-	gl_Position = projection * view * model * vec4(calcOffset() + aPos, 1.0);
+
+	vec3 vertexPos = pos + a_pos + (cameraRight * a_vertex.x * a_size.x ) + (cameraUp * a_vertex.y * a_size.y);
+
+	ParticleColor = a_color;
+
+	gl_Position = projection * view * vec4(vertexPos, 1.0);
 }

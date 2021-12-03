@@ -11,7 +11,7 @@ namespace hagame {
 		class Circle : public DynamicMesh {
 			float m_radius;
 			float m_thickness = .025f;
-			int m_divisions = 16;
+			int m_divisions = 50;
 			Ptr<Mesh> m_mesh;
 
 			void computeMesh() {
@@ -71,13 +71,13 @@ namespace hagame {
 				computeMesh();
 			}
 
-			void setRadius(float radius) { m_radius = radius; computeMesh(); }
+			void setRadius(float radius) { if (radius != m_radius) { m_radius = radius; computeMesh(); } }
 			float getRadius() { return m_radius; }
 
-			void setDivisions(int divisions) { m_divisions = divisions; computeMesh(); }
+			void setDivisions(int divisions) { if (divisions != m_divisions) { m_divisions = divisions; computeMesh(); } }
 			int getDivisions() { return m_divisions; }
 
-			void setThickness(float thickness) { m_thickness = thickness; computeMesh(); }
+			void setThickness(float thickness) { if (thickness != m_thickness) { m_thickness = thickness; computeMesh(); } }
 			float getThickness() { return m_thickness; }
 
 			Mesh* getMesh() {
