@@ -257,7 +257,7 @@ namespace hagame {
 			}
 
 			T angleBetween(Vector vect) {
-				return atan2(cross(vect).dot(Vec3::Face()), dot(vect));
+				return atan2(cross(vect).dot(Vector::Face()), dot(vect));
 			}
 
 			Quaternion<T> rotationBetween(Vector vect) {
@@ -270,7 +270,7 @@ namespace hagame {
 					return Quaternion<T>(0, orth().normalized());
 				}
 
-				Quaternion q = Quaternion(0.5f * PI * (dotProd + k), cross(vect));
+				Quaternion q = Quaternion(0.5f * M_PI * (dotProd + k), cross(vect));
 				q.normalize();
 
 				return q;
@@ -293,16 +293,14 @@ namespace hagame {
 			Vector inverse() {
 				Vector copy = *this;
 				for (int i = 0; i < size; i++) {
-					copy[i] = 1 / vect[i];
+					copy[i] = 1 / vector[i];
 				};
 				return copy;
 			}
 
 
 			Vector<3, T> cross(Vector vect) {
-				if (size != 3) {
-					throw new std::exception("Cross product only supported for 3d vectors");
-				}
+				static_assert(vect.size >= 3);
 
 				return Vector<3, T>({
 					vector[1] * vect[2] - vector[2] * vect[1],
@@ -408,16 +406,12 @@ namespace hagame {
 			// Operator Overloads
 
 			T operator[](int i) const {
-				if (i >= size) {
-					throw new std::exception("Index out of bounds");
-				}
+				static_assert(i <= size);
 				return vector[i];
 			}
 
 			T& operator[](int i) {
-				if (i >= size) {
-					throw new std::exception("Index out of bounds");
-				}
+				static_assert(i <= size);
 				return vector[i];
 			}
 

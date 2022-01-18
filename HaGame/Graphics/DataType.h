@@ -1,7 +1,7 @@
 #ifndef DATA_TYPE_H
 #define DATA_TYPE_H
 
-#include <gl/glew.h>
+#include <GL/glew.h>
 
 namespace hagame {
 	namespace graphics {

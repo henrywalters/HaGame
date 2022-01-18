@@ -19,9 +19,9 @@ namespace hagame {
 			AABB(Cube cube) : center(cube.pos + (cube.size * 0.5)), radius(cube.size * 0.5) {}
 
 			bool isIntersecting(AABB b) {
-				if (abs(center[0] - b.center[0]) > (radius[0] + b.radius[0])) return false;
-				if (abs(center[1] - b.center[1]) > (radius[1] + b.radius[1])) return false;
-				if (abs(center[2] - b.center[2]) > (radius[2] + b.radius[2])) return false;
+				if (std::abs(center[0] - b.center[0]) > (radius[0] + b.radius[0])) return false;
+				if (std::abs(center[1] - b.center[1]) > (radius[1] + b.radius[1])) return false;
+				if (std::abs(center[2] - b.center[2]) > (radius[2] + b.radius[2])) return false;
 				return true;
 			}
 

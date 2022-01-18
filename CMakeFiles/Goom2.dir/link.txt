@@ -1,0 +1,1 @@
+/usr/bin/c++     CMakeFiles/Goom2.dir/Goom2/Goom2.cpp.o  -o Goom2  -lSDL2 /usr/lib/x86_64-linux-gnu/libGL.so /usr/lib/x86_64-linux-gnu/libGLU.so 

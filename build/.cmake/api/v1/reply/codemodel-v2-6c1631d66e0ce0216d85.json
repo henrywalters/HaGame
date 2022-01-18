@@ -1,0 +1,95 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.8"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "HaGameEditor",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "Demos::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Demos-Debug-d0683f361b75d18deddd.json",
+					"name" : "Demos",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Goom2::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Goom2-Debug-834384e7884722420df1.json",
+					"name" : "Goom2",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "HaGame::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-HaGame-Debug-e3f47d02808538df25d9.json",
+					"name" : "HaGame",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "HaGameEditor::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-HaGameEditor-Debug-612a3f77909446dfb4b1.json",
+					"name" : "HaGameEditor",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "ImSim::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ImSim-Debug-767347eb849278208cfa.json",
+					"name" : "ImSim",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/henry/HaGame/build",
+		"source" : "/home/henry/HaGame"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 0
+	}
+}

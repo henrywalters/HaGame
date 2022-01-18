@@ -1,0 +1,27 @@
+[
+{
+  "directory": "/home/henry/HaGame/build",
+  "command": "/bin/clang++-10   -I/usr/include/SDL2  -g   -std=gnu++17 -o CMakeFiles/ImSim.dir/ImSim/ImSim.cpp.o -c /home/henry/HaGame/ImSim/ImSim.cpp",
+  "file": "/home/henry/HaGame/ImSim/ImSim.cpp"
+},
+{
+  "directory": "/home/henry/HaGame/build",
+  "command": "/bin/clang++-10   -I/usr/include/SDL2  -g   -std=gnu++17 -o CMakeFiles/Goom2.dir/Goom2/Goom2.cpp.o -c /home/henry/HaGame/Goom2/Goom2.cpp",
+  "file": "/home/henry/HaGame/Goom2/Goom2.cpp"
+},
+{
+  "directory": "/home/henry/HaGame/build",
+  "command": "/bin/clang++-10   -I/usr/include/SDL2  -g   -std=gnu++17 -o CMakeFiles/Demos.dir/Demos/Demo.cpp.o -c /home/henry/HaGame/Demos/Demo.cpp",
+  "file": "/home/henry/HaGame/Demos/Demo.cpp"
+},
+{
+  "directory": "/home/henry/HaGame/build",
+  "command": "/bin/clang++-10   -I/usr/include/SDL2  -g   -std=gnu++17 -o CMakeFiles/HaGameEditor.dir/Editor/Editor.cpp.o -c /home/henry/HaGame/Editor/Editor.cpp",
+  "file": "/home/henry/HaGame/Editor/Editor.cpp"
+},
+{
+  "directory": "/home/henry/HaGame/build",
+  "command": "/bin/clang++-10   -I/usr/include/SDL2  -g   -std=gnu++17 -o CMakeFiles/HaGame.dir/HaGame/HaGame.cpp.o -c /home/henry/HaGame/HaGame/HaGame.cpp",
+  "file": "/home/henry/HaGame/HaGame/HaGame.cpp"
+}
+]

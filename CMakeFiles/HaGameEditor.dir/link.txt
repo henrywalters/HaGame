@@ -1,0 +1,1 @@
+/usr/bin/c++     CMakeFiles/HaGameEditor.dir/Editor/Editor.cpp.o  -o HaGameEditor  -lSDL2 /usr/lib/x86_64-linux-gnu/libGL.so /usr/lib/x86_64-linux-gnu/libGLU.so 

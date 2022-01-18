@@ -204,7 +204,7 @@ Optional<hagame::math::collisions::Hit> hagame::math::collisions::checkSphereAga
 	Vec3 normal = tri.calcNormal();
 	float dist = dot(sphere.center - tri.a, normal);
 
-	if (abs(dist) > sphere.radius)
+	if (std::abs(dist) > sphere.radius)
 		return std::nullopt;
 
 	Vec3 projSphereCenter = sphere.center - normal * dist;
@@ -319,7 +319,7 @@ Optional<hagame::math::collisions::Hit> hagame::math::collisions::checkCapsuleAg
 		refPoint = tri.b;
 	}
 	else {
-		t = dot(triNorm, (tri.a - capsule.center.a)) / abs(dot(triNorm, capNorm));
+		t = dot(triNorm, (tri.a - capsule.center.a)) / std::abs(dot(triNorm, capNorm));
 		Vec3 linePlaneIntersect = capsule.center.a + capNorm * t;
 
 		if (tri.containsPoint(linePlaneIntersect)) {
