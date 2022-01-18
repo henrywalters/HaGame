@@ -1,7 +1,7 @@
 #ifndef FONT_H
 #define FONT_H
 
-#include <gl/glew.h>
+#include <GL/glew.h>
 #include "./../Utils/Aliases.h"
 #include "./../Utils/File.h"
 #include "./../Vendor/imgui/imstb_truetype.h"

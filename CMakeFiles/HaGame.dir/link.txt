@@ -1,0 +1,1 @@
+/usr/bin/c++     CMakeFiles/HaGame.dir/HaGame/HaGame.cpp.o  -o HaGame  -lSDL2 /usr/lib/x86_64-linux-gnu/libGL.so /usr/lib/x86_64-linux-gnu/libGLU.so 

@@ -274,7 +274,7 @@ Optional<hagame::math::collisions::Hit> hagame::math::collisions::checkSphereAga
 	Vec3 normal = tri.calcNormal();
 	float dist = dot(sphere.center - tri.a, normal);
 
-	if (abs(dist) > sphere.radius)
+	if (std::abs(dist) > sphere.radius)
 		return std::nullopt;
 
 	Vec3 projSphereCenter = sphere.center - normal * dist;

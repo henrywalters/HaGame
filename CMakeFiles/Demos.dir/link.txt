@@ -1,0 +1,1 @@
+/usr/bin/c++     CMakeFiles/Demos.dir/Demos/Demo.cpp.o  -o Demos  -lSDL2 /usr/lib/x86_64-linux-gnu/libGL.so /usr/lib/x86_64-linux-gnu/libGLU.so 

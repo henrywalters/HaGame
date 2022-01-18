@@ -13,9 +13,6 @@
 #include <optional>
 #include <list>
 #include <tuple>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/vec3.hpp>
-#include <glm/mat4x4.hpp>
 #include "../Math/Vector.h"
 #include "../Math/Matrix.h"
 #include "../Math/Hypercube.h"
@@ -196,42 +193,6 @@ inline Rect cubeToRect(Cube cube) {
 }
 
 // Simple helpers
-
-inline std::string glVec3ToString(glm::vec3 vec3) {
-	return "[" + std::to_string(vec3[0]) + ", " + std::to_string(vec3[1]) + ", " + std::to_string(vec3[2]) + "]";
-}
-
-inline std::string glMat4ToString(glm::mat4 mat) {
-	std::string out = "";
-	const float* matSrc = (const float*)glm::value_ptr(mat);
-	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 4; j++) {
-			out += std::to_string(matSrc[j * 4 + i]) + " ";
-		}
-		out += "\n";
-	}
-	return out;
-}
-
-inline Vec2 hgVec2(glm::vec2 vec) {
-	return Vec2({ vec[0], vec[1] });
-}
-
-inline glm::vec2 glVec2(Vec2 vec) {
-	return glm::vec2(vec[0], vec[1]);
-}
-
-inline Vec3 hgVec3(glm::vec3 vec) {
-	return Vec3({ vec[0], vec[1], vec[2] });
-}
-
-inline glm::vec3 glVec3(Vec3 vec) {
-	return glm::vec3(vec[0], vec[1], vec[2]);
-}
-
-inline glm::vec4 glVec4(Vec4 vec) {
-	return glm::vec4(vec[0], vec[1], vec[2], vec[3]);
-}
 
 template <template <typename...> class Base, typename Derived>
 struct is_base_of_template

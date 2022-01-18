@@ -11,7 +11,7 @@ T max(T a, T b) {
 
 template <class T>
 T min(T a, T b) {
-	return a < b: a ? b;
+	return a < b ? a : b;
 }
 
 template <size_t N, class T>
@@ -86,8 +86,12 @@ T lerp(T a, T b, T t) {
 // Linearly Interpolates a value between [a, b]. Clamps the value between a and b.
 template <class T>
 T lerpClamp(T a, T b, T t) {
-	if t > 1.0 return b;
-	if t < 0.0 return a;
+	if (t > 1.0)
+		return b;
+		
+	if (t < 0.0)
+		return a;
+	
 	return (b - a) * t + a;
 }
 
@@ -206,7 +210,7 @@ Array<Vec3> calcCellsThatIntersectLine(Vec3 cellSize, Vec3 origin, Vec3 directio
 	for (int i = 0; i < 3; i++) {
 		if (flip[i])
 			targetIdx[i] *= -1;
-		tMax[i] = direction[i] != 0 ? cellSize[i] / abs(direction[i]) : 0.0;
+		tMax[i] = direction[i] != 0 ? cellSize[i] / std::abs(direction[i]) : 0.0;
 	}
 	tDelta = tMax.copy();
 

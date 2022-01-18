@@ -4,7 +4,7 @@
 #include "../Math/Vector.h"
 #include "../Math/Quaternion.h"
 #include "../Math/Hypercube.h"
-#include <gl/glew.h>
+#include <GL/glew.h>
 #include "ShaderProgram.h"
 #include "../Utils/Aliases.h"
 #include "../Core/Transform.h"

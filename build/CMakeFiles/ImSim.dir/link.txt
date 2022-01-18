@@ -1,0 +1,1 @@
+/bin/clang++-10  -g   CMakeFiles/ImSim.dir/ImSim/ImSim.cpp.o  -o ImSim  -lSDL2 /usr/lib/x86_64-linux-gnu/libGL.so /usr/lib/x86_64-linux-gnu/libGLU.so 
