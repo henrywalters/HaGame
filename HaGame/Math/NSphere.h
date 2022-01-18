@@ -1,6 +1,8 @@
 #ifndef NSPHERE_PRIMITIVE_H
 #define NSPHERE_PRIMITIVE_H
 
+#include "./Hypercube.h"
+
 namespace hagame {
 	namespace math {
 
@@ -9,6 +11,7 @@ namespace hagame {
 			Vector<N, T> center;
 			T radius;
 
+			NSphere() : center(Vector<N, T>::Zero()), radius(0.0f) {}
 			NSphere(Vector<N, T> _center, float _radius) : center(_center), radius(_radius) {}
 
 			bool isIntersecting(NSphere<N, T> sphere) {
@@ -45,6 +48,15 @@ namespace hagame {
 
 			std::string toString() {
 				return "C = " + center.toString() + " r = " + std::to_string(radius);
+			}
+
+			Hypercube<N, T> getBoundingCube() {
+				return Hypercube<N, T>(center - Vector<N, T>(radius), Vector<N, T>(radius * 2));
+			}
+
+			Vector<N, T> closestPoint(Vector<N, T> point) {
+				auto delta = point - center;
+				return center + delta.normalized() * radius;
 			}
 		};
 	}

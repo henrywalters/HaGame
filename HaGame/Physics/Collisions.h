@@ -26,9 +26,6 @@ namespace hagame {
 			Vec3 normal;
 		};
 
-		// Prime number to help LCD
-		const Vec3 CHUNK_SIZE = Vec3(10000.0f);
-
 		bool isColliding(Rect r1, Rect r2);
 
 		class Collisions {
@@ -38,20 +35,8 @@ namespace hagame {
 
 			utils::SpatialMap<ecs::Entity, float> entityMap;
 
-			Collisions() : entityMap(utils::SpatialMap<ecs::Entity, float>(CHUNK_SIZE)) {}
+			Collisions() : entityMap(utils::SpatialMap<ecs::Entity, float>(Vec3(10.0f))) {}
 
-			/*Array<Ptr<ecs::Entity>> queryAABB(math::AABB aabb) {
-				Array<Ptr<ecs::Entity>> entities;
-				std::cout << "Checking: " << entityMap.get(aabb.center).size() << std::endl;
-				for (auto other : entityMap.get(aabb.center)) {
-					auto otherCollider = other->getComponent<Collider>();
-					if (otherCollider->aabb.isIntersecting(aabb)) {
-						entities.push_back(other);
-					}
-				}
-				return entities;
-			}
-			*/
 			static Sphere getBoundingSphere(Ptr<ecs::Entity> entity, Collider* collider) {
 				if (collider->type == hagame::physics::ColliderType::SphereCollider) {
 					if (!collider->boundingSphere.has_value()) {

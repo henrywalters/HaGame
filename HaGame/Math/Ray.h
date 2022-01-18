@@ -3,6 +3,7 @@
 
 #include "../Utils/Aliases.h"
 #include "./Line.h"
+#include "./LineSegment.h"
 #include "./Functions.h"
 
 namespace hagame {
@@ -54,6 +55,10 @@ namespace hagame {
 
 			Line toLine() {
 				return Line(origin, origin + direction);
+			}
+
+			LineSegment toLineSegment() {
+				return LineSegment(origin, origin + direction);
 			}
 		};
 	}

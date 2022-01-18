@@ -65,6 +65,12 @@ namespace hagame {
 				return component;
 			}
 
+			template <class T, class... Args>
+			T* addComponent(Args &&... args) {
+				T* component = &registry->emplace<T>(entt_id, std::forward<Args>(args)...);
+				return component;
+			}
+
 			void addComponent(entt::id_type componentId) {
 				// &registry->emplace()
 			}
@@ -88,7 +94,23 @@ namespace hagame {
 			T* getComponent() {
 				return hasComponent<T>() ? &registry->get<T>(entt_id) : NULL;
 			}
+
+			template <class T>
+			T* getOrCreateComponent() {
+				return hasComponent<T>() ? &registry->get<T>(entt_id) : addComponent<T>();
+			}
 			
+			/*
+			Vec3 getPos() { return transform->getPosition(); }
+			Quat getRot() { return transform->getRotation(); }
+			Vec3 getScale() { return transform->getScale(); }
+
+			void setPos(Vec3 pos) { transform->setPosition(pos); }
+			void move(Vec3 delta) { transform->move(delta); }
+			void setRot(Quat rot) { transform->setRotation(rot); }
+			void rotate(Quat delta) { transform->rotate(delta); }
+			void setScale(Vec3 scale) { transform->setScale(scale); }
+			*/
 		};
 	}
 }

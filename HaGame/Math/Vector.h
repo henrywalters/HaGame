@@ -53,6 +53,19 @@ namespace hagame {
 				}
 			}
 
+			Vector(T x, T y) {
+				assert(size == 2);
+				vector[0] = x;
+				vector[1] = y;
+			}
+
+			Vector(T x, T y, T z) {
+				assert(size == 3);
+				vector[0] = x;
+				vector[1] = y;
+				vector[2] = z;
+			}
+
 			// Static Helpers
 
 			static Vector Identity() {

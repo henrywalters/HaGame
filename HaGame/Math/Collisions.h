@@ -13,10 +13,17 @@
 #include "Plane.h"
 #include "Disc.h"
 #include "./../Utils/Aliases.h"
+#include "./../Graphics/Color.h"
+#include "./../Graphics/ShaderProgram.h"
+#include "./../Graphics/Routines.h"
 
 namespace hagame {
 	namespace math {
 		namespace collisions {
+
+			static hagame::graphics::ShaderProgram* DEBUG_SHADER;
+			static bool DEBUG_DISPLAY = false;
+
 			struct Hit {
 				Vec3 position;
 				Vec3 normal;
@@ -28,6 +35,8 @@ namespace hagame {
 				}
 			};
 
+			Optional<hagame::math::collisions::Hit> checkLineAgainstPlane(Line line, Plane plane, float& t);
+
 			Optional<hagame::math::collisions::Hit> checkRayAgainstSphere(Ray ray, Sphere sphere, float &t);
 			Optional<hagame::math::collisions::Hit> checkRayAgainstCube(Ray ray, Cube cube, float& t);
 			Optional<hagame::math::collisions::Hit> checkRayAgainstCapsule(Ray ray, Capsule capsule, float& t);
@@ -36,8 +45,11 @@ namespace hagame {
 			Optional<hagame::math::collisions::Hit> checkRayAgainstDisc(Ray ray, Disc disc, float& t);
 			Optional<hagame::math::collisions::Hit> checkRayAgainstHollowDisc(Ray ray, Vec3 center, Vec3 normal, float innerRadius, float outerRadius, float& t);
 
+			Optional<hagame::math::collisions::Hit> checkAABBAgainstAABB(math::AABB A, math::AABB B);
+
 			Optional<hagame::math::collisions::Hit> checkSphereAgainstLineSegment(Sphere sphere, LineSegment line);
 			Optional<hagame::math::collisions::Hit> checkSphereAgainstSphere(Sphere A, Sphere B);
+			Optional<hagame::math::collisions::Hit> checkSphereAgainstAABB(Sphere sphere, math::AABB box);
 			Optional<hagame::math::collisions::Hit> checkSphereAgainstTriangle(Sphere sphere, Triangle tri);
 			Optional<hagame::math::collisions::Hit> checkSphereAgainstSurface(Sphere sphere, Surface surface, Mat4 transform);
 

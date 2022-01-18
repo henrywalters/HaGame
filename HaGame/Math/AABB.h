@@ -16,6 +16,7 @@ namespace hagame {
 			Vec3 radius;
 
 			AABB() : center(Vec3::Zero()), radius(Vec3::Zero()) {}
+			AABB(Vec3 _center, Vec3 _radius) : center(_center), radius(_radius) {}
 			AABB(Cube cube) : center(cube.pos + (cube.size * 0.5)), radius(cube.size * 0.5) {}
 
 			bool isIntersecting(AABB b) {
@@ -39,8 +40,31 @@ namespace hagame {
 				return out;
 			}
 
+			// Calculate the squared distance to the closest point on the AABB. Useful for collision calculations
+			float sqDistClosestPoint(Vec3 point) {
+				float sqDist = 0.0f;
+				for (int i = 0; i < 3; i++) {
+					float v = point[i];
+					float m = center[i] - radius[i];
+					float M = center[i] + radius[i];
+					if (v < m)
+						sqDist += (m - v) * (m - v);
+					if (v > M)
+						sqDist += (v - M) * (v - M);
+				}
+				return sqDist;
+			}
+
 			Cube getCube() {
 				return Cube(center - radius, radius * 2.0);
+			}
+
+			Vec3 getMin() {
+				return center - radius;
+			}
+
+			Vec3 getMax() {
+				return center + radius;
 			}
 
 			String toString() {

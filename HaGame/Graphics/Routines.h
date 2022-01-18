@@ -18,6 +18,8 @@
 #include "./../Math/Ray.h"
 #include "./../Math/NSphere.h"
 
+#define DEBUG_GRAPHICS true
+
 namespace hagame {
 	namespace graphics {
 
@@ -34,6 +36,8 @@ namespace hagame {
 		void drawSprite(GLuint vao, ShaderProgram* shader, Sprite sprite);
 		void drawParticle(GLuint vao, ShaderProgram* shader, Particle particle);
 		*/
+
+		static ShaderProgram* DEBUG_SHADER;
 
 		static MeshCache meshCache;
 		static Text textBuffer;
@@ -66,21 +70,24 @@ namespace hagame {
 			return meshCache.line;
 		}
 
-		void drawLine(Line line, Color color, ShaderProgram* shader);
-		void drawLine(hagame::math::Line line, Color color, ShaderProgram* shader, float thickness = 0.01f);
-		void drawRect(Rect rect, Color color, ShaderProgram* shader);
-		void drawCubeOutline(Cube cube, Color color, ShaderProgram* shader);
-		void drawSurface(hagame::math::Surface surface, Mat4 transform, Color color, ShaderProgram* shader, float thickness = 0.01f);
-		void drawSphereOutline(Vec3 position, float radius, Color color, ShaderProgram* shader, float thickness = 0.01f);
-		void drawCupsuleOutline(Vec3 pointA, Vec3 pointB, float radius, Color color, ShaderProgram* shader, float thickness = 0.01f);
-		void drawCircle(Vec3 position, Vec3 axis, float radius, Color color, ShaderProgram* shader, float thickness = 0.01f);
-		void drawTriangle(hagame::math::Triangle tri, Color color, ShaderProgram* shader, float thickness = 0.01f);
-		void drawCone(Vec3 position, Vec3 axis, float radius, float height, Color color, ShaderProgram* shader);
-		void drawCube(Vec3 position, Vec3 size, Color color, ShaderProgram* shader);
-		void drawRay(hagame::math::Ray ray, Color color, ShaderProgram* shader);
-		void drawRotationGizmo(Vec3 position, float radius, ShaderProgram* shader, int axis = -1);
-		void drawMovementGizmo(Vec3 position, float size, ShaderProgram* shader, int axis = -1);
-		void drawScaleGizmo(Vec3 position, float size, ShaderProgram* shader, int axis = -1);
+		void drawLine(Line line, Color color, ShaderProgram* shader = DEBUG_SHADER);
+		void drawLine(hagame::math::Line line, Color color, ShaderProgram* shader = DEBUG_SHADER, float thickness = 0.01f);
+		void drawRect(Rect rect, Color color, ShaderProgram* shader = DEBUG_SHADER);
+		void drawCubeOutline(Cube cube, Color color, ShaderProgram* shader = DEBUG_SHADER);
+		void drawSurface(hagame::math::Surface surface, Mat4 transform, Color color, ShaderProgram* shader = DEBUG_SHADER, float thickness = 0.01f);
+		void drawSurfaceNormals(hagame::math::Surface surface, Mat4 transform, Color color, ShaderProgram* shader = DEBUG_SHADER, float length = 0.5f, float thickness = 0.01f);
+		void drawSphereOutline(Vec3 position, float radius, Color color, ShaderProgram* shader = DEBUG_SHADER, float thickness = 0.01f);
+		void drawCupsuleOutline(Vec3 pointA, Vec3 pointB, float radius, Color color, ShaderProgram* shader = DEBUG_SHADER, float thickness = 0.01f);
+		void drawCircle(Vec3 position, Vec3 axis, float radius, Color color, ShaderProgram* shader = DEBUG_SHADER, float thickness = 0.01f);
+		void drawTriangle(hagame::math::Triangle tri, Color color, ShaderProgram* shader = DEBUG_SHADER, float thickness = 0.01f);
+		void drawTriangleNormal(hagame::math::Triangle tri, Color color, ShaderProgram* shader = DEBUG_SHADER, float length = 0.5f, float thickness = 0.01f);
+		void drawCone(Vec3 position, Vec3 axis, float radius, float height, Color color, ShaderProgram* shader = DEBUG_SHADER);
+		void drawCube(Vec3 position, Vec3 size, Color color, ShaderProgram* shader = DEBUG_SHADER);
+		void drawRay(hagame::math::Ray ray, Color color, ShaderProgram* shader = DEBUG_SHADER);
+		void drawAxis(Vec3 position, float size = 1.0f, ShaderProgram* shader = DEBUG_SHADER);
+		void drawRotationGizmo(Vec3 position, float radius, ShaderProgram* shader = DEBUG_SHADER, int axis = -1);
+		void drawMovementGizmo(Vec3 position, float size, ShaderProgram* shader = DEBUG_SHADER, int axis = -1);
+		void drawScaleGizmo(Vec3 position, float size, ShaderProgram* shader = DEBUG_SHADER, int axis = -1);
 		
 		void drawText(ShaderProgram* shader, Font* font, String message, Color color, Vec3 pos = Vec3::Zero(), float maxLength = 0.0f);
 	}

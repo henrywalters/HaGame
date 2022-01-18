@@ -40,8 +40,8 @@ namespace hagame {
 				return map[hashPosition(position)];
 			}
 
-			Array<Array<Ptr<DataType>>> get(hagame::math::Vector<3, SpatialDataType> position, SpatialDataType radius) {
-				Array<Array<Ptr<DataType>>> output = Array<Array<Ptr<DataType>>>();
+			Array<Ptr<DataType>> get(hagame::math::Vector<3, SpatialDataType> position, SpatialDataType radius) {
+				Array<Ptr<DataType>> output = Array<Ptr<DataType>>();
 				Vec3 points[] = {
 					Vec3::Zero(),
 					Vec3::Top() * radius,
@@ -53,7 +53,27 @@ namespace hagame {
 				};
 
 				for (int i = 0; i < 7; i++) {
-					output.push_back(map[hashPosition(position + points[i])]);
+					auto neighbors = map[hashPosition(position + points[i])];
+					output.insert(output.end(), neighbors.begin(), neighbors.end());
+				}
+
+				return output;
+			}
+
+			Array<Ptr<DataType>> get(hagame::math::Vector<3, SpatialDataType> position, hagame::math::Vector<3, SpatialDataType> radius) {
+				Array<Ptr<DataType>> output = Array<Ptr<DataType>>();
+				Vec3 points[] = {
+					Vec3::Top() * radius[1],
+					Vec3::Bottom() * radius[1],
+					Vec3::Right() * radius[0],
+					Vec3::Left() * radius[0],
+					Vec3::Face() * radius[2],
+					Vec3::Back() * radius[2]
+				};
+
+				for (int i = 0; i < 6; i++) {
+					auto neighbors = map[hashPosition(position + points[i])];
+					output.insert(output.end(), neighbors.begin(), neighbors.end());
 				}
 
 				return output;

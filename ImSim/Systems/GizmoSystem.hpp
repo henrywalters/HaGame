@@ -11,10 +11,16 @@ using namespace hagame::graphics;
 
 class GizmoSystem : public hagame::ecs::System {
 
+	float SIZE_FACTOR = 0.2f;
+	float SCALE_FACTOR = 0.15f;
+	float DRAG_FACTOR = 0.15f;
+	float ROT_FACTOR = 0.15f;
+
 	ShaderProgram* shader;
 	Ptr<MouseSystem> mouseSystem;
 	Ptr<StateSystem> stateSystem;
 	Ptr<Entity> selectedEntity;
+
 	int selectedAxis = -1;
 	int adjustingAxis = -1;
 	Vec3 initialAdjustPos;
@@ -24,7 +30,7 @@ class GizmoSystem : public hagame::ecs::System {
 
 	float getSize(Ptr<Entity> entity) {
 		auto delta = entity->transform->getPosition() - scene->activeCameraEntity->transform->getPosition();
-		return delta.magnitude() * 0.2f;
+		return delta.magnitude() * SIZE_FACTOR;
 	}
 
 	void setMeshBorder(Ptr<Entity> entity, bool bordered) {
@@ -37,15 +43,25 @@ class GizmoSystem : public hagame::ecs::System {
 	}
 
 	void selectEntity(Ptr<Entity> entity) {
+
+		while (entity->parent != NULL) {
+			entity = entity->parent;
+		}
+
 		if (selectedEntity != NULL) {
-			selectedEntity->removeComponent<Gizmo>();
+			selectedEntity->getComponent<Gizmo>()->active = false;
 			setMeshBorder(selectedEntity, false);
 		}
 
 		selectedEntity = entity;
 
-		auto gizmo = selectedEntity->addComponent<Gizmo>();
-		gizmo->type = Gizmo::Type::Movement;
+		if (selectedEntity->hasComponent<Gizmo>()) {
+			selectedEntity->getComponent<Gizmo>()->active = true;
+		}
+		else {
+			auto gizmo = selectedEntity->addComponent<Gizmo>();
+			gizmo->type = Gizmo::Type::Movement;
+		}
 
 		setMeshBorder(selectedEntity, true);
 	}
@@ -125,6 +141,9 @@ public:
 
 		forEach<Gizmo>([this, dt](Gizmo* g, Ptr<Entity> entity) {
 
+			if (!g->active)
+				return;
+
 			if (game->input.keyboardMouse.keyboard.numbersPressed[1])
 				g->type = Gizmo::Type::Movement;
 			if (game->input.keyboardMouse.keyboard.numbersPressed[2])
@@ -157,14 +176,14 @@ public:
 			}
 
 			if (adjustingAxis != -1) {
+
 				auto delta = mouseSystem->mouseWorldPos - initialAdjustPos;
-				auto scaled = delta[adjustingAxis] * 0.3f;
 
 				switch (g->type) {
 				case Gizmo::Type::Movement:
 				{
 					auto pos = initialEntityAdjustPos;
-					pos[adjustingAxis] += scaled;
+					pos[adjustingAxis] += delta[adjustingAxis] * DRAG_FACTOR;
 					entity->transform->setPosition(pos);
 				}
 				break;
@@ -173,14 +192,14 @@ public:
 					auto rot = initialEntityRot;
 					auto axis = Vec3::Zero();
 					axis[adjustingAxis] = 1.0f;
-					rot = Quat(delta.magnitude() * sign(delta), axis) * rot;
+					rot = Quat(delta.magnitude() * sign(delta) * ROT_FACTOR, axis) * rot;
 					entity->transform->setRotation(rot);
 				}
 				break;
 				case Gizmo::Type::Scale:
 				{
 					auto scale = initialEntityScale;
-					scale[adjustingAxis] += delta.magnitude() * sign(delta);
+					scale[adjustingAxis] += delta.magnitude() * sign(delta) * SCALE_FACTOR;
 					entity->transform->setScale(scale);
 				}
 					break;
@@ -195,6 +214,7 @@ public:
 			auto rayHit = game->collisions.raycast(scene->activeCameraEntity, mouseSystem->mouseWorldRay, t, { "player" });
 
 			if (rayHit.has_value() && debug && game->input.keyboardMouse.mouse.leftPressed) {
+				std::cout << rayHit.value().entity->uuid << "\n";
 				selectEntity(rayHit.value().entity);
 			}
 		}

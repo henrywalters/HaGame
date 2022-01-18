@@ -37,6 +37,7 @@
 #include "Graphics/Quad.hpp"
 #include "Graphics/RectPrism.hpp"
 #include "Graphics/TriangularPrism.hpp"
+#include "Graphics/Stairs.hpp"
 #include "Graphics/Circle.hpp"
 #include "Graphics/Cylinder.hpp"
 #include "Graphics/Cone.hpp"
@@ -99,6 +100,8 @@
 #include "Physics/Systems/PhysicsSystem.h"
 #include "Physics/Systems/MovementSystem.h"
 #include "Physics/Systems/CollisionSystem.h"
+#include "Physics/Systems/PartitionSystem.h"
+#include "Physics/BoundingVolume.h"
 
 
 #include "Core/Game.cpp"

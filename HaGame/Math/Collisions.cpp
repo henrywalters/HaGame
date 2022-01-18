@@ -1,5 +1,30 @@
 #include "Collisions.h"
 
+Optional<hagame::math::collisions::Hit> hagame::math::collisions::checkLineAgainstPlane(Line line, Plane plane, float& t)
+{
+	Optional<hagame::math::collisions::Hit> hit;
+
+	Vec3 delta = line.b - line.a;
+	float denom = dot(plane.normal, delta);
+
+	if (denom == 0.0f) {
+		// Line and plane are parallel so return nothing
+		return std::nullopt;
+	}
+
+	t = (plane.distance - dot(plane.normal, line.a)) / denom;
+
+	Vec3 point = line.getPointOnLine(t);
+
+	hit = Hit{
+		point,
+		delta.normalized(),
+		0.0f
+	};
+
+	return hit;
+}
+
 Optional<hagame::math::collisions::Hit> hagame::math::collisions::checkRayAgainstSphere(Ray ray, Sphere sphere, float& t)
 {
 	std::optional<hagame::math::collisions::Hit> hit;
@@ -113,7 +138,14 @@ Optional<hagame::math::collisions::Hit> hagame::math::collisions::checkRayAgains
 
 Optional<hagame::math::collisions::Hit> hagame::math::collisions::checkRayAgainstTriangle(Ray ray, Triangle tri, float& t)
 {
-	return Optional<hagame::math::collisions::Hit>();
+	Optional<hagame::math::collisions::Hit> hit;
+
+	auto planeIntersect = checkRayAgainstPlane(ray, Plane(tri.calcNormal(), tri.a), t);
+
+	if (planeIntersect.has_value() && tri.containsPoint(planeIntersect.value().position))
+		hit = planeIntersect;
+
+	return hit;
 }
 
 Optional<hagame::math::collisions::Hit> hagame::math::collisions::checkRayAgainstPlane(Ray ray, Plane plane, float& t)
@@ -125,7 +157,7 @@ Optional<hagame::math::collisions::Hit> hagame::math::collisions::checkRayAgains
 	if (t >= 0.0f && t <= 1.0f) {
 		Vec3 point = ray.getPointOnLine(t);
 		hit = Hit{
-			ray.getPointOnLine(t),
+			point,
 			ray.direction.normalized() * -1,
 			ray.getPointOnLine(1.0f - t).magnitude()
 		};
@@ -164,6 +196,22 @@ Optional<hagame::math::collisions::Hit> hagame::math::collisions::checkRayAgains
 	return std::nullopt;
 }
 
+Optional<hagame::math::collisions::Hit> hagame::math::collisions::checkAABBAgainstAABB(math::AABB A, math::AABB B)
+{
+	if (!A.isIntersecting(B))
+		return std::nullopt;
+
+	auto closestPointOnB = B.closestPoint(A.center);
+	auto closestPointOnA = A.closestPoint(B.center);
+	auto delta = closestPointOnB - closestPointOnA;
+
+	return Hit{
+		closestPointOnB,
+		delta.normalized(),
+		delta.magnitude()
+	};
+}
+
 Optional<hagame::math::collisions::Hit> hagame::math::collisions::checkSphereAgainstLineSegment(Sphere sphere, LineSegment line)
 {
 	Optional<hagame::math::collisions::Hit> hit = std::nullopt;
@@ -193,6 +241,28 @@ Optional<hagame::math::collisions::Hit> hagame::math::collisions::checkSphereAga
 		Vec3 normal = delta.normalized();
 		hit = Hit{ pos, normal, A.radius - (pos - A.center).magnitude() };
 	}
+
+	return hit;
+}
+
+Optional<hagame::math::collisions::Hit> hagame::math::collisions::checkSphereAgainstAABB(Sphere sphere, math::AABB box)
+{
+	Optional<hagame::math::collisions::Hit> hit;
+
+	auto closestPointOnBox = box.closestPoint(sphere.center);
+
+	if (dot2(closestPointOnBox - sphere.center) > sphere.radius * sphere.radius)
+		return std::nullopt;
+
+	auto closestPointOnSphere = sphere.closestPoint(box.center);
+
+	auto delta = closestPointOnBox - closestPointOnSphere;
+
+	return Hit{
+		closestPointOnSphere,
+		delta.normalized(),
+		delta.magnitude()
+	};
 
 	return hit;
 }
@@ -307,27 +377,29 @@ Optional<hagame::math::collisions::Hit> hagame::math::collisions::checkCapsuleAg
 
 	Vec3 capNorm = normalize(capsule.center.b - capsule.center.a);
 	Vec3 capOffset = capNorm * capsule.radius;
-	//Vec3 A = capsule.center.a + capOffset;
-	//Vec3 B = capsule.center.b - capOffset;
 
 	Vec3 triNorm = tri.calcNormal();
 
 	float t;
 	Vec3 refPoint;
 
-	if (dot(triNorm, capNorm) == 0.0f) {
+	auto linePlaneHit = checkLineAgainstPlane(Line(capsule.center.a, capsule.center.b), Plane(triNorm, dot(triNorm, tri.a)), t);
+
+	if (!linePlaneHit.has_value()) {
 		refPoint = tri.b;
 	}
 	else {
-		t = dot(triNorm, (tri.a - capsule.center.a)) / abs(dot(triNorm, capNorm));
-		Vec3 linePlaneIntersect = capsule.center.a + capNorm * t;
+		
+		auto linePlaneIntersect = linePlaneHit.value().position;
+
+		if (DEBUG_DISPLAY) {
+			hagame::graphics::drawSphereOutline(linePlaneIntersect, 0.05f, hagame::graphics::Color::red(), DEBUG_SHADER);
+		}
 
 		if (tri.containsPoint(linePlaneIntersect)) {
 			refPoint = linePlaneIntersect;
 		}
 		else {
-
-			float t;
 
 			Vec3 p1 = LineSegment(tri.a, tri.b).closestPoint(linePlaneIntersect, t);
 			Vec3 v1 = linePlaneIntersect - p1;
@@ -335,20 +407,33 @@ Optional<hagame::math::collisions::Hit> hagame::math::collisions::checkCapsuleAg
 			float bestDist = distSq;
 			refPoint = p1;
 
+			if (DEBUG_DISPLAY) {
+				hagame::graphics::drawSphereOutline(p1, 0.05f, hagame::graphics::Color::blue(), DEBUG_SHADER);
+			}
+
 			Vec3 p2 = LineSegment(tri.b, tri.c).closestPoint(linePlaneIntersect, t);
 			Vec3 v2 = linePlaneIntersect - p2;
+			if (DEBUG_DISPLAY) {
+				hagame::graphics::drawSphereOutline(p2, 0.05f, hagame::graphics::Color::green(), DEBUG_SHADER);
+			}
 			distSq = dot(v2, v2);
 			if (distSq < bestDist) {
 				bestDist = distSq;
 				refPoint = p2;
+
 			}
 
 			Vec3 p3 = LineSegment(tri.c, tri.a).closestPoint(linePlaneIntersect, t);
 			Vec3 v3 = linePlaneIntersect - p3;
+			if (DEBUG_DISPLAY) {
+				hagame::graphics::drawSphereOutline(p3, 0.05f, hagame::graphics::Color::purple(), DEBUG_SHADER);
+			}
 			distSq = dot(v3, v3);
 			if (distSq < bestDist) {
 				bestDist = distSq;
 				refPoint = p3;
+
+				
 			}
 		}
 	}

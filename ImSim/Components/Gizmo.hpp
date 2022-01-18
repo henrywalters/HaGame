@@ -11,6 +11,7 @@ struct Gizmo {
 	Type type;
 	bool allAxis = false;
 	int axis = -1;
+	bool active = true;
 };
 
 #endif

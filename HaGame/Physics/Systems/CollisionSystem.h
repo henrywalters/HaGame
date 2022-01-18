@@ -6,11 +6,14 @@
 #include "../Components/Collider.h"
 #include "./../Collisions.h"
 #include "../../Math/Functions.h"
+#include "./PartitionSystem.h"
 
 namespace hagame {
 	namespace physics {
 		class CollisionSystem : public ecs::System {
 		public:
+
+			Ptr<PartitionSystem> partitions;
 
 			String getSystemName() {
 				return "hagame::physics::CollisionSystem";
@@ -20,6 +23,7 @@ namespace hagame {
 				//forEach<Collider>([this](Collider* c, Ptr<ecs::Entity> entity) {
 				//	c->updateAABB(entity->transform->getModelMatrix().resize<3, 3>(), entity->transform->getPosition());
 				//});
+				partitions = scene->getSystem<PartitionSystem>();
 			}
 
 			void onSystemBeforeUpdate(double dt) {
@@ -27,17 +31,6 @@ namespace hagame {
 				forEach<Collider>([this, dt](Collider* c, Ptr<ecs::Entity> entity) {
 					if (c->active) {
 						game->collisions.entityMap.insert(entity->transform->getPosition(), entity);
-
-						/*if (c->dynamic) {
-							// TODO: add overloads for transform bounding box with AABB to prevent conversion between cube and AABB.
-							//c->updateAABB(entity->transform->getModelMatrix().resize<3, 3>(), entity->transform->position);
-						}
-
-						if (c->display && c->shader) {
-							c->shader->setMVP(Mat4::Identity(), scene->viewMat, scene->projMat);
-							c->shader->setVec4("color", hagame::graphics::Color(54, 134, 255));
-							//hagame::graphics::drawCubeOutline(c->aabb.getCube(), hagame::graphics::Color::green(), c->shader);
-						}*/
 					}
 				});
 			}
@@ -45,15 +38,7 @@ namespace hagame {
 			void onSystemAfterUpdate(double dt) {
 				forEach<Collider>([this, dt](Collider* c, Ptr<ecs::Entity> entity) {
 					if (c->active) {
-
-						// game->collisions.handleCollisions(entity, c, dt);
-
-						/*if (c->display && c->shader) {
-							c->shader->setMVP(Mat4::Identity(), scene->viewMat, scene->projMat);
-							c->shader->setVec4("color", hagame::graphics::Color(54, 134, 255));
-							// hagame::graphics::drawCubeOutline(c->aabb.getCube(), hagame::graphics::Color::green(), c->shader);
-						}
-						*/
+						// auto neighbors = 
 					}
 				});
 			}

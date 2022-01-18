@@ -44,6 +44,10 @@ namespace hagame {
 				return cross(b - a, c - a).normalized();
 			}
 
+			Vec3 calcCentroid() {
+				return (a + b + c) / 3.0f;
+			}
+
 			static Triangle Equilateral(Vec3 pos, float radius) {
 				return Triangle(pos + Vec3({ 0, radius, 0 }), pos + Vec3({ radius, -radius, 0 }), pos + Vec3({ -radius, -radius, 0 }));
 			}

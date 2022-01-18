@@ -35,7 +35,6 @@ namespace hagame {
 			}
 
 			static Ptr<Buffer> Dynamic(Array<DataType> data) {
-				glCheckError();
 				Ptr<Buffer<DataType, Type>> buffer = std::make_shared<Buffer<DataType, Type>>();
 				buffer->initialize();
 				buffer->dynamic = true;
@@ -44,7 +43,6 @@ namespace hagame {
 				glBindBuffer(Type, buffer->id);
 				glBufferData(Type, sizeof(DataType) * buffer->max, &data[0], GL_DYNAMIC_DRAW);
 				glBindBuffer(Type, 0);
-				glCheckError();
 				return buffer;
 			}
 

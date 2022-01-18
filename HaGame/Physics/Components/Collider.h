@@ -5,6 +5,7 @@
 #include "../../Utils/Aliases.h"
 #include "../../Core/Transform.h"
 #include "../../Math/AABB.h"
+#include "./../boundingVolume.h"
 
 namespace hagame {
 	namespace physics {
@@ -45,6 +46,7 @@ namespace hagame {
 
 			// Ignore collisions with any entity that has any of these tags
 			Array<String> ignoreTags;
+
 		};
 	}
 }

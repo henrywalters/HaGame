@@ -127,6 +127,14 @@ void hagame::graphics::drawSurface(hagame::math::Surface surface, Mat4 transform
 	}
 }
 
+void hagame::graphics::drawSurfaceNormals(hagame::math::Surface surface, Mat4 transform, Color color, ShaderProgram* shader, float length, float thickness)
+{
+	for (auto tri : surface.triangles) {
+		auto transformedTri = tri.transformed(transform);
+		drawTriangleNormal(transformedTri, color, shader, length, thickness);
+	}
+}
+
 void hagame::graphics::drawSphereOutline(Vec3 position, float radius, Color color, ShaderProgram* shader, float thickness)
 {
 	drawCircle(position, Vec3::Top(), radius, color, shader, thickness);
@@ -176,6 +184,13 @@ void hagame::graphics::drawTriangle(hagame::math::Triangle tri, Color color, Sha
 	drawLine(hagame::math::Line(tri.c, tri.a), color, shader, thickness);
 }
 
+void hagame::graphics::drawTriangleNormal(hagame::math::Triangle tri, Color color, ShaderProgram* shader, float length, float thickness)
+{
+	auto center = tri.calcCentroid();
+	auto normal = tri.calcNormal();
+	drawLine(hagame::math::Line(center, center + normal * length), color, shader, thickness);
+}
+
 void hagame::graphics::drawCone(Vec3 position, Vec3 axis, float radius, float height, Color color, ShaderProgram* shader)
 {
 	auto rot = Mat4::Rotation(Vec3::Top().rotationBetween(axis.normalized()));
@@ -206,12 +221,19 @@ void hagame::graphics::drawRay(hagame::math::Ray ray, Color color, ShaderProgram
 	drawCone(ray.origin + ray.direction, ray.direction, 0.05f, 0.1f, color, shader);
 }
 
+void hagame::graphics::drawAxis(Vec3 position, float size, ShaderProgram* shader)
+{
+	drawRay(hagame::math::Ray(position, Vec3::Right() * size), Color::red(), shader);
+	drawRay(hagame::math::Ray(position, Vec3::Top() * size), Color::green(), shader);
+	drawRay(hagame::math::Ray(position, Vec3::Face() * size), Color::blue (), shader);
+}
+
 void hagame::graphics::drawRotationGizmo(Vec3 position, float radius, ShaderProgram* shader, int axis)
 {
 	Color selectedColor = Color(255, 255, 0);
 	drawCircle(position, Vec3::Top(), radius, axis == 1 ? selectedColor : Color::red(), shader);
-	drawCircle(position, Vec3::Right(), radius, axis == 0 ? selectedColor : Color::blue(), shader);
-	drawCircle(position, Vec3::Face(), radius, axis == 2 ? selectedColor : Color::green(), shader);
+	drawCircle(position, Vec3::Right(), radius, axis == 0 ? selectedColor : Color::green(), shader);
+	drawCircle(position, Vec3::Face(), radius, axis == 2 ? selectedColor : Color::blue(), shader);
 }
 
 
@@ -219,9 +241,9 @@ void hagame::graphics::drawMovementGizmo(Vec3 position, float size, ShaderProgra
 {
 	Color selectedColor = Color(255, 255, 0);
 	glDisable(GL_DEPTH_TEST);
-	drawRay(hagame::math::Ray(position, Vec3::Right() * size), axis == 0 ? selectedColor : Color::blue(), shader);
-	drawRay(hagame::math::Ray(position, Vec3::Top() * size), axis == 1 ? selectedColor : Color::red(), shader);
-	drawRay(hagame::math::Ray(position, Vec3::Face() * size), axis == 2 ? selectedColor : Color::green(), shader);
+	drawRay(hagame::math::Ray(position, Vec3::Right() * size), axis == 0 ? selectedColor : Color::red(), shader);
+	drawRay(hagame::math::Ray(position, Vec3::Top() * size), axis == 1 ? selectedColor : Color::green(), shader);
+	drawRay(hagame::math::Ray(position, Vec3::Face() * size), axis == 2 ? selectedColor : Color::blue(), shader);
 	glEnable(GL_DEPTH_TEST);
 }
 
@@ -230,14 +252,14 @@ void hagame::graphics::drawScaleGizmo(Vec3 position, float size, ShaderProgram* 
 	Color selectedColor = Color(255, 255, 0);
 	glDisable(GL_DEPTH_TEST);
 
-	drawLine(hagame::math::Line(position, position + Vec3::Right() * size), axis == 0 ? selectedColor : Color::blue(), shader, 0.01f);
-	drawCube(position + Vec3::Right() * size, Vec3(0.1f), axis == 0 ? selectedColor : Color::blue(), shader);
+	drawLine(hagame::math::Line(position, position + Vec3::Right() * size), axis == 0 ? selectedColor : Color::red(), shader, 0.01f);
+	drawCube(position + Vec3::Right() * size, Vec3(0.1f), axis == 0 ? selectedColor : Color::red(), shader);
 
-	drawLine(hagame::math::Line(position, position + Vec3::Top() * size), axis == 1 ? selectedColor : Color::red(), shader, 0.01f);
-	drawCube(position + Vec3::Top() * size, Vec3(0.1f), axis == 1 ? selectedColor : Color::red(), shader);
+	drawLine(hagame::math::Line(position, position + Vec3::Top() * size), axis == 1 ? selectedColor : Color::green(), shader, 0.01f);
+	drawCube(position + Vec3::Top() * size, Vec3(0.1f), axis == 1 ? selectedColor : Color::green(), shader);
 
-	drawLine(hagame::math::Line(position, position + Vec3::Face() * size), axis == 2 ? selectedColor : Color::green(), shader, 0.01f);
-	drawCube(position + Vec3::Face() * size, Vec3(0.1f), axis == 2 ? selectedColor : Color::green(), shader);
+	drawLine(hagame::math::Line(position, position + Vec3::Face() * size), axis == 2 ? selectedColor : Color::blue(), shader, 0.01f);
+	drawCube(position + Vec3::Face() * size, Vec3(0.1f), axis == 2 ? selectedColor : Color::blue(), shader);
 
 	glEnable(GL_DEPTH_TEST);
 }
