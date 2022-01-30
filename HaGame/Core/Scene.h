@@ -6,6 +6,7 @@
 #include "../Utils/StateManager.h"
 #include "../Graphics/Camera.h"
 #include "../Graphics/Components/CameraComponent.h"
+#include "../Graphics/OrthographicCamera.hpp"
 #include "ECS/System.h"
 #include "ECS/Entity.h"
 #include "ECS/ECS.h"
@@ -101,7 +102,6 @@ namespace hagame {
 		Ptr<graphics::Camera> activeCamera;
 		Mat4 viewMat;
 		Mat4 projMat;
-		Mat4 uiProjMat;
 
 		template<class T>
 		Ptr<T> addSystem() {

@@ -55,6 +55,8 @@ target_link_libraries(Goom2 ${LIBS})
 add_executable(ImSim ImSim/ImSim.cpp)
 target_link_libraries(ImSim ${LIBS})
 
+target_compile_options(ImSim PRIVATE "/bigobj")
+
 if (MSVC_VERSION GREATER_EQUAL "1900")
     include(CheckCXXCompilerFlag)
     CHECK_CXX_COMPILER_FLAG("/std:c++latest" _cpp_latest_flag_supported)

@@ -67,9 +67,7 @@ namespace hagame {
 			}
 
 			void canAssign(unsigned int index, size_t size) {
-				if (index > max) {
-					throw new std::exception("Can not assign data of this size to this index in buffer. Larger than allocated memory size");
-				}
+				assert(index + size < max);
 			}
 
 			// Update a single instance of the DataType at a given index
@@ -95,6 +93,15 @@ namespace hagame {
 				bind();
 				glBufferSubData(Type, index * sizeof(DataType) + memberOffseType, sizeof(MemberType), &memberData);
 				unbind();
+			}
+
+			// Return the data at the given index. Useful for updating the state of a buffer
+			DataType read(unsigned int index) {
+				canAssign(index, sizeof(DataType));
+				bind();
+				DataType data;
+				glGetBufferSubData(Type, index * sizeof(DataType), sizeof(DataType), &data);
+				return data;
 			}
 
 			void clear() {

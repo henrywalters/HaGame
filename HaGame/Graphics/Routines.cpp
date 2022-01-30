@@ -79,15 +79,23 @@ void hagame::graphics::drawLine(Line line, Color color, ShaderProgram* shader)
 
 void hagame::graphics::drawLine(hagame::math::Line line, Color color, ShaderProgram* shader, float thickness)
 {
-	auto lineMesh = getLineCache();
-	lineMesh->setP1(line.a);
-	lineMesh->setP2(line.b);
-	lineMesh->setThickness(thickness);
 
-	shader->use();
-	shader->setMat4("model", Mat4::Identity());
-	shader->setVec4("color", color);
-	lineMesh->getMesh()->draw();
+	if (BATCH_LINE_RENDERING) {
+		lineBuffer.insert(line, color, thickness);
+	}
+	else {
+		auto lineMesh = getLineCache();
+		lineMesh->setP1(line.a);
+		lineMesh->setP2(line.b);
+		lineMesh->setThickness(thickness);
+
+		shader->use();
+		shader->setMat4("model", Mat4::Identity());
+		shader->setVec4("color", color);
+		lineMesh->getMesh()->draw();
+	}
+
+	
 }
 
 void hagame::graphics::drawRect(Rect rect, Color color, ShaderProgram* shader)

@@ -1,5 +1,5 @@
-#ifndef SPRITE_3D
-#define SPRITE_3D
+#ifndef SPRITE_2D
+#define SPRITE_2D
 
 #include "ShaderProgram.h"
 #include "Texture.h"
@@ -14,11 +14,11 @@
 namespace hagame {
 	namespace graphics {
 
-		class Sprite3D {
+		class Sprite2D {
 		public:
 			Texture* texture;
 			Ptr<Quad> quad;
-			Vec3 pos;
+			Vec2 pos;
 
 			void draw() {
 				glActiveTexture(GL_TEXTURE0);

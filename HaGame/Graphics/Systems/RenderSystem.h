@@ -15,6 +15,7 @@
 #include "../Components/TextRenderer.h"
 #include "../Components/Text3dRenderer.h"
 #include "../Components/SpriteRenderer.h"
+#include "../Components/Sprite2DRenderer.h"
 #include "../Components/Sprite3DRenderer.h"
 #include "../Components/AnimatedSpriteRenderer.h"
 #include "../Components/ParticleEmitterRenderer.h"
@@ -38,6 +39,9 @@ namespace hagame {
 			}
 
 			void onSystemUpdate(double dt) {
+
+				OrthographicCamera uiCamera = OrthographicCamera(scene->game->window->size);
+				Mat4 uiProjMat = uiCamera.getProjMatrix(Vec3::Zero());
 
 				forEach<MeshRenderer>([this, dt](MeshRenderer* r, Ptr<ecs::Entity> entity) {
 
@@ -161,6 +165,9 @@ namespace hagame {
 
 				forEach<SpriteRenderer>([this](SpriteRenderer* r, Ptr<ecs::Entity> entity) {
 					if (entity != NULL && r->sprite->texture != NULL && r->shader != NULL) {
+
+						std::cout << "Rendering sprite\n";
+
 						r->shader->use();
 
 						auto translation = Mat4::Translation(entity->transform->getPosition() + r->sprite->rect.pos.resize<3>());
@@ -169,8 +176,8 @@ namespace hagame {
 
 						r->shader->setMVP(
 							translation * rotation * scale,
-							scene->viewMat,
-							scene->projMat
+							r->viewMat.has_value() ? r->viewMat.value() : scene->viewMat,
+							r->projMat.has_value() ? r->projMat.value() : scene->projMat
 						);
 						r->sprite->draw(r->shader);
 					}
@@ -194,6 +201,23 @@ namespace hagame {
 						r->sprite->draw();
 					}
 				});
+
+				forEach<Sprite2DRenderer>([this, uiProjMat](Sprite2DRenderer* r, Ptr<ecs::Entity> entity) {
+					if (entity != NULL && r->sprite->texture != NULL && r->shader != NULL) {
+						r->shader->use();
+
+						auto translation = Mat4::Translation(r->sprite->pos.resize<3>(1.0f));
+						//auto rotation = Mat4::Rotation(entity->transform->getRotation() * Quat(r->sprite->rotation, Vec3::Face()));
+						//auto scale = Mat4::Scale(r->sprite->rect.size.resize<3>());
+
+						r->shader->setMVP(
+							translation,
+							Mat4::Identity(),
+							uiProjMat
+						);
+						r->sprite->draw();
+					}
+					});
 
 				forEach<ParticleEmitterRenderer>([this](ParticleEmitterRenderer* r, Ptr<ecs::Entity> entity) {
 					r->emitter->update(scene->game->secondsElapsed);

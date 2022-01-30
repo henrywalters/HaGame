@@ -26,6 +26,22 @@ namespace hagame {
 				t = t / denom;
 				return a + ab * t;
 			}
+
+			Vec3 center() {
+				return getPointOnLine(0.5f);
+			}
+
+			Quat rotation() {
+				return Quat(Vec3(b[2] - a[2], b[1] - a[1], b[0] - a[0]));
+			}
+
+			float magnitude() {
+				return (b - a).magnitude();
+			}
+
+			float magnitudeSq() {
+				return (b - a).magnitudeSq();
+			}
 		};
 
 		void to_json(JSON& json, const Line& line) {

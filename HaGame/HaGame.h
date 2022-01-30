@@ -49,6 +49,7 @@
 #include "Graphics/Font.h"
 #include "Graphics/Text.h"
 #include "Graphics/Texture.cpp"
+#include "Graphics/LineBuffer.cpp"
 #include "Graphics/Sprite.h"
 #include "Graphics/AnimatedSprite.h"
 #include "Graphics/Routines.cpp"
@@ -71,6 +72,7 @@
 #include "Graphics/Systems/RenderSystem.h"
 #include "Graphics/Systems/CameraSystem.h"
 #include "Graphics/Systems/LightingSystem.h"
+#include "Graphics/MeshBuffer.cpp"
 
 #include "Audio/Audio.h"
 

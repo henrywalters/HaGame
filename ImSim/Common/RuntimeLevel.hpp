@@ -7,26 +7,37 @@ using namespace hagame::ecs;
 using namespace hagame::graphics;
 
 struct RuntimeLevel : public hagame::Scene {
-	Ptr<Entity> addCacodemon(Vec3 pos) {
-		auto demon = addEntity();
-		demon->transform->setPosition(pos);
-		auto mesh = demon->addComponent<Sprite3DRenderer>();
+
+	const Vec3 CELL_SIZE = Vec3(1.0f);
+
+	Ptr<Entity> addSprite2D(Vec2 pos, Vec2 size, String textureName) {
+		auto entity = addEntity();
+		entity->transform->setPosition(pos.resize<3>(1.0f));
+		auto mesh = entity->addComponent<Sprite2DRenderer>();
+		mesh->sprite = std::make_shared<Sprite2D>();
+		mesh->sprite->quad = std::make_shared<Quad>(size);
+		mesh->sprite->texture = game->resources->getTexture(textureName);
+		mesh->shader = game->resources->getShaderProgram("sprite2d");
+		return entity;
+	}
+
+	Ptr<Entity> addSprite3D(Vec3 pos, Vec2 size, String textureName) {
+		auto entity = addEntity();
+		entity->transform->setPosition(pos);
+		auto mesh = entity->addComponent<Sprite3DRenderer>();
 		mesh->sprite = std::make_shared<Sprite3D>();
-		mesh->sprite->quad = std::make_shared<Quad>(1.5f, 1.5f);
-		mesh->sprite->texture = game->resources->getTexture("cacodemon");
+		mesh->sprite->quad = std::make_shared<Quad>(size);
+		mesh->sprite->texture = game->resources->getTexture(textureName);
 		mesh->shader = game->resources->getShaderProgram("sprite3d");
-		return demon;
+		return entity;
+	}
+
+	Ptr<Entity> addCacodemon(Vec3 pos) {
+		return addSprite3D(pos, Vec2(1.5f), "cacodemon");
 	}
 
 	Ptr<Entity> addRareRabbit(Vec3 pos) {
-		auto demon = addEntity();
-		demon->transform->setPosition(pos);
-		auto mesh = demon->addComponent<Sprite3DRenderer>();
-		mesh->sprite = std::make_shared<Sprite3D>();
-		mesh->sprite->quad = std::make_shared<Quad>(1.5f, 1.5f);
-		mesh->sprite->texture = game->resources->getTexture("rabbit");
-		mesh->shader = game->resources->getShaderProgram("sprite3d");
-		return demon;
+		return addSprite3D(pos, Vec2(1.5f), "rabbit");
 	}
 
 	Ptr<Entity> addCube(Vec3 pos, Vec3 size) {
@@ -37,7 +48,7 @@ struct RuntimeLevel : public hagame::Scene {
 		meshRenderer->shader = game->resources->getShaderProgram("texture");
 		meshRenderer->color = Color::white();
 		meshRenderer->material = Material::greenRubber();
-		auto collider = cube->addComponent<Collider>();
+		auto collider = cube->addComponent<hagame::physics::Collider>();
 		collider->boundingCube = Cube(size * -0.5f, size);
 		auto partition = cube->addComponent<hagame::physics::BoundingVolume>(collider->boundingCube.value());
 		
@@ -55,7 +66,7 @@ struct RuntimeLevel : public hagame::Scene {
 		meshRenderer->shader = game->resources->getShaderProgram("texture");
 		meshRenderer->color = Color::white();
 		meshRenderer->material = Material::greenRubber();
-		auto collider = entity->addComponent<Collider>();
+		auto collider = entity->addComponent<hagame::physics::Collider>();
 		collider->boundingCube = meshRenderer->mesh->getMesh()->getBoundingCube();
 	}
 

@@ -13,5 +13,5 @@ uniform vec4 color;
 void main() {
 	TexCoords = vertex.zw;
 	Color = color;
-	gl_Position = projection * model * view * vec4(vertex.xy, 0.0, 1.0);
+	gl_Position = projection * model * view * vec4(vertex.xy, 1.0, 1.0);
 }

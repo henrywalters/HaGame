@@ -324,11 +324,11 @@ namespace hagame {
 			}
 
 			Matrix<M, N, T> transpose() {
-				auto out = copy();
+				Matrix<M, N, T> out = copy();
 				if (M == N) {
 					for (int i = 0; i < M; i++) {
 						for (int j = 0; j < N; j++) {
-							std::swap(mat[Matrix::FlattenIndex(i, j)], mat[Matrix::FlattenIndex(j, i)]);
+							out.set(i, j, get(j, i));
 						}
 					}
 				}
@@ -339,7 +339,7 @@ namespace hagame {
 				return out;
 			}
 
-			std::string toString() {
+			std::string toString() const {
 				std::string out = "";
 				for (int i = 0; i < M; i++) {
 					std::string row = "[";
@@ -352,6 +352,17 @@ namespace hagame {
 				}
 
 				return out;
+			}
+
+			friend std::ostream& operator <<(std::ostream& out, const Matrix& mat) {
+				out << mat.toString();
+				return out;
+			}
+
+			operator std::string() const {
+				std::ostringstream out;
+				out << *this;
+				return out.str();
 			}
 
 			// Static helpers

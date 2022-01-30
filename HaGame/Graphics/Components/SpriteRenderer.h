@@ -9,6 +9,10 @@ namespace hagame {
 		struct SpriteRenderer : public hagame::ecs::Component {
 			Ptr<Sprite> sprite;
 			ShaderProgram* shader;
+			Optional<Mat4> projMat;
+			Optional<Mat4> viewMat;
+
+
 			String getName() {
 				return "Sprite Renderer";
 			}

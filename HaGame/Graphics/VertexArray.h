@@ -53,11 +53,19 @@ namespace hagame {
 				glBindVertexArray(0);
 			}
 
-			void setInstanced(int layoutNumber) {
+			void setInstanced(const int layoutNumber) {
 				bind();
 				glEnableVertexAttribArray(layoutNumber);
 				glVertexAttribDivisor(layoutNumber, 1);
 				glBindVertexArray(0);
+			}
+
+			// Set a range (inclusive) of layouts to be instaced
+			void setInstanced(int layoutNumberStart, int layoutNumberEnd) {
+				assert(layoutNumberStart <= layoutNumberEnd);
+				for (int i = layoutNumberStart; i <= layoutNumberEnd; i++) {
+					setInstanced(i);
+				}
 			}
 		};
 	}

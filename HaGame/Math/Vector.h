@@ -169,7 +169,7 @@ namespace hagame {
 
 			// Set all elements to zero
 
-			Vector copy() {
+			Vector copy() const {
 				Vector copy = Vector();
 				for (int i = 0; i < size; i++) {
 					copy[i] = vector[i];
@@ -190,11 +190,11 @@ namespace hagame {
 				}
 			}
 
-			size_t getSize() {
+			size_t getSize() const {
 				return size;
 			}
 
-			std::string toString() {
+			std::string toString() const {
 				std::string out = "[";
 				for (int i = 0; i < size; i++) {
 					if (i > 0) out += ", ";
@@ -202,6 +202,17 @@ namespace hagame {
 				}
 				out += "]";
 				return out;
+			}
+
+			friend std::ostream& operator <<(std::ostream& out, const Vector& vect) {
+				out << vect.toString();
+				return out;
+			}
+
+			operator std::string() const {
+				std::ostringstream out;
+				out << *this;
+				return out.str();
 			}
 
 			const T magnitude() {
@@ -215,7 +226,7 @@ namespace hagame {
 				return mag * mag;
 			}
 
-			Vector normalized() {
+			Vector normalized() const {
 				Vector copy = *this;
 				T mag = copy.magnitude();
 				if (mag != 0) {
@@ -236,7 +247,7 @@ namespace hagame {
 				
 			}
 
-			Vector rounded(float step = 1.0f) {
+			Vector rounded(float step = 1.0f) const {
 				Vector copy = *this;
 				for (int i = 0; i < size; i++) { 
 					copy[i] = std::round(copy[i]); 
@@ -249,19 +260,19 @@ namespace hagame {
 				for (int i = 0; i < size; i++) { vector[i] = std::round(vector[i]); }
 			}
 
-			Vector floor() {
+			Vector floor() const {
 				Vector copy = *this;
 				for (int i = 0; i < size; i++) { copy[i] = std::floor(copy[i]); }
 				return copy;
 			}
 
-			Vector ceil() {
+			Vector ceil() const {
 				Vector copy = *this;
 				for (int i = 0; i < size; i++) { copy[i] = std::ceil(copy[i]); }
 				return copy;
 			}
 
-			T dot(Vector vect) {
+			T dot(Vector vect) const {
 				T sum = 0;
 				for (int i = 0; i < size; i++) {
 					sum += vector[i] * vect[i];
@@ -269,7 +280,7 @@ namespace hagame {
 				return sum;
 			}
 
-			T angleBetween(Vector vect) {
+			T angleBetween(Vector vect) const {
 				return atan2(cross(vect).dot(Vec3::Face()), dot(vect));
 			}
 
@@ -290,7 +301,7 @@ namespace hagame {
 			}
 
 			// Compute an orthaganol vector
-			Vector orth() {
+			Vector orth() const {
 				if (dot(Vector::Top()) == 0.0) {
 					return cross(Vector::Top());
 				}
@@ -303,7 +314,7 @@ namespace hagame {
 			}
 
 			// Return the vector such that V.prod(V.inverse()) = V.Identity();
-			Vector inverse() {
+			Vector inverse() const {
 				Vector copy = *this;
 				for (int i = 0; i < size; i++) {
 					copy[i] = 1 / vect[i];
@@ -312,7 +323,7 @@ namespace hagame {
 			}
 
 
-			Vector<3, T> cross(Vector vect) {
+			Vector<3, T> cross(Vector vect) const {
 				if (size != 3) {
 					throw new std::exception("Cross product only supported for 3d vectors");
 				}
@@ -325,7 +336,7 @@ namespace hagame {
 			}
 
 			// element-wise multiplication
-			Vector prod(Vector vect) {
+			Vector prod(Vector vect) const {
 				Vector copy = *this;
 				for (int i = 0; i < size; i++) {
 					copy[i] *= vect[i];
@@ -334,7 +345,7 @@ namespace hagame {
 			}
 
 			// element-wise division
-			Vector div(Vector vect) {
+			Vector div(Vector vect) const {
 				Vector copy = *this;
 				for (int i = 0; i < size; i++) {
 					copy[i] /= vect[i];
@@ -343,7 +354,7 @@ namespace hagame {
 			}
 
 			// Return vect projected onto this vector
-			Vector proj(Vector vect) {
+			Vector proj(Vector vect) const {
 				return vect * (dot(vect) / vect.dot(vect));
 			}
 
@@ -371,7 +382,7 @@ namespace hagame {
 				return copy;
 			}
 
-			T min() {
+			T min() const {
 				T val;
 				bool first = true;
 				for (int i = 0; i < size; i++) {
@@ -385,7 +396,7 @@ namespace hagame {
 				return val;
 			}
 
-			T max() {
+			T max() const {
 				T val;
 				bool first = true;
 				for (int i = 0; i < size; i++) {
@@ -399,7 +410,7 @@ namespace hagame {
 				return val;
 			}
 
-			Vector bounded(Vector by) {
+			Vector bounded(Vector by) const {
 				auto out = copy();
 				float maxDim = max();
 				float byMaxDim = by.max();
@@ -412,7 +423,7 @@ namespace hagame {
 				return out;
 			}
 
-			Vector fill(Vector to) {
+			Vector fill(Vector to) const {
 				auto out = copy();
 				float scale = max() / to.max();
 				return out * (1 / scale);
@@ -434,14 +445,14 @@ namespace hagame {
 				return vector[i];
 			}
 
-			bool operator==(const Vector& vect) {
+			bool operator==(const Vector& vect) const {
 				for (int i = 0; i < size; i++) {
 					if (vector[i] != vect[i]) return false;
 				}
 				return true;
 			}
 
-			bool operator!=(const Vector& vect) {
+			bool operator!=(const Vector& vect) const {
 				for (int i = 0; i < size; i++) {
 					if (vector[i] != vect[i]) return true;
 				}
@@ -460,7 +471,7 @@ namespace hagame {
 				return magA < magB;
 			}
 
-			Vector operator+(const Vector& vect) {
+			Vector operator+(const Vector& vect) const {
 				Vector copy = *this;
 				for (int i = 0; i < size; i++) {
 					copy[i] += vect[i];
@@ -468,7 +479,7 @@ namespace hagame {
 				return copy;
 			}
 
-			Vector operator-(const Vector& vect) {
+			Vector operator-(const Vector& vect) const {
 				Vector copy = *this;
 				for (int i = 0; i < size; i++) {
 					copy[i] -= vect[i];
@@ -476,7 +487,7 @@ namespace hagame {
 				return copy;
 			}
 
-			Vector operator*(T scalar) {
+			Vector operator*(T scalar) const {
 				Vector copy = *this;
 				for (int i = 0; i < size; i++) {
 					copy[i] *= scalar;
@@ -484,7 +495,7 @@ namespace hagame {
 				return copy;
 			}
 
-			Vector operator/(T scalar) {
+			Vector operator/(T scalar) const {
 				Vector copy = *this;
 				for (int i = 0; i < size; i++) {
 					copy[i] /= scalar;
