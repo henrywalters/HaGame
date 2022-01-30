@@ -219,7 +219,7 @@ Color.h
 /home/henry/HaGame/HaGame/Math/Quaternion.h
 ../Math/Hypercube.h
 /home/henry/HaGame/HaGame/Math/Hypercube.h
-GL/glew.h
+gl/glew.h
 -
 ShaderProgram.h
 /home/henry/HaGame/HaGame/Graphics/ShaderProgram.h
@@ -399,7 +399,7 @@ cstdint
 -
 
 /home/henry/HaGame/HaGame/Graphics/DataType.h
-GL/glew.h
+gl/glew.h
 -
 
 /home/henry/HaGame/HaGame/Graphics/Disc.hpp
@@ -419,7 +419,7 @@ cstdint
 /home/henry/HaGame/HaGame/Graphics/Mesh.h
 
 /home/henry/HaGame/HaGame/Graphics/Font.h
-GL/glew.h
+gl/glew.h
 -
 ./../Utils/Aliases.h
 /home/henry/HaGame/HaGame/Utils/Aliases.h
@@ -509,7 +509,7 @@ OpenGL.h
 /home/henry/HaGame/HaGame/Graphics/OpenGL.h
 
 /home/henry/HaGame/HaGame/Graphics/OpenGL.h
-GL/glew.h
+gl/glew.h
 -
 type_traits
 -
@@ -641,7 +641,7 @@ Shader.h
 /home/henry/HaGame/HaGame/Graphics/Shader.h
 SDL.h
 -
-GL/glew.h
+gl/glew.h
 -
 SDL_opengl.h
 -
@@ -659,7 +659,7 @@ ShaderProgram.h
 /home/henry/HaGame/HaGame/Graphics/ShaderProgram.h
 SDL.h
 -
-GL/glew.h
+gl/glew.h
 -
 SDL_opengl.h
 -
@@ -799,7 +799,7 @@ Texture.h
 /home/henry/HaGame/HaGame/Graphics/Texture.h
 iostream
 -
-GL/glew.h
+gl/glew.h
 -
 ./Image.h
 /home/henry/HaGame/HaGame/Graphics/Image.h
@@ -849,7 +849,7 @@ string
 -
 SDL.h
 -
-GL/glew.h
+gl/glew.h
 -
 SDL_opengl.h
 -
@@ -2457,7 +2457,7 @@ GLES3/gl3.h
 -
 GL/gl3w.h
 -
-GL/glew.h
+gl/glew.h
 -
 glad/glad.h
 -

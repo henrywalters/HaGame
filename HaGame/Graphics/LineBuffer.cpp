@@ -45,6 +45,7 @@ void hagame::graphics::LineBuffer::draw(bool clearBuffer)
 {
 	m_cube->getMesh()->getVAO()->bind();
 	glDrawArraysInstanced(GL_TRIANGLES, 0, 36, getLineCount());
+	std::cout << "Drew " << getLineCount() << " lines...\n";
 	if (clearBuffer) {
 		clear();
 	}

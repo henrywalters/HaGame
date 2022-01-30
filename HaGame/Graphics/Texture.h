@@ -2,7 +2,7 @@
 #define TEXTURE
 
 #include <iostream>
-#include <GL/glew.h>
+#include <gl/glew.h>
 #include "./Image.h"
 #include "../Utils/Aliases.h"
 

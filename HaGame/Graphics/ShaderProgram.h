@@ -3,7 +3,7 @@
 #define SHADER_PROGRAM
 
 #include <SDL.h>
-#include <GL/glew.h>
+#include <gl/glew.h>
 #include <SDL_opengl.h>
 #include "Shader.h"
 #include "../Utils/Aliases.h"

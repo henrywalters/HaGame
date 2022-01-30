@@ -16,33 +16,29 @@ namespace hagame {
 
 		template <class T> inline T sq(T val) { return val * val; }
 
-		template <size_t M, size_t N, class T> 
+		template <size_t M, size_t N, class T>
 		class Matrix {
-		private:
-			size_t m_rows, m_cols;
-
 		public:
 			T mat[M * N];
 
-			Matrix(): m_rows(M), m_cols(N) {
+			Matrix() {
 				fill(0);
 			}
 
-			Matrix(T value): m_rows(M), m_cols(N) {
+			Matrix(T value) {
 				fill(value);
 			}
 
-			Matrix(std::vector<T> values): m_rows(M), m_cols(N) {
+			Matrix(std::vector<T> values) {
 
-				assert(values.size() != M * N);
+				if (values.size() != M * N) {
+					throw new std::exception("Invalid data length for this size matrix");
+				}
 
 				for (int i = 0; i < M * N; i++) {
 					mat[i] = values[i];
 				}
 			}
-
-			size_t rows() const { return m_rows; }
-			size_t cols() const { return m_cols; }
 
 			// Static Initializers
 
@@ -123,7 +119,7 @@ namespace hagame {
 			}
 
 			static Matrix<4, 4, T> Perspective(T left, T right, T bottom, T top, T zNear, T zFar) {
-				
+
 				std::vector<T> proj = {
 					2 * zNear / (right - left), 0, (right + left) / (right - left), 0,
 					0, 2 * zNear / (top - bottom), (top + bottom) / (top - bottom), 0,
@@ -145,7 +141,7 @@ namespace hagame {
 					zAxis[0], zAxis[1], zAxis[2], -zAxis.dot(eye),
 					0, 0, 0, 1
 				};
-				
+
 				return Matrix<4, 4, T>(view);
 			}
 
@@ -206,6 +202,14 @@ namespace hagame {
 						set(i, j, mat.get(i, j));
 					}
 				}
+			}
+
+			const static int rows() {
+				return N;
+			}
+
+			const static int cols() {
+				return M;
 			}
 
 			const T get(int row, int col) {
@@ -284,8 +288,9 @@ namespace hagame {
 			}
 
 			void fillDiag(T value) {
-				// Must be a square matrix
-				static_assert(M == N);
+				if (!isSquare()) {
+					throw new std::exception("Can only fill diag of square matrices");
+				}
 
 				for (int i = 0; i < M; i++) {
 					mat[Matrix::FlattenIndex(i, i)] = value;
@@ -310,7 +315,7 @@ namespace hagame {
 						}
 					}
 				}
-				
+
 				return eye;
 			}
 
@@ -330,6 +335,7 @@ namespace hagame {
 				else {
 					throw new std::exception("Rectangular matrix transpose not implemented lol");
 				}
+
 				return out;
 			}
 
@@ -389,8 +395,9 @@ namespace hagame {
 			}
 
 			Matrix operator+(const Matrix& B) {
-
-				static_assert(M == B.rows() && N == B.cols());
+				if (!Matrix::IsSameSize(this, B)) {
+					throw new std::exception("Only same size matrices may be added");
+				}
 
 				Matrix out = Matrix();
 				for (int i = 0; i < M * N; i++) {
@@ -400,17 +407,19 @@ namespace hagame {
 			}
 
 			Matrix operator+=(const Matrix& B) {
-				assert(M == B.rows() && N == B.cols());
-
+				if (!Matrix::IsSameSize(this, B)) {
+					throw new std::exception("Only same size matrices may be added");
+				}
 				for (int i = 0; i < M * N; i++) {
 					this[i] += B[i];
 				}
 			}
 
 			template <size_t P, size_t Q>
-			Matrix operator*(const Matrix<P, Q, T> & B) {
-
-				assert(cols() == B.rows());
+			Matrix operator*(const Matrix<P, Q, T>& B) {
+				if (!Matrix::CanMultiply(*this, B)) {
+					throw new std::exception("Number of cols in mat A must match the number of rows in mat B");
+				}
 
 				Matrix<M, Q, T> out = Matrix<M, Q, T>();
 				for (int i = 0; i < M; i++) {

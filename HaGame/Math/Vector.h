@@ -280,13 +280,8 @@ namespace hagame {
 				return sum;
 			}
 
-<<<<<<< HEAD
 			T angleBetween(Vector vect) {
 				return atan2(cross(vect).dot(Vector::Face()), dot(vect));
-=======
-			T angleBetween(Vector vect) const {
-				return atan2(cross(vect).dot(Vec3::Face()), dot(vect));
->>>>>>> feature-batch-rendering
 			}
 
 			Quaternion<T> rotationBetween(Vector vect) {
@@ -328,15 +323,8 @@ namespace hagame {
 			}
 
 
-<<<<<<< HEAD
-			Vector<3, T> cross(Vector vect) {
-				assert(vect.size >= 3);
-=======
 			Vector<3, T> cross(Vector vect) const {
-				if (size != 3) {
-					throw new std::exception("Cross product only supported for 3d vectors");
-				}
->>>>>>> feature-batch-rendering
+				assert(size == 3);
 
 				return Vector<3, T>({
 					vector[1] * vect[2] - vector[2] * vect[1],
