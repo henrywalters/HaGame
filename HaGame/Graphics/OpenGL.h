@@ -1,6 +1,6 @@
 #ifndef OPEN_GL
 #define OPEN_GL
-#include <GL/glew.h>
+#include <gl/glew.h>
 #include <type_traits>
 #include "../Utils/Aliases.h"
 

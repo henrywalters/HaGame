@@ -385,7 +385,7 @@ namespace hagame {
 			}
 
 			Matrix operator+=(const Matrix& B) {
-				static_assert(M == B.rows() && N == B.cols());
+				assert(M == B.rows() && N == B.cols());
 
 				for (int i = 0; i < M * N; i++) {
 					this[i] += B[i];
@@ -395,7 +395,7 @@ namespace hagame {
 			template <size_t P, size_t Q>
 			Matrix operator*(const Matrix<P, Q, T> & B) {
 
-				static_assert(cols() == B.rows());
+				assert(cols() == B.rows());
 
 				Matrix<M, Q, T> out = Matrix<M, Q, T>();
 				for (int i = 0; i < M; i++) {

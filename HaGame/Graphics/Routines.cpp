@@ -1,6 +1,4 @@
 #include "Routines.h"
-#include <glm/gtx/string_cast.hpp>
-
 /*
 void hagame::graphics::drawMesh(Mesh mesh, ShaderProgram* shader) {
 	

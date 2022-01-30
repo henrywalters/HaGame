@@ -283,7 +283,7 @@ namespace hagame {
 					return Quaternion<T>(0, orth().normalized());
 				}
 
-				Quaternion q = Quaternion(0.5f * M_PI * (dotProd + k), cross(vect));
+				Quaternion q = Quaternion(0.5f * PI * (dotProd + k), cross(vect));
 				q.normalize();
 
 				return q;
@@ -313,7 +313,7 @@ namespace hagame {
 
 
 			Vector<3, T> cross(Vector vect) {
-				static_assert(vect.size >= 3);
+				assert(vect.size >= 3);
 
 				return Vector<3, T>({
 					vector[1] * vect[2] - vector[2] * vect[1],
@@ -418,13 +418,13 @@ namespace hagame {
 
 			// Operator Overloads
 
-			T operator[](int i) const {
-				static_assert(i <= size);
+			T operator[](const int i) const {
+				assert(i <= size);
 				return vector[i];
 			}
 
-			T& operator[](int i) {
-				static_assert(i <= size);
+			T& operator[](const int i) {
+				assert(i <= size);
 				return vector[i];
 			}
 

@@ -18,17 +18,17 @@ namespace hagame {
 			}
 
 			Quaternion(T rotation, Vector<3, T> axisOfRotation) {
-				*this[0] = cos(0.5 * rotation);
-				*this[1] = axisOfRotation[0] * sin(0.5 * rotation);
-				*this[2] = axisOfRotation[1] * sin(0.5 * rotation);
-				*this[3] = axisOfRotation[2] * sin(0.5 * rotation);
+				vector[0] = cos(0.5 * rotation);
+				vector[1] = axisOfRotation[0] * sin(0.5 * rotation);
+				vector[2] = axisOfRotation[1] * sin(0.5 * rotation);
+				vector[3] = axisOfRotation[2] * sin(0.5 * rotation);
 			}
 
 			Quaternion(T w, T i, T j, T k) {
-				*this[0] = w;
-				*this[1] = i;
-				*this[2] = j;
-				*this[3] = k;
+				vector[0] = w;
+				vector[1] = i;
+				vector[2] = j;
+				vector[3] = k;
 			}
 
 			Quaternion(Vector<3, T> euler) : Quaternion(euler[0], euler[1], euler[2]) {}
@@ -41,18 +41,18 @@ namespace hagame {
 				T cr = cos(roll * 0.5);
 				T sr = sin(roll * 0.5);
 
-				*this[0] = cr * cp * cy + sr * sp * sy;
-				*this[1] = sr * cp * cy - cr * sp * sy;
-				*this[2] = cr * sp * cy + sr * cp * sy;
-				*this[3] = cr * cp * sy - sr * sp * cy;
+				vector[0] = cr * cp * cy + sr * sp * sy;
+				vector[1] = sr * cp * cy - cr * sp * sy;
+				vector[2] = cr * sp * cy + sr * cp * sy;
+				vector[3] = cr * cp * sy - sr * sp * cy;
 			}
 
 			Quaternion operator*(const Quaternion& quat) {
 				return Quaternion(
-					*this[0] * quat[0] - *this[1] * quat[1] - *this[2] * quat[2] - *this[3] * quat[3],
-					*this[0] * quat[1] + *this[1] * quat[0] + *this[2] * quat[3] - *this[3] * quat[2],
-					*this[0] * quat[2] - *this[1] * quat[3] + *this[2] * quat[0] + *this[3] * quat[1],
-					*this[0] * quat[3] + *this[1] * quat[2] - *this[2] * quat[1] + *this[3] * quat[0]
+					vector[0] * quat[0] - vector[1] * quat[1] - vector[2] * quat[2] - vector[3] * quat[3],
+					vector[0] * quat[1] + vector[1] * quat[0] + vector[2] * quat[3] - vector[3] * quat[2],
+					vector[0] * quat[2] - vector[1] * quat[3] + vector[2] * quat[0] + vector[3] * quat[1],
+					vector[0] * quat[3] + vector[1] * quat[2] - vector[2] * quat[1] + vector[3] * quat[0]
 				);
 			}
 
@@ -62,28 +62,28 @@ namespace hagame {
 
 			Quaternion operator*(T scalar) {
 				return Quaternion(
-					*this[0] * scalar,
-					*this[1] * scalar,
-					*this[2] * scalar,
-					*this[3] * scalar
+					vector[0] * scalar,
+					vector[1] * scalar,
+					vector[2] * scalar,
+					vector[3] * scalar
 				);
 			}
 
 			Quaternion operator/(T scalar) {
 				return Quaternion(
-					*this[0] / scalar,
-					*this[1] / scalar,
-					*this[2] / scalar,
-					*this[3] / scalar
+					vector[0] / scalar,
+					vector[1] / scalar,
+					vector[2] / scalar,
+					vector[3] / scalar
 				);
 			}
 
 			T magnitude() {
-				return sqrt(*this[0] * *this[0] + *this[1] * *this[1] + *this[2] * *this[2] + *this[3] * *this[3]);
+				return sqrt(vector[0] * vector[0] + vector[1] * vector[1] + vector[2] * vector[2] + vector[3] * vector[3]);
 			}
 
 			Quaternion conjugate() {
-				return Quaternion(*this[0], -*this[1], -*this[2], -*this[3]);
+				return Quaternion(vector[0], -vector[1], -vector[2], -vector[3]);
 			}
 
 			Quaternion inverse() {
@@ -91,11 +91,11 @@ namespace hagame {
 			}
 
 			Vector<3, T> imaginary() {
-				return Vector<3, T>({ *this[1], *this[2], *this[3] });
+				return Vector<3, T>({ vector[1], vector[2], vector[3] });
 			}
 
 			T real() {
-				return *this[0];
+				return vector[0];
 			}
 
 			Vector<3, T> rotatePoint(Vector<3, T> point) {
@@ -103,10 +103,10 @@ namespace hagame {
 			}
 
 			Vector<3, T> eulerAngles() {
-				T a = *this[0];
-				T b = *this[1];
-				T c = *this[2];
-				T d = *this[3];
+				T a = vector[0];
+				T b = vector[1];
+				T c = vector[2];
+				T d = vector[3];
 
 				// Roll
 				T roll_a = 2 * (a * b + c * d);

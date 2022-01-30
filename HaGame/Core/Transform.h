@@ -2,9 +2,6 @@
 #define TRANSFORM
 
 #include "../Math/Vector.h"
-#include <glm/matrix.hpp>
-#include <glm/vec4.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 #include "../Utils/Aliases.h"
 #include "../Math/Functions.h"
 #include "ECS/Entity.h"

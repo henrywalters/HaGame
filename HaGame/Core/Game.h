@@ -13,7 +13,6 @@
 #include "ResourceManager.h"
 #include "Scene.h"
 #include <SDL.h>
-#include <SDL_mixer.h>
 
 namespace hagame {
 	// Base game class that wraps a simple game loop
