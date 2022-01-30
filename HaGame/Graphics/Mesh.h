@@ -223,7 +223,8 @@ namespace hagame {
 
 				vao->bind();
 				ebo->bind();
-				glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+				glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+			//glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
 			}
 

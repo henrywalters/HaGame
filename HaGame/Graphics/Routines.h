@@ -12,6 +12,8 @@
 #include "Circle.hpp"
 #include "Cone.hpp"
 #include "RectPrism.hpp"
+#include "LineBuffer.h"
+#include "Quad.hpp"
 #include "./../Math/Surface.h"
 #include "./../Math/Capsule.h"
 #include "./../Math/Line.h"
@@ -28,6 +30,7 @@ namespace hagame {
 			Ptr<hagame::graphics::Cone> cone;
 			Ptr<hagame::graphics::RectPrism> cube;
 			Ptr<hagame::graphics::Line> line;
+			Ptr<hagame::graphics::Quad> quad;
 		};
 
 		/*void drawMesh(Mesh mesh, ShaderProgram* shader);
@@ -41,6 +44,9 @@ namespace hagame {
 
 		static MeshCache meshCache;
 		static Text textBuffer;
+
+		static bool BATCH_LINE_RENDERING = true;
+		static LineBuffer lineBuffer;
 
 		static Ptr<hagame::graphics::Circle> getCircleCache() {
 			if (meshCache.circle == NULL) {

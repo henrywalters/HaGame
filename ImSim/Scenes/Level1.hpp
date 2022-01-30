@@ -7,6 +7,7 @@
 #include "../Systems/Movement.hpp"
 #include "../Systems/ProjectileSystem.hpp"
 #include "../Systems/GizmoSystem.hpp"
+#include "../Systems/WeaponSystem.hpp"
 #include "../Components/PlayerMovement.hpp"
 #include "../Common/RuntimeLevel.hpp"
 #include "../Components/Player.hpp"
@@ -23,10 +24,22 @@ public:
 	Ptr<Entity> floor;
 	Ptr<MouseSystem> mouse;
 	Ptr<Quad> projQuad;
+	Ptr<WeaponSystem> weaponSystem;
 	Ptr<CameraSystem> cameraSystem;
 	Ptr<StateSystem> stateSystem;
+	Ptr<OrthographicCamera> orthCamera;
 	FPSCameraController* fpsCam;
 	hagame::math::Surface floorSurface;
+
+	bool isDrawing = false;
+	bool hasLastPos = false;
+	Vec3 lastPos;
+	Ptr<LineBuffer> currentLine;
+	Array<Ptr<LineBuffer>> lines;
+	Ptr<DynamicMesh> cubeMesh;
+	Ptr<MeshBuffer> cubeBuffer;
+
+	Array<Ptr<Entity>> cubes;
 
 	void onSceneInit() {
 
@@ -38,11 +51,12 @@ public:
 		addSystem<CollisionSystem>();
 		mouse = addSystem<MouseSystem>();
 		stateSystem = addSystem<StateSystem>();
+		weaponSystem = addSystem<WeaponSystem>();
 		addSystem<ProjectileSystem>();
 		addSystem<GizmoSystem>();
 		addSystem<hagame::physics::PartitionSystem>();
 
-		projQuad = std::make_shared<Quad>(0.25f, 0.25f);
+		projQuad = std::make_shared<Quad>(10.0f, 10.0f);
 
 		player.player = addEntity();
 		player.player->addTag("player");
@@ -51,6 +65,7 @@ public:
 		auto movement = player.player->addComponent<PlayerMovement>();
 
 		player.broadCollider = addChild(player.player);
+		player.broadCollider->addTag("player");
 
 		auto pCollider = player.broadCollider->addComponent<Collider>();
 		pCollider->type = ColliderType::SphereCollider;
@@ -58,6 +73,7 @@ public:
 		//pCollider->boundingVolume = BoundingSphere(hagame::math::NSphere<3, float>(Vec3::Zero(), 1.5f));
 
 		player.groundCollider = addChild(player.player);
+		player.groundCollider->addTag("player");
 		player.groundCollider->transform->move(Vec3::Top(-1.0f));
 
 		pCollider = player.groundCollider->addComponent<Collider>();
@@ -68,6 +84,7 @@ public:
 		movement->groundCollider = pCollider;
 
 		player.body = addChild(player.player);
+		player.body->addTag("player");
 		addCylinder(player.body, 0.25f, 1.0f);
 		player.camera = addChild(player.player);
 		auto camera = player.camera->addComponent<CameraComponent>();
@@ -82,6 +99,8 @@ public:
 
 		pVolume->dynamic = true;
 
+		orthCamera = std::make_shared<OrthographicCamera>(game->window->size);
+
 		fpsCam = player.player->addComponent<FPSCameraController>();
 		fpsCam->camera = perspectiveCam.get();
 		fpsCam->ySensitivity = 2.0f;
@@ -94,6 +113,7 @@ public:
 		};
 
 		player.camera->transform->move(Vec3::Top(1.0f));
+		player.camera->addTag("player");
 
 		debugCameraEntity = addEntity();
 		debugCameraEntity->transform->move(Vec3({ 5, 5, 5 }));
@@ -114,22 +134,49 @@ public:
 		floor = addFloor<10, 10>(Vec3::Zero(), Vec2(100.0f));
 		floor->name = "Floor";
 		floorSurface = floor->getComponent<DynamicMeshRenderer>()->mesh->getMesh()->getSurface();
-		auto floorVolume = floor->addComponent<BoundingVolume>(floorSurface);
+		//auto floorVolume = floor->addComponent<BoundingVolume>(floorSurface);
 
-		// addCube(Vec3::Zero(), Vec3(50.0f, 0.0f, 50.0f));
+		addCube(Vec3::Zero(), Vec3(50.0f, 0.0f, 50.0f));
 
 		//addCube(Vec3(3, 0.5, 3), Vec3(1.0f));
 		//addCube(Vec3(3, 1.5, 5), Vec3(1.0f));
 
+		addCube(Vec3(0, 4, -5), Vec3(10.0f, 4.0f, 0.2f));
+
+		addSprite2D(Vec2(50.0f, 50.0f), Vec2(100), "crosshairs");
+
+		addCacodemon(Vec3(7.0f));
+
 		//addRamp(Vec3(-3, 1.0, 3), Vec3(1.0f, 1.0f, 2.0f));
 
-		//for (int i = 0; i < 10; i++) {
-		//	for (int j = 0; j < 10; j++) {
-		//		addCube(Vec3(5 + i * 4, 0.5, 5 + j * 4), Vec3(1.5f));
-		//	}
-		//}
+		cubeBuffer = std::make_shared<MeshBuffer>();
+		cubeMesh = std::make_shared<RectPrism>(Vec3(1.5f));
+		cubeBuffer->initializeBuffers(cubeMesh->getMesh());
+
+		int size = 2;
+		float padding = 2;
+		float offset = 5;
+		float radius = 10;
+
+		for (int i = 0; i < 360; i++) {
+			float x = sin(i * DEG_TO_RAD) * radius + 15;
+			float y = cos(i * DEG_TO_RAD) * radius + 15;
+			cubeBuffer->insert(Mat4::Translation(Vec3(x, y, 0.0f)), Mat4::Identity(), Mat4::Identity());
+		}
+
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				for (int k = 0; k < size; k++) {
+					// cubeBuffer->insert(Mat4::Translation(Vec3(offset + i * padding, offset + j * padding, offset + k * padding)), Mat4::Rotation(Quat(i * j * k, Vec3::Top(1.0f))), Mat4::Identity());
+				}
+				//cubes.push_back(addCube(Vec3(5 + i * 4, 0.5, 5 + j * 4), Vec3(1.5f)));
+
+			}
+		}
 
 		addLight(Vec3(0, 10, 0));
+
+
 
 		stateSystem->events->subscribe(StateEvents::DebugChange, [this](Ptr<State> state) {
 			if (state->debug) {
@@ -166,13 +213,24 @@ public:
 	}
 
 	void onSceneUpdate(double dt) {
+		//for (auto cube : cubes) {
+		//	cube->transform->rotate(Quat(1.0f * dt, Vec3::Top(1.0f)));
+		//}
+
+		
 
 		fpsCam->ySensitivity = game->input.usingGamepad(0) ? stateSystem->state->gamepadSensitivity[0] : stateSystem->state->mouseSensitivity[0];
 		fpsCam->xSensitivity = game->input.usingGamepad(0) ? stateSystem->state->gamepadSensitivity[1] : stateSystem->state->mouseSensitivity[1];
 	}
 
 	void onSceneBeforeUpdate() {
-		
+
+		OrthographicCamera camera = OrthographicCamera(game->window->size);
+
+		if (game->input.keyboardMouse.keyboard.numbersPressed[1]) {
+			hagame::graphics::BATCH_LINE_RENDERING = !hagame::graphics::BATCH_LINE_RENDERING;
+		}
+
 		auto colorShader = game->resources->getShaderProgram("color");
 		colorShader->use();
 		colorShader->setMVP(Mat4::Identity(), viewMat, projMat);
@@ -187,16 +245,88 @@ public:
 
 		drawSurface(floorSurface, floor->transform->getModelMatrix(), Color::green());
 
+		auto lineShader = game->resources->getShaderProgram("batch_line");
+		lineShader->use();
+		lineShader->setMVP(Mat4::Identity(), viewMat, projMat);
+		hagame::graphics::lineBuffer.draw();
+
 		// drawCubeOutline(getSystem<hagame::physics::PartitionSystem>()->getStaticEntities()->getPartition(volCube.pos).getCube(), Color::blue());
 
 		auto neighbors = getSystem<hagame::physics::PartitionSystem>()->getStaticEntities()->getNeighbors(vol, player.body->transform->getPosition());
 
 		if (DEBUG_GRAPHICS) {
 			for (auto neighbor : neighbors) {
-				std::cout << neighbor->name << "\n";
+				// std::cout << neighbor->name << "\n";
 				drawCubeOutline(Cube(neighbor->transform->getPosition() - Vec3(0.75f), Vec3(1.5f)), Color::red());
 			}
 		}
+
+		auto spriteShader = game->resources->getShaderProgram("sprite2d");
+		spriteShader->use();
+		spriteShader->setMVP(Mat4::Identity(), Mat4::Identity(), projMat);
+		projQuad->getMesh()->draw();
+
+		hagame::math::Ray mouseWorldRay;
+		auto mousePos = game->input.keyboardMouse.mouse.position;
+		auto mouseWorldPos = MouseToWorld(viewMat, projMat, mousePos, game->window->size);
+		mouseWorldRay.origin = activeCameraEntity->transform->getPosition();
+		mouseWorldRay.direction = (mouseWorldPos - activeCameraEntity->transform->getPosition()).normalized() * CAMERA_RAY_DISTANCE;
+
+		float t;
+		auto rayHit = game->collisions.raycast(player.body, mouseWorldRay, t, {"player"});
+
+		if (game->input.keyboardMouse.mouse.leftPressed) {
+			currentLine = std::make_shared<LineBuffer>();
+			currentLine->initializeBuffers();
+			lines.push_back(currentLine);
+			isDrawing = true;
+		}
+		
+
+		if (game->input.keyboardMouse.mouse.left) {
+			if (rayHit.has_value() && isDrawing) {
+				if (!hasLastPos) {
+					lastPos = rayHit.value().point;
+					hasLastPos = true;
+				}
+				else {
+					std::cout << lastPos << " -> " << rayHit.value().point << "\n";
+					currentLine->insert(hagame::math::Line(lastPos, rayHit.value().point), Color::blue());
+					lastPos = rayHit.value().point;
+				}
+			}
+		}
+		else {
+			isDrawing = false;
+			hasLastPos = false;
+		}
+
+		
+
+		lineShader->use();
+		for (auto line : lines) {
+			line->draw(false);
+		}
+
+		auto textureShader = game->resources->getShaderProgram("batch_texture");
+		textureShader->use();
+		textureShader->setMVP(Mat4::Rotation(Quat(game->secondsElapsed, Vec3::Right())), viewMat, projMat);
+		textureShader->setVec3("viewPos", activeCameraEntity->transform->getPosition());
+		// textureShader->setMat4("normal", modelInverse);
+		textureShader->setVec4("color", Color::white());
+		textureShader->setMaterial("material", Material::blackRubber());
+
+		auto texture = game->resources->getTexture("crate");
+
+		glActiveTexture(GL_TEXTURE0 + 0);
+		texture->bind();
+		glActiveTexture(GL_TEXTURE0 + 1);
+		texture->bind();
+		glActiveTexture(GL_TEXTURE0 + 2);
+		texture->bind();
+
+
+		cubeBuffer->draw(false);
 
 	}
 

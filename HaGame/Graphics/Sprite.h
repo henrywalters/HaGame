@@ -11,6 +11,8 @@
 
 namespace hagame {
 	namespace graphics {
+
+		// Deprecated in favor of Sprite2D
 		class Sprite {
 		private:
 

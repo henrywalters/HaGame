@@ -71,6 +71,7 @@ public:
 		resources->loadTexture("plasma", "Textures/plasma_ball.png");
 		resources->loadTexture("cacodemon", "Textures/cacodemon.png");
 		resources->loadTexture("rabbit", "Textures/rarerabbit.jpg");
+		resources->loadTexture("crosshairs", "Textures/crosshair.png");
 
 		Array<String> shaders = {
 			"color",
@@ -79,7 +80,10 @@ public:
 			"material",
 			"sprite",
 			"sprite3d",
-			"particle"
+			"sprite2d",
+			"particle",
+			"batch_line",
+			"batch_texture",
 		};
 
 		for (auto shader : shaders) {

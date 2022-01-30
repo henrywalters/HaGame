@@ -43,6 +43,8 @@ namespace hagame {
 
 			Quad(Vec2 size) : Quad(size[0], size[1]) {}
 
+			Quad() : Quad(Vec2(1.0f)) {}
+
 			void setWidth(float width) { m_width = width; computeMesh(); }
 			float getWidth() { return m_width; }
 

@@ -49,6 +49,7 @@ void hagame::graphics::Window::initGLContext() {
 	glDebugMessageCallback(glErrorHandler, 0);
 
 	hagame::graphics::textBuffer.initializeForGL();
+	hagame::graphics::lineBuffer.initializeBuffers();
 
 	//if (SDL_GL_SetSwapInterval(-1) < 0) {
 	//	throw new std::exception("Failed to set VSync");

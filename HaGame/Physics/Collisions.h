@@ -64,7 +64,6 @@ namespace hagame {
 				float currT;
 				for (auto& [key, neighborhood] : entityMap.map) {
 					for (auto neighbor : neighborhood) {
-
 						if (neighbor->id == origin->id || (ignoreTags.size() > 0 && neighbor->hasTag(ignoreTags)))
 							continue;
 
