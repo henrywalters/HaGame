@@ -51,6 +51,7 @@
 #include "Graphics/Texture.cpp"
 #include "Graphics/LineBuffer.cpp"
 #include "Graphics/Material.cpp"
+#include "Graphics/Color.h"
 #include "Graphics/Color.cpp"
 #include "Graphics/Sprite.h"
 #include "Graphics/AnimatedSprite.h"

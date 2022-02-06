@@ -101,47 +101,47 @@ namespace hagame {
 					auto boxMax = getPartition(minPos + Vec3(CHUNK_SIZE));
 
 					if (DEBUG_GRAPHICS)
-						hagame::graphics::drawCubeOutline(boxMin.getCube(), Color::red());
+						hagame::graphics::drawCubeOutline(boxMin.getCube(), graphics::Color::red());
 
 					if (box.isIntersecting(right)) {
 						insertFromGrid(results, right.center);
 						if (DEBUG_GRAPHICS)
-							hagame::graphics::drawCubeOutline(right.getCube(), Color::red());
+							hagame::graphics::drawCubeOutline(right.getCube(), graphics::Color::red());
 					}
 
 					if (box.isIntersecting(front)) {
 						insertFromGrid(results, front.center);
 						if (DEBUG_GRAPHICS)
-							hagame::graphics::drawCubeOutline(front.getCube(), Color::red());
+							hagame::graphics::drawCubeOutline(front.getCube(), graphics::Color::red());
 	
 						if (box.isIntersecting(rightFront)) {
 							insertFromGrid(results, rightFront.center);
 							if (DEBUG_GRAPHICS)
-								hagame::graphics::drawCubeOutline(rightFront.getCube(), Color::red());
+								hagame::graphics::drawCubeOutline(rightFront.getCube(), graphics::Color::red());
 						}
 					}
 
 					if (box.isIntersecting(top)) {
 						insertFromGrid(results, top.center);
 						if (DEBUG_GRAPHICS)
-							hagame::graphics::drawCubeOutline(top.getCube(), Color::red());
+							hagame::graphics::drawCubeOutline(top.getCube(), graphics::Color::red());
 
 						if (box.isIntersecting(boxMax)) {
 							insertFromGrid(results, boxMax.center);
 							if (DEBUG_GRAPHICS)
-								hagame::graphics::drawCubeOutline(boxMax.getCube(), Color::red());
+								hagame::graphics::drawCubeOutline(boxMax.getCube(), graphics::Color::red());
 						}
 
 						if (box.isIntersecting(topFront)) {
 							insertFromGrid(results, topFront.center);
 							if (DEBUG_GRAPHICS)
-								hagame::graphics::drawCubeOutline(topFront.getCube(), Color::red());
+								hagame::graphics::drawCubeOutline(topFront.getCube(), graphics::Color::red());
 						}
 
 						if (box.isIntersecting(rightFront)) {
 							insertFromGrid(results, rightFront.center);
 							if (DEBUG_GRAPHICS)
-								hagame::graphics::drawCubeOutline(rightFront.getCube(), Color::red());
+								hagame::graphics::drawCubeOutline(rightFront.getCube(), graphics::Color::red());
 						}
 					}
 				}

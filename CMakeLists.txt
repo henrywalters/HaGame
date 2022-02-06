@@ -57,6 +57,9 @@ target_link_libraries(Goom2 ${LIBS})
 add_executable(ImSim ImSim/ImSim.cpp)
 target_link_libraries(ImSim ${LIBS})
 
+add_executable(SpaceHorror SpaceHorror/SpaceHorror.cpp)
+target_link_libraries(SpaceHorror ${LIBS})
+
 target_compile_options(ImSim PRIVATE "/bigobj")
 
 if (MSVC_VERSION GREATER_EQUAL "1900")
@@ -68,6 +71,7 @@ if (MSVC_VERSION GREATER_EQUAL "1900")
         target_compile_options(Demos PRIVATE "/std:c++17")
         target_compile_options(Goom2 PRIVATE "/std:c++17")
         target_compile_options(ImSim PRIVATE "/std:c++17")
+        target_compile_options(SpaceHorror PRIVATE "/std:c++17")
     endif()
 else()
     set_property(TARGET HaGame PROPERTY CXX_STANDARD 17)
@@ -75,6 +79,7 @@ else()
     set_property(TARGET Demos PROPERTY CXX_STANDARD 17)
     set_property(TARGET Goom2 PROPERTY CXX_STANDARD 17)
     set_property(TARGET ImSim PROPERTY CXX_STANDARD 17)
+    set_property(TARGET SpaceHorror PROPERTY CXX_STANDARD 17)
 endif() 
 
 # Copy SDL2 DLLs to output folder on Windows
