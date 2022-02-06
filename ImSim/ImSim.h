@@ -58,6 +58,8 @@ public:
 		resources->loadMesh("triangle", Triangle(Vec3({ 0, 0, 0 }), Vec3({ 0, 1, 0 }), Vec3({ 1, 0, 0 })).getMesh());
 		resources->loadMesh("camera", "Models/camera.obj");
 		resources->loadMesh("glock", "Models/glock.obj");
+		resources->loadMesh("shotgun", "Models/shotgun.obj");
+		resources->loadMesh("church", "Models/church.obj");
 
 		resources->loadFont("arial", "Fonts/arial.ttf");
 

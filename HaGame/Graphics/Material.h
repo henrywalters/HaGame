@@ -6,20 +6,34 @@
 namespace hagame {
 	namespace graphics {
 		class Material {
+
+		private:
+
+			static unsigned int LastMaterialId;
+
 		public:
+			
+			unsigned int id;
 			Vec3 ambient;
 			Vec3 diffuse;
 			Vec3 specular;
 			float shininess;
 
-			Material() {
-				ambient = Vec3::Zero();
-				diffuse = Vec3::Zero();
-				specular = Vec3::Zero();
-				shininess = 0;
-			}
+			Material():
+				id(Material::LastMaterialId++),
+				ambient(Vec3::Zero()),
+				diffuse(Vec3::Zero()),
+				specular(Vec3::Zero()),
+				shininess(0)
+			{}
 
-			Material(Vec3 _ambient, Vec3 _diffuse, Vec3 _specular, float _shininess) : ambient(_ambient), diffuse(_diffuse), specular(_specular), shininess(_shininess) {}
+			Material(Vec3 _ambient, Vec3 _diffuse, Vec3 _specular, float _shininess) : 
+				id(Material::LastMaterialId++),
+				ambient(_ambient), 
+				diffuse(_diffuse), 
+				specular(_specular), 
+				shininess(_shininess) 
+			{}
 			
 			static Material emerald() {
 				return Material(

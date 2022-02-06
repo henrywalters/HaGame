@@ -40,6 +40,21 @@ struct RuntimeLevel : public hagame::Scene {
 		return addSprite3D(pos, Vec2(1.5f), "rabbit");
 	}
 
+	Ptr<Entity> addMesh(Vec3 pos, Vec3 size, String meshName, String textureName) {
+		auto entity = addEntity();
+		auto mesh = entity->addComponent<MeshRenderer>();
+		mesh->mesh = game->resources->getMesh(meshName);
+		mesh->texture = game->resources->getTexture(textureName);
+		mesh->shader = game->resources->getShaderProgram("texture");
+		mesh->color = Color::white();
+		mesh->material = Material::greenRubber();
+		
+		entity->transform->setScale(size);
+		entity->transform->setPosition(pos);
+
+		return entity;
+	}
+
 	Ptr<Entity> addCube(Vec3 pos, Vec3 size) {
 		auto cube = addEntity();
 		auto meshRenderer = cube->addComponent<DynamicMeshRenderer>();

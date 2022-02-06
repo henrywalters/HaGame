@@ -9,53 +9,59 @@ namespace hagame {
 
 		class Color : public color::RGB
 		{
+		private:
+
+			static unsigned int LastId;
+
 		public:
 
-			Color() {}
+			unsigned int id;
 
-			Color(int r, int g, int b) {
+			Color(): id(LastId++) {}
+
+			Color(int r, int g, int b) : id(LastId++) {
 				vector[0] = (float) r / 255.0;
 				vector[1] = (float) g / 255.0;
 				vector[2] = (float) b / 255.0;
 				vector[3] = 1.0f;
 			}
 
-			Color(int r, int g, int b, float a) {
+			Color(int r, int g, int b, float a) : id(LastId++) {
 				vector[0] = (float)r / 255.0;
 				vector[1] = (float)g / 255.0;
 				vector[2] = (float)b / 255.0;
 				vector[3] = a;
 			}
 
-			Color(int r, int g, int b, int a) {
+			Color(int r, int g, int b, int a) : id(LastId++) {
 				vector[0] = (float) r / 255.0;
 				vector[1] = (float) g / 255.0;
 				vector[2] = (float) b / 255.0;
 				vector[3] = (float)a / 255.0;
 			}
 
-			Color(float r, float g, float b) {
+			Color(float r, float g, float b) : id(LastId++) {
 				vector[0] = r;
 				vector[1] = g;
 				vector[2] = b;
 				vector[3] = 1.0f;
 			}
 
-			Color(float r, float g, float b, float a) {
+			Color(float r, float g, float b, float a) : id(LastId++) {
 				vector[0] = r;
 				vector[1] = g;
 				vector[2] = b;
 				vector[3] = a;
 			}
 
-			Color(color::RGB rgb) {
+			Color(color::RGB rgb) : id(LastId++) {
 				vector[0] = rgb[0];
 				vector[1] = rgb[1];
 				vector[2] = rgb[2];
 				vector[3] = rgb[3];
 			}
 
-			Color(char* hex) {
+			Color(char* hex) : id(LastId++) {
 				color::RGB rgb = color::RGB::ParseHex(hex);
 				vector[0] = rgb[0];
 				vector[1] = rgb[1];

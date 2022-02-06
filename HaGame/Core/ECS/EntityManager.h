@@ -30,6 +30,15 @@ namespace hagame {
 
 			EntityManager(entt::basic_registry<uint32_t>* _registry) : registry(_registry) {
 			}
+			/*
+			EntityIterator begin() { 
+				return EntityIterator(&enttMap.begin()->second);
+			}
+
+			EntityIterator end() {
+				return EntityIterator(&enttMap.end()->second);
+			}
+			*/
 			
 			Ptr<Entity> add() {
 				Ptr<Entity> entity = std::make_shared<Entity>(registry->create(), entityCount);
@@ -45,6 +54,15 @@ namespace hagame {
 			void forEach(std::function<void(Ptr<Entity>)> lambda) {
 				for (auto& [id, entity] : enttMap) {
 					lambda(entity);
+				}
+			}
+
+			void forEach(std::function<void(Ptr<Entity>)> lambda, Array<uint64_t> ignoreEntities, Array<String> ignoreTags) {
+				for (auto& [id, entity] : enttMap) {
+					if (!hasElement(ignoreEntities, (uint64_t)entity->uuid) && !entity->hasTag(ignoreTags)) {
+						lambda(entity);
+					}
+					
 				}
 			}
 

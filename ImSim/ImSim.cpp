@@ -1,6 +1,15 @@
 #define SDL_MAIN_HANDLED 
 #define WITH_SDL2
+#define NDEBUG
 #include "./ImSim.h"
+
+uint64_t hash(unsigned int a, unsigned int b, unsigned int c, unsigned int d) {
+	size_t intSize = sizeof(unsigned int) * CHAR_BIT;
+	return (uint64_t)a << (intSize * 0) |
+		(uint64_t)b << (intSize * 1) |
+		(uint64_t)c << (intSize * 2) |
+		(uint64_t)d << (intSize * 3);
+}
 
 int main() {
 	hagame::Game::initializeSDL();

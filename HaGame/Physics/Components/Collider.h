@@ -18,7 +18,8 @@ namespace hagame {
 		};
 
 		// Collider component ensures it is added to the spacial map.
-		struct Collider {
+		class Collider {
+		public:
 
 			// A dynamic collider will update it's aabb every frame from the bounding cube and entity translation
 			bool dynamic = true;

@@ -104,6 +104,13 @@ bool hasKey(Map<K, V> map, K key) {
 }
 
 template <class K, class V>
+void insertIfMissing(Map<K, V> map, K key, V value) {
+	if (map.find(key) == map.end()) {
+		map.insert(std::make_pair(key, value));
+	}
+}
+
+template <class K, class V>
 Map<K, Any> make_any(Map<K, V> map) {
 	Map<K, Any> out;
 	for (auto& [key, value] : map) {

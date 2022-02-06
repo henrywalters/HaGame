@@ -50,22 +50,22 @@ namespace hagame {
 
 			BoundingVolumeType getType() { return m_type; }
 
-			Sphere getSphere() {
+			Sphere& getSphere() {
 				assert(m_type == BoundingVolumeType::Sphere && m_sphere.has_value());
 				return m_sphere.value();
 			}
 
-			math::Capsule getCapsule() {
+			math::Capsule& getCapsule() {
 				assert(m_type == BoundingVolumeType::Capsule && m_capsule.has_value());
 				return m_capsule.value();
 			}
 
-			Cube getCube() {
+			Cube& getCube() {
 				assert(m_type == BoundingVolumeType::Cube && m_cube.has_value());
 				return m_cube.value();
 			}
 
-			math::Surface getSurface() {
+			math::Surface& getSurface() {
 				assert(m_type == BoundingVolumeType::Surface && m_surface.has_value());
 				return m_surface.value();
 			}

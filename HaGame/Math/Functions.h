@@ -337,4 +337,17 @@ Vec3 MouseToWorld(Mat4 view, Mat4 proj, Vec2 mousePos, Vec2 windowSize, float de
 	return ScreenToWorld(view, proj, mousePosNorm, depth);
 }
 
+// Construct a uint64_t hash id from an array of other data types
+template <class T, size_t N>
+uint64_t HashIds(T ids[N]) {
+	uint64_t id = 0;
+
+	for (int i = 0; i < N; i++) {
+		id *= 37;
+		id += ids[i];
+	}
+
+	return id;
+}
+
 #endif

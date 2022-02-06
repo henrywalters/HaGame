@@ -50,6 +50,8 @@
 #include "Graphics/Text.h"
 #include "Graphics/Texture.cpp"
 #include "Graphics/LineBuffer.cpp"
+#include "Graphics/Material.cpp"
+#include "Graphics/Color.cpp"
 #include "Graphics/Sprite.h"
 #include "Graphics/AnimatedSprite.h"
 #include "Graphics/Routines.cpp"
@@ -116,6 +118,13 @@
 #include "Core/Scene.h"
 #include "Core/Subscriber.h"
 #include "Core/Publisher.h"
+
+#ifndef HAGAME_IMPLEMENTATION
+#define HAGAME_IMPLEMENTATION
+
+#include "Physics/Collisions.cpp"
+
+#endif
 
 #include "Vendor/json.hpp"
 

@@ -92,10 +92,13 @@ public:
 		perspectiveCam->setAspectRatio(game->window);
 		camera->camera = perspectiveCam;
 
-		auto pVolume = player.body->addComponent<hagame::physics::BoundingVolume>(
+		/*auto pVolume = player.body->addComponent<hagame::physics::BoundingVolume>(
 			hagame::math::Capsule(
-				hagame::math::LineSegment(Vec3::Bottom(-1.0f), Vec3::Top(1.0f)), 0.5f)
+				hagame::math::LineSegment(Vec3::Bottom(1.0f), Vec3::Top(1.0f)), 0.5f)
 			);
+			*/
+
+		auto pVolume = player.body->addComponent<hagame::physics::BoundingVolume>(Cube(Vec3(-0.5f, -1.0f, -0.5f), Vec3(1, 2, 1)));
 
 		pVolume->dynamic = true;
 
@@ -131,23 +134,33 @@ public:
 		meshRenderer->shader = game->resources->getShaderProgram("texture");
 		meshRenderer->color = Color::white();
 
-		floor = addFloor<10, 10>(Vec3::Zero(), Vec2(100.0f));
-		floor->name = "Floor";
-		floorSurface = floor->getComponent<DynamicMeshRenderer>()->mesh->getMesh()->getSurface();
+		//floor = addFloor<10, 10>(Vec3::Zero(), Vec2(100.0f));
+		//floor->name = "Floor";
+		//floorSurface = floor->getComponent<DynamicMeshRenderer>()->mesh->getMesh()->getSurface();
 		//auto floorVolume = floor->addComponent<BoundingVolume>(floorSurface);
 
-		addCube(Vec3::Zero(), Vec3(50.0f, 0.0f, 50.0f));
+		//addMesh(Vec3::Zero(), Vec3(1.0f), "church", "proto");
+
+		//addCube(Vec3::Zero(), Vec3(50.0f, 0.0f, 50.0f));
 
 		//addCube(Vec3(3, 0.5, 3), Vec3(1.0f));
 		//addCube(Vec3(3, 1.5, 5), Vec3(1.0f));
 
-		addCube(Vec3(0, 4, -5), Vec3(10.0f, 4.0f, 0.2f));
+		//addCube(Vec3(0, 4, -5), Vec3(10.0f, 4.0f, 0.2f));
 
 		addSprite2D(Vec2(50.0f, 50.0f), Vec2(100), "crosshairs");
 
 		addCacodemon(Vec3(7.0f));
 
 		//addRamp(Vec3(-3, 1.0, 3), Vec3(1.0f, 1.0f, 2.0f));
+
+		int cubeGridSize = 1;
+
+		for (int i = 0; i < cubeGridSize; i++) {
+			for (int j = 0; j < cubeGridSize; j++) {
+				addCube(Vec3(i * 2.0f, 0.75, 2.0f * j), Vec3(1.5f));
+			}
+		}
 
 		cubeBuffer = std::make_shared<MeshBuffer>();
 		cubeMesh = std::make_shared<RectPrism>(Vec3(1.5f));
@@ -162,16 +175,6 @@ public:
 			float x = sin(i * DEG_TO_RAD) * radius + 15;
 			float y = cos(i * DEG_TO_RAD) * radius + 15;
 			cubeBuffer->insert(Mat4::Translation(Vec3(x, y, 0.0f)), Mat4::Identity(), Mat4::Identity());
-		}
-
-		for (int i = 0; i < size; i++) {
-			for (int j = 0; j < size; j++) {
-				for (int k = 0; k < size; k++) {
-					// cubeBuffer->insert(Mat4::Translation(Vec3(offset + i * padding, offset + j * padding, offset + k * padding)), Mat4::Rotation(Quat(i * j * k, Vec3::Top(1.0f))), Mat4::Identity());
-				}
-				//cubes.push_back(addCube(Vec3(5 + i * 4, 0.5, 5 + j * 4), Vec3(1.5f)));
-
-			}
 		}
 
 		addLight(Vec3(0, 10, 0));
@@ -213,11 +216,6 @@ public:
 	}
 
 	void onSceneUpdate(double dt) {
-		//for (auto cube : cubes) {
-		//	cube->transform->rotate(Quat(1.0f * dt, Vec3::Top(1.0f)));
-		//}
-
-		
 
 		fpsCam->ySensitivity = game->input.usingGamepad(0) ? stateSystem->state->gamepadSensitivity[0] : stateSystem->state->mouseSensitivity[0];
 		fpsCam->xSensitivity = game->input.usingGamepad(0) ? stateSystem->state->gamepadSensitivity[1] : stateSystem->state->mouseSensitivity[1];
@@ -240,10 +238,10 @@ public:
 
 		auto vol = player.body->getComponent<BoundingVolume>();
 		auto volCube = vol->getBoundingBox().getCube();
-		volCube.pos += player.body->transform->getPosition();
+		// volCube.pos += player.body->transform->getPosition();
 		drawCubeOutline(volCube, Color::blue());
 
-		drawSurface(floorSurface, floor->transform->getModelMatrix(), Color::green());
+		// drawSurface(floorSurface, floor->transform->getModelMatrix(), Color::green());
 
 		auto lineShader = game->resources->getShaderProgram("batch_line");
 		lineShader->use();
@@ -255,9 +253,23 @@ public:
 		auto neighbors = getSystem<hagame::physics::PartitionSystem>()->getStaticEntities()->getNeighbors(vol, player.body->transform->getPosition());
 
 		if (DEBUG_GRAPHICS) {
+			std::cout << "Checking " << neighbors.size() << " neighbors\n";
+			player.body->getComponent<BoundingVolume>()->getCube().pos = player.body->transform->getPosition();
 			for (auto neighbor : neighbors) {
-				// std::cout << neighbor->name << "\n";
+				//std::cout << neighbor->name << "\n";
 				drawCubeOutline(Cube(neighbor->transform->getPosition() - Vec3(0.75f), Vec3(1.5f)), Color::red());
+
+				if (!neighbor->hasTag("player")) {
+					auto hit = game->collisions.checkCollision(
+						player.body->getComponent<BoundingVolume>(), 
+						player.body->transform->getPosition(), 
+						neighbor->getComponent<BoundingVolume>(),
+						neighbor->transform->getPosition()
+					);
+					if (hit.has_value()) {
+						std::cout << neighbor->name << "\n";
+					}
+				}
 			}
 		}
 
@@ -273,7 +285,8 @@ public:
 		mouseWorldRay.direction = (mouseWorldPos - activeCameraEntity->transform->getPosition()).normalized() * CAMERA_RAY_DISTANCE;
 
 		float t;
-		auto rayHit = game->collisions.raycast(player.body, mouseWorldRay, t, {"player"});
+		//auto rayHit = game->collisions.raycast(player.body, mouseWorldRay, t, {"player"});
+		auto rayHit = game->collisions.raycast(mouseWorldRay, ecs.entities, t, { "player" });
 
 		if (game->input.keyboardMouse.mouse.leftPressed) {
 			currentLine = std::make_shared<LineBuffer>();
@@ -290,8 +303,7 @@ public:
 					hasLastPos = true;
 				}
 				else {
-					std::cout << lastPos << " -> " << rayHit.value().point << "\n";
-					currentLine->insert(hagame::math::Line(lastPos, rayHit.value().point), Color::blue());
+					currentLine->insert(hagame::math::Line(lastPos, rayHit.value().point), Color::blue(), 0.01f);
 					lastPos = rayHit.value().point;
 				}
 			}

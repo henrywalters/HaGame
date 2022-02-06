@@ -112,6 +112,27 @@ namespace hagame {
 			void setScale(Vec3 scale) { transform->setScale(scale); }
 			*/
 		};
+
+		struct EntityIterator {
+			using iterator_category = std::input_iterator_tag;
+			using difference_type = std::ptrdiff_t;
+			using value_type = Ptr<Entity>;
+			using pointer = Ptr<Entity>*;
+			using reference = Ptr<Entity>&;
+
+			EntityIterator(pointer ptr) : m_ptr(ptr) {}
+
+			reference operator*() const { return *m_ptr; }
+			pointer operator->() { return m_ptr; }
+
+			EntityIterator& operator++() { m_ptr++; return *this; }
+			EntityIterator operator++(int) { EntityIterator tmp = *this; ++(*this); return tmp; }
+
+			friend bool operator==(const EntityIterator& a, const EntityIterator& b) { return (*a.m_ptr)->uuid == (*b.m_ptr)->uuid; }
+			friend bool operator!=(const EntityIterator& a, const EntityIterator& b) { return (*a.m_ptr)->uuid != (*b.m_ptr)->uuid; }
+		private:
+			pointer m_ptr;
+		};
 	}
 }
 
