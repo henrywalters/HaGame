@@ -1,7 +1,9 @@
-#ifndef IM_SIM_HPP
-#define IM_SIM_HPP
+#ifndef SPACE_HORROR_H
+#define SPACE_HORROR_H
 
 #include "../HaGame/HaGame.h"
+#include "./Common/RuntimeLevel.cpp";
+#include "./Scenes/Demo.cpp"
 
 class SpaceHorror : public hagame::Game {
 public:
@@ -25,6 +27,11 @@ public:
 		resources->setBasePath("../../../Assets");
 
 		loadResources();
+
+		addScene<Demo>("demo");
+
+		scenes.setActive("demo");
+
 	}
 
 	void onGameBeforeUpdate() {
@@ -43,6 +50,14 @@ public:
 
 	void loadResources() {
 
+		Array<String> textures = {
+			"henry.png",
+			"cacodemon.png",
+			"crosshair.png",
+			"scifi_block.png",
+			"prototype.jpg",
+		};
+
 		Array<String> shaders = {
 			"color",
 			"text",
@@ -50,6 +65,13 @@ public:
 			"particle",
 			"batch_line",
 		};
+
+		resources->loadFont("arial", "Fonts/arial.ttf");
+
+		for (auto texture : textures) {
+			auto parts = stringSplit(texture, '.');
+			resources->loadTexture(parts[0], "Textures/" + texture);
+		}
 
 		for (auto shader : shaders) {
 			resources->loadShaderProgram(shader, "Shaders/" + shader + "_vert.glsl", "Shaders/" + shader + "_frag.glsl");

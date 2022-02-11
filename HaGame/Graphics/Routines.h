@@ -20,7 +20,7 @@
 #include "./../Math/Ray.h"
 #include "./../Math/NSphere.h"
 
-#define DEBUG_GRAPHICS true
+#define DEBUG_GRAPHICS false
 
 namespace hagame {
 	namespace graphics {
@@ -85,6 +85,7 @@ namespace hagame {
 		void drawSphereOutline(Vec3 position, float radius, Color color, ShaderProgram* shader = DEBUG_SHADER, float thickness = 0.01f);
 		void drawCupsuleOutline(Vec3 pointA, Vec3 pointB, float radius, Color color, ShaderProgram* shader = DEBUG_SHADER, float thickness = 0.01f);
 		void drawCircle(Vec3 position, Vec3 axis, float radius, Color color, ShaderProgram* shader = DEBUG_SHADER, float thickness = 0.01f);
+		void drawCircle2D(Vec2 position, float radius, Color color, ShaderProgram* shader = DEBUG_SHADER, float thickness = 0.01f, int divisions = 100);
 		void drawTriangle(hagame::math::Triangle tri, Color color, ShaderProgram* shader = DEBUG_SHADER, float thickness = 0.01f);
 		void drawTriangleNormal(hagame::math::Triangle tri, Color color, ShaderProgram* shader = DEBUG_SHADER, float length = 0.5f, float thickness = 0.01f);
 		void drawCone(Vec3 position, Vec3 axis, float radius, float height, Color color, ShaderProgram* shader = DEBUG_SHADER);

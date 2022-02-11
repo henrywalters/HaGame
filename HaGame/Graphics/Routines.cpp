@@ -183,6 +183,16 @@ void hagame::graphics::drawCircle(Vec3 position, Vec3 axis, float radius, Color 
 	mesh->draw(shader);
 }
 
+void hagame::graphics::drawCircle2D(Vec2 position, float radius, Color color, ShaderProgram* shader, float thickness, int divisions)
+{
+	float theta = (2 * PI) / (float) divisions;
+	for (int i = 0; i < divisions; i++) {
+		Vec2 a = Vec2(cos(theta * i), sin(theta * i)) * radius;
+		Vec2 b = Vec2(cos(theta * (i + 1)), sin(theta * (i + 1))) * radius;
+		drawLine(hagame::math::Line(position + a, position + b), color, shader, thickness);
+	}
+}
+
 void hagame::graphics::drawTriangle(hagame::math::Triangle tri, Color color, ShaderProgram* shader, float thickness)
 {
 	drawLine(hagame::math::Line(tri.a, tri.b), color, shader, thickness);

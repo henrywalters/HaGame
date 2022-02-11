@@ -124,6 +124,7 @@
 #define HAGAME_IMPLEMENTATION
 
 #include "Physics/Collisions.cpp"
+#include "Core/ECS/Entity.cpp"
 
 #endif
 

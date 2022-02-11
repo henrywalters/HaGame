@@ -48,8 +48,13 @@ namespace hagame {
 				m_dynamicEntities->clear();
 			}
 
-			void onSystemBeforeUpdate(double dt) {
-				
+			void onSystemUpdate(double dt) {
+				m_dynamicEntities->clear();
+				forEach<BoundingVolume>([this](BoundingVolume* volume, Ptr<Entity> entity) {
+					if (volume->dynamic) {
+						m_dynamicEntities->insert(*volume, entity->transform->getPosition(), entity);
+					}
+				});
 			}
 
 

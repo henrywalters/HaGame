@@ -42,6 +42,8 @@ namespace hagame {
 			// Required for SphereCollider
 			std::optional<Sphere> boundingSphere = std::nullopt;
 
+			BoundingVolume* boundingVolume;
+
 			// Ignore collisions with any of these specific entities
 			Array<hagame::utils::UUID> ignoreEntities;
 

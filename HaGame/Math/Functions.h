@@ -337,6 +337,14 @@ Vec3 MouseToWorld(Mat4 view, Mat4 proj, Vec2 mousePos, Vec2 windowSize, float de
 	return ScreenToWorld(view, proj, mousePosNorm, depth);
 }
 
+// Convert raw mouse position to normalized [-1:1, -1:1] screen position
+Vec2 MouseToScreen(Vec2 windowSize, Vec2 mousePos) {
+	return Vec2({
+		mapToDomain<float>(0.0f, windowSize[0], -1.0f, 1.0f, mousePos[0]),
+		-mapToDomain<float>(0.0f, windowSize[1], -1.0f, 1.0f, mousePos[1])
+	});
+}
+
 // Construct a uint64_t hash id from an array of other data types
 template <class T, size_t N>
 uint64_t HashIds(T ids[N]) {

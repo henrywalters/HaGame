@@ -165,6 +165,14 @@ namespace hagame {
 				return Vector<3, T>({ vector[0], vector[1], vector[2] });
 			}
 
+			operator Vector<2, T>() const {
+				return resize<2>();
+			}
+
+			operator Vector<3, T>() const {
+				return resize<3>();
+			}
+
 			// Basic functions
 
 			// Set all elements to zero
@@ -367,7 +375,7 @@ namespace hagame {
 			}
 
 			template <size_t toSize>
-			Vector<toSize, T> resize(T defaultValue = 0.0) {
+			Vector<toSize, T> resize(T defaultValue = 0.0) const {
 				Vector<toSize, T> copy = Vector<toSize, T>();
 				for (int i = 0; i < toSize; i++) {
 					if (i < size) {
@@ -489,10 +497,26 @@ namespace hagame {
 				return copy;
 			}
 
+			Vector operator*(const Vector& vect) const {
+				Vector copy = *this;
+				for (int i = 0; i < size; i++) {
+					copy[i] = vect[i] * vector[i];
+				}
+				return copy;
+			}
+
 			Vector operator/(T scalar) const {
 				Vector copy = *this;
 				for (int i = 0; i < size; i++) {
 					copy[i] /= scalar;
+				}
+				return copy;
+			}
+
+			Vector operator/(const Vector& vect) const {
+				Vector copy = *this;
+				for (int i = 0; i < size; i++) {
+					copy[i] = vector[i] / vect[i];
 				}
 				return copy;
 			}
@@ -514,6 +538,13 @@ namespace hagame {
 			Vector& operator*=(T scalar) {
 				for (int i = 0; i < size; i++) {
 					vector[i] *= scalar;
+				}
+				return *this;
+			}
+
+			Vector& operator*=(Vector vect) {
+				for (int i = 0; i < size; i++) {
+					vector[i] *= vect[i];
 				}
 				return *this;
 			}

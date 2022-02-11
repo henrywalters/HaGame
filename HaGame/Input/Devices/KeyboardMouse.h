@@ -1,6 +1,7 @@
 #ifndef KEYBOARD_MOUSE
 #define KEYBOARD_MOUSE
 
+#include "../../Core/Publisher.h"
 #include "../Device.h"
 #include "../../Math/Vector.h"
 #include "../../Math/Functions.h"
@@ -15,6 +16,23 @@ namespace hagame {
 		namespace devices {
 
 			using KeyCode = SDL_KeyCode;
+
+			enum class MouseEvents {
+				Moved,
+				LeftPressed,
+				LeftReleased,
+				MiddlePressed,
+				MiddleReleased,
+				RightPressed,
+				RightReleased
+			};
+
+			struct MouseEvent {
+
+				MouseEvent(Vec2 pos) : mousePos(pos) {}
+
+				Vec2 mousePos;
+			};
 
 			struct MouseState {
 				int wheel;
@@ -109,6 +127,8 @@ namespace hagame {
 				MouseState mouse;
 				KeyboardState keyboard;
 
+				Publisher<MouseEvents, MouseEvent> mouseEvents;
+
 				KeyboardMouse() {
 					initialized = false;
 					mouse.prevPosition = Vec2::Zero();
@@ -169,27 +189,36 @@ namespace hagame {
 
 						rAxis[0] = -mouse.delta[0];
 						rAxis[1] = mouse.delta[1];
+
+						mouseEvents.emit(MouseEvents::Moved, MouseEvent(mouse.position));
+
 						break;
 					case SDL_MOUSEBUTTONDOWN:
 						if (event.button.button == SDL_BUTTON_MIDDLE) {
 							updateBtnState(mouse.middle, mouse.middlePressed, true);
+							mouseEvents.emit(MouseEvents::MiddlePressed, MouseEvent(mouse.position));
 						}
 						else if (event.button.button == SDL_BUTTON_LEFT) {
 							updateBtnState(mouse.left, mouse.leftPressed, true);
+							mouseEvents.emit(MouseEvents::LeftPressed, MouseEvent(mouse.position));
 						}
 						else if (event.button.button == SDL_BUTTON_RIGHT) {
 							updateBtnState(mouse.right, mouse.rightPressed, true);
+							mouseEvents.emit(MouseEvents::RightPressed, MouseEvent(mouse.position));
 						}
 						break;
 					case SDL_MOUSEBUTTONUP:
 						if (event.button.button == SDL_BUTTON_MIDDLE) {
 							updateBtnState(mouse.middle, mouse.middlePressed, false);
+							mouseEvents.emit(MouseEvents::MiddleReleased, MouseEvent(mouse.position));
 						}
 						else if (event.button.button == SDL_BUTTON_LEFT) {
 							updateBtnState(mouse.left, mouse.leftPressed, false);
+							mouseEvents.emit(MouseEvents::LeftReleased, MouseEvent(mouse.position));
 						}
 						else if (event.button.button == SDL_BUTTON_RIGHT) {
 							updateBtnState(mouse.right, mouse.rightPressed, false);
+							mouseEvents.emit(MouseEvents::RightReleased, MouseEvent(mouse.position));
 						}
 						break;
 					case SDL_MOUSEWHEEL:

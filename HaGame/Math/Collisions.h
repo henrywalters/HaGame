@@ -44,6 +44,7 @@ namespace hagame {
 			Optional<hagame::math::collisions::Hit> checkRayAgainstPlane(Ray ray, Plane plane, float& t);
 			Optional<hagame::math::collisions::Hit> checkRayAgainstDisc(Ray ray, Disc disc, float& t);
 			Optional<hagame::math::collisions::Hit> checkRayAgainstHollowDisc(Ray ray, Vec3 center, Vec3 normal, float innerRadius, float outerRadius, float& t);
+			Optional<hagame::math::collisions::Hit> checkRayAgainstRect(Ray ray, Rect rect, float& t);
 
 			Optional<hagame::math::collisions::Hit> checkAABBAgainstAABB(math::AABB A, math::AABB B);
 

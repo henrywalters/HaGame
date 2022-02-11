@@ -8,10 +8,10 @@ int main() {
 
 	auto monitor = hagame::graphics::MonitorManager::GetMonitor(0);
 	auto window = hagame::graphics::Window(
-		monitor.displayBounds.pos + Vec2(50.0f),
-		monitor.displayBounds.size - Vec2({ 100, 100 }),
+		Vec2(800, 800),
 		"SpaceHorror"
 	);
+
 
 	window.create();
 

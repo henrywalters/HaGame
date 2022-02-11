@@ -107,13 +107,17 @@ Optional<Ptr<hagame::ecs::Entity>> hagame::physics::Collisions::checkCollisions(
 {
 	if (collider != NULL && collider->dynamic) {
 		auto bs = getBoundingSphere(entity, collider);
+		bs.radius += velocity.magnitude();
+
+		hagame::graphics::drawCircle2D(bs.center, bs.radius, hagame::graphics::Color::green());
+
 		auto velNorm = velocity.normalized();
 		// math::Ray velRay = math::Ray(bs.center + velNorm * bs.radius, velocity * dt);
 		auto velPerp = cross(velNorm, Vec3::Face()) * 100.0f;
 		auto velPerpNorm = velPerp.normalized();
 
 		auto origin = bs.center + velNorm * bs.radius;
-		auto dir = velocity * dt;
+		auto dir = velocity * dt * 1000;
 
 		math::Ray rays[3] = {
 			math::Ray(origin, dir),
@@ -136,7 +140,25 @@ Optional<Ptr<hagame::ecs::Entity>> hagame::physics::Collisions::checkCollisions(
 				auto cube = nCollider->boundingCube.value();
 				cube.pos += neighbor->transform->getPosition();
 
-				for (int i = 0; i < 3; i++) {
+				hagame::graphics::drawCubeOutline(cube, hagame::graphics::Color::red());
+
+				auto broadHit = hagame::math::collisions::checkSphereAgainstAABB(bs, hagame::math::AABB(cube));
+
+				if (broadHit.has_value()) {
+					if (collider->type == ColliderType::BoxCollider) {
+						auto entityCube = collider->boundingCube.value();
+						entityCube.pos += entity->transform->getPosition();
+						auto fineHit = hagame::math::collisions::checkAABBAgainstAABB(hagame::math::AABB(entityCube), hagame::math::AABB(cube));
+
+						if (fineHit.has_value()) {
+							tMin = broadHit.value().depth;
+							collidedWith = neighbor;
+							collided = true;
+						}
+					}
+				}
+
+				/*for (int i = 0; i < 3; i++) {
 					auto rayHit = hagame::math::collisions::checkRayAgainstCube(rays[i], cube, collisionT);
 					if (rayHit.has_value()) {
 						// TODO: add fine grain collision check here but it seems to work great.
@@ -146,7 +168,7 @@ Optional<Ptr<hagame::ecs::Entity>> hagame::physics::Collisions::checkCollisions(
 							collided = true;
 						}
 					}
-				}
+				}*/
 			}
 			else if (nCollider->type == ColliderType::SphereCollider) {
 				auto sphere = nCollider->boundingSphere.value();

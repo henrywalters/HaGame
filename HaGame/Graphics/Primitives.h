@@ -22,11 +22,12 @@ namespace hagame {
 
 		const Array<Vec4> QuadVertexVectors = {
 			Vec4({-0.5f, -0.5f, 0.0f, 1.0f}),
-			Vec4({-0.5f, 0.5f, 0.0f, 0.0f}),
 			Vec4({0.5f, 0.5f, 1.0f, 0.0f}),
+			Vec4({-0.5f, 0.5f, 0.0f, 0.0f}),	
+			
 			Vec4({-0.5f, -0.5f, 0.0f, 1.0f}),
-			Vec4({0.5f, 0.5f, 1.0f, 0.0f}),
-			Vec4({0.5f, -0.5f, 1.0f, 1.0f})
+			Vec4({0.5f, -0.5f, 1.0f, 1.0f}),
+			Vec4({0.5f, 0.5f, 1.0f, 0.0f})
 		};
 
 		const MeshDefinition QuadMesh = MeshDefinition{ 

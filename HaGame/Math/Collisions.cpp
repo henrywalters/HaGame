@@ -196,6 +196,49 @@ Optional<hagame::math::collisions::Hit> hagame::math::collisions::checkRayAgains
 	return std::nullopt;
 }
 
+Optional<hagame::math::collisions::Hit> hagame::math::collisions::checkRayAgainstRect(Ray ray, Rect rect, float& t)
+{
+	auto tNear = (rect.pos - ray.origin) / ray.direction;
+	auto tFar = (rect.pos + rect.size - ray.origin) / ray.direction;
+
+	if (std::isnan(tFar[1]) || std::isnan(tFar[0])) return std::nullopt;
+	if (std::isnan(tNear[0]) || std::isnan(tNear[1])) return std::nullopt;
+
+	if (tNear[0] > tFar[0]) std::swap(tNear[0], tFar[0]);
+	if (tNear[1] > tFar[1]) std::swap(tNear[1], tFar[1]);
+
+	if (tNear[0] > tFar[1] || tNear[1] > tFar[0]) return std::nullopt;
+
+	auto tHitNear = max(tNear[0], tNear[1]);
+	auto tHitFar = min(tFar[0], tFar[1]);
+
+	if (tHitFar < 0) return std::nullopt;
+
+	hagame::math::collisions::Hit hit;
+
+	hit.position = ray.getPointOnLine(tHitNear);
+	hit.depth = ray.direction.magnitude() * (1 - tHitNear);
+	
+	if (tNear[0] > tNear[1]) {
+		if (ray.direction[0] < 0)
+			hit.normal = Vec3(1, 0, 0);
+		else
+			hit.normal = Vec3(-1, 0, 0);
+	}
+	else if (tNear[0] < tNear[1]) {
+		if (ray.direction[1] < 0) {
+			hit.normal = Vec3(0, 1, 0);
+		}
+		else {
+			hit.normal = Vec3(0, -1, 0);
+		}
+	}
+
+	t = tHitNear;
+
+	return hit;
+}
+
 Optional<hagame::math::collisions::Hit> hagame::math::collisions::checkAABBAgainstAABB(math::AABB A, math::AABB B)
 {
 	if (!A.isIntersecting(B))

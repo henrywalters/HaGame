@@ -99,6 +99,10 @@ namespace hagame {
 			T* getOrCreateComponent() {
 				return hasComponent<T>() ? &registry->get<T>(entt_id) : addComponent<T>();
 			}
+
+			Vec3 getPos();
+			Quat getRot();
+			Vec3 getScale();
 			
 			/*
 			Vec3 getPos() { return transform->getPosition(); }

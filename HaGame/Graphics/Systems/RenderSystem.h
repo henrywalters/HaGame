@@ -38,7 +38,11 @@ namespace hagame {
 				cube = std::make_shared<Mesh>(CubeMesh);
 			}
 
-			void onSystemUpdate(double dt) {
+			void onSystemBeforeUpdate() {
+
+			}
+
+			void onSystemBeforeUpdate(double dt) {
 
 				OrthographicCamera uiCamera = OrthographicCamera(scene->game->window->size);
 				Mat4 uiProjMat = uiCamera.getProjMatrix(Vec3::Zero());
@@ -166,20 +170,20 @@ namespace hagame {
 				forEach<SpriteRenderer>([this](SpriteRenderer* r, Ptr<ecs::Entity> entity) {
 					if (entity != NULL && r->sprite->texture != NULL && r->shader != NULL) {
 
-						std::cout << "Rendering sprite\n";
-
 						r->shader->use();
 
-						auto translation = Mat4::Translation(entity->transform->getPosition() + r->sprite->rect.pos.resize<3>());
+						auto translation = Mat4::Translation(entity->transform->getPosition() + r->sprite->rect.pos);
 						auto rotation = Mat4::Rotation(entity->transform->getRotation() * Quat(r->sprite->rotation, Vec3::Face()));
 						auto scale = Mat4::Scale(r->sprite->rect.size.resize<3>());
 
 						r->shader->setMVP(
 							translation * rotation * scale,
-							r->viewMat.has_value() ? r->viewMat.value() : scene->viewMat,
-							r->projMat.has_value() ? r->projMat.value() : scene->projMat
+							scene->viewMat,
+							scene->projMat
 						);
 						r->sprite->draw(r->shader);
+
+						glCheckError();
 					}
 					
 				});

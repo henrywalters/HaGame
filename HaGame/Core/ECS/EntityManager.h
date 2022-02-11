@@ -66,6 +66,22 @@ namespace hagame {
 				}
 			}
 
+			template <class T>
+			void forEach(std::function<void(T*, Ptr<Entity>)> lambda) {
+				for (auto entity : registry->view<T>()) {
+					lambda(&registry->get<T>(entity), getByEnttId(entity));
+				}
+			}
+
+			template <class T>
+			void forEach(std::function<void(T*, Ptr<Entity>)> lambda, Array<uint64_t> ignoreEntities, Array<String> ignoreTags) {
+				for (auto entity : registry->view<T>()) {
+					if (!hasElement(ignoreEntities, (uint64_t)entity->uuid) && !entity->hasTag(ignoreTags)) {
+						lambda(&registry->get<T>(entity), getByEnttId(entity));
+					}
+				}
+			}
+
 			// Instantiate a new Entity belonging to the parent
 			Ptr<Entity> add(Ptr<Entity> parent) {
 				Ptr<Entity> entity = add();

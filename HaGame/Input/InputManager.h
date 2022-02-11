@@ -10,7 +10,7 @@
 namespace hagame {
 	namespace input {
 
-		enum WindowEvents {
+		enum class WindowEvents {
 			Moved,
 			Resized,
 		};

@@ -51,6 +51,10 @@ namespace hagame {
 			Game::input.onQuit([this]() {
 				running = false;
 			});
+			input.windowEvents.subscribe(input::WindowEvents::Resized, [this](input::WindowEvent e) {
+				window->size = e.data;
+				std::cout << "UPDATED WINDOW SIZE\n";
+			});
 			audio->initialize();
 		}
 
