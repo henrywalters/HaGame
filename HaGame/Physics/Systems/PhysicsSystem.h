@@ -15,10 +15,17 @@ namespace hagame {
 				return "hagame::physics::PhysicsSystem";
 			}
 
+			void onSystemBeforeUpdate(double dt) {
+				forEach<RigidBody>([this, dt](RigidBody* rb, Ptr<ecs::Entity> entity) {
+					rb->clearForces();
+
+				});
+			}
+
 			void onSystemAfterUpdate(double dt) {
 				forEach<RigidBody>([this, dt](RigidBody* rb, Ptr<ecs::Entity> entity) {
 					rb->applyGlobalGravity();
-					std::cout << rb->netForce << "\n";
+					//std::cout << rb->netForce << "\n";
 					rb->update(dt);
 
 					

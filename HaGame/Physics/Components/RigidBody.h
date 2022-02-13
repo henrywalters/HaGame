@@ -33,7 +33,7 @@ namespace hagame {
 				accel = netForce / mass;
 				accel.update([this](int idx, float accel) { return fixAxis[idx] ? 0.0f : accel; });
 				vel += accel * dt;
-				clearForces();
+				// clearForces();
 			}
 		};
 	}

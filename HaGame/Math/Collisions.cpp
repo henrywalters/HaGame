@@ -212,7 +212,7 @@ Optional<hagame::math::collisions::Hit> hagame::math::collisions::checkRayAgains
 	auto tHitNear = max(tNear[0], tNear[1]);
 	auto tHitFar = min(tFar[0], tFar[1]);
 
-	if (tHitFar < 0) return std::nullopt;
+	if (tHitFar < 0 || tHitNear < 0) return std::nullopt;
 
 	hagame::math::collisions::Hit hit;
 

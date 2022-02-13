@@ -3,6 +3,8 @@
 
 #include "./../../HaGame/HaGame.h"
 #include "./../Common/RuntimeLevel.h"
+#include "./../Systems/PlatformerSystem.h"
+#include "./../Components/PlayerController.h"
 
 class Demo : public RuntimeLevel {
 public:
@@ -15,16 +17,22 @@ public:
 
 private:
 
+	void renderPlayerConfig();
+
 	double frameTime;
 
 	Ptr<hagame::ecs::Entity> player;
 
 	const Array<String> MAP = {
-		"##########",
-		"----------",
-		"-P--# #---",
-		"----------",
-		"#####--###",
+		"############################",
+		"#--------------------------#",
+		"#---------#--#--#----------#",
+		"#-----P--------------------#",
+		"# ----------------####-----#",
+		"#--------------------------#",
+		"#----------------------##--#",
+		"#--------------------------#",
+		"############################",
 	};
 
 };

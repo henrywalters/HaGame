@@ -4,6 +4,7 @@
 #include "../HaGame/HaGame.h"
 #include "./Common/RuntimeLevel.cpp";
 #include "./Scenes/Demo.cpp"
+#include "./Systems/PlatformerSystem.cpp"
 
 class SpaceHorror : public hagame::Game {
 public:

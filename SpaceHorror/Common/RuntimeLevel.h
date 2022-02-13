@@ -2,6 +2,7 @@
 #define RUNTIME_LEVEL_H
 
 #include "./../../HaGame/HaGame.h"
+#include "./../Components/Platformer.h"
 
 class RuntimeLevel : public hagame::Scene {
 protected:
@@ -24,19 +25,10 @@ protected:
 	hagame::physics::Collider* addBoxCollider(Ptr<hagame::ecs::Entity> entity, Vec2 size, bool dynamic = true);
 	hagame::physics::Collider* addCircleCollider(Ptr<hagame::ecs::Entity> entity, float radius, bool dynamic = true);
 
-	// Return the allowable velocity after collisions
-	void resolveCollisions(Ptr<hagame::ecs::Entity> entity, Vec3& velocity, bool& grounded);
-
 	void setMousePos(Vec2 rawMousePos);
 	void setWindowSize(Vec2 size);
 
 private:
-
-	struct EntityHit {
-		Ptr<Entity> entity;
-		Vec3 normal;
-		float t;
-	};
 
 	// Return the time <= dt such that the entity cube is just less than colliding with the other cube.
 	float binarySearchCollisionTime(Cube entityCube, Cube otherCube, Vec2 velocity, double dt);
