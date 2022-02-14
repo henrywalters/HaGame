@@ -76,14 +76,11 @@ void Demo::onSceneUpdate(double dt)
 	//	playerBody->applyForce(Vec3::Top(3000.0f));
 	//}
 
-	playerBody->applyForce(Vec3::Right(game->input.keyboardMouse.lAxis[0]) * player->getComponent<PlayerController>()->movementForce);
-
-	camera->transform->setPosition(player->transform->getPosition());
-
 }
 
 void Demo::onSceneAfterUpdate()
 {
+	camera->transform->setPosition(player->transform->getPosition());
 	renderPlayerConfig();
 	auto shader = game->resources->getShaderProgram("batch_line");
 	shader->use();
@@ -101,8 +98,12 @@ void Demo::renderPlayerConfig()
 {
 	auto platform = player->getComponent<Platformer>();
 	auto controller = player->getComponent<PlayerController>();
+	auto rigidbody = player->getComponent<RigidBody>();
+
 	ImGui::Begin("Player Controls");
-	ImGui::SliderFloat("Movement Force", &controller->movementForce, 0, 100);
+	ImGui::SliderFloat("Movement Force", &controller->movementForce, 0, 10000);
+	ImGui::SliderFloat("Jump Force", &controller->jumpForce, 0, 10000);
 	ImGui::SliderFloat("Ground Drag", &platform->groundDrag, 0, 10000);
 	ImGui::SliderFloat("Air Drag", &platform->airDrag, 0, 10000);
+	ImGui::SliderFloat("Gravity", &rigidbody->forceDueToGravity, -30, 30);
 }

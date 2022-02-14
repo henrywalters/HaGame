@@ -2,8 +2,9 @@
 #define PLATFORMER_H
 
 struct Platformer {
-	float groundDrag = 6000.0f;
-	float airDrag = 4000.0f;
+	float groundDrag = 600.0f;
+	float airDrag = 500.0f;
+	bool grounded = false;
 };
 
 #endif

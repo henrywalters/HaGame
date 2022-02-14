@@ -88,8 +88,8 @@ namespace hagame {
 		}
 
 		void updatePhysics(double dt) {
-			onScenePhysicsUpdate(dt);
 			ecs.systems.physicsUpdateAll(dt);
+			onScenePhysicsUpdate(dt);
 		}
 
 	public:

@@ -1,10 +1,12 @@
 #include "PlatformerSystem.h"
 
-void PlatformerSystem::onSystemUpdate(double dt) {
+void PlatformerSystem::onSystemAfterUpdate(double dt) {
 	forEach<Platformer>([this, dt](Platformer* p, Ptr<hagame::ecs::Entity> entity) {
 		auto rigidbody = entity->getComponent<hagame::physics::RigidBody>();
+		auto platformer = entity->getComponent<Platformer>();
 		auto velocity = rigidbody->vel;
 		velocity *= dt;
+
 
 		Vec3 velX = velocity * Vec3::Right();
 		Vec3 velY = velocity * Vec3::Top();
@@ -23,17 +25,44 @@ void PlatformerSystem::onSystemUpdate(double dt) {
 			rigidbody->vel[1] = 0.0f;
 		}
 
-		// Apply drag forces in air or ground
-		auto drag = collisionDirsY[2] ? p->groundDrag : p->airDrag;
+		// Check if the platformer object is grounded
+		// platformer->grounded = false;
 
-		std::cout << Vec3::Right(velocity[0] * -drag * dt) << "\n";
-
-		rigidbody->applyForce(Vec3::Right(velocity[0] * -drag));
+		if (collisionDirsY[2]) {
+			platformer->grounded = true;
+		}
+		else {
+			platformer->grounded = false;
+		}
 
 		entity->transform->move(velX + velY);
 	});
-};
+}
 
+void PlatformerSystem::onSystemPhysicsUpdate(double dt)
+{
+	forEach<PlayerController>([this, dt](PlayerController* p, Ptr<Entity> entity) {
+		auto rigidbody = entity->getComponent<RigidBody>();
+		auto controller = entity->getComponent<PlayerController>();
+		auto platformer = entity->getComponent<Platformer>();
+		
+		if (platformer->grounded) {
+			rigidbody->applyForce(Vec3::Right(game->input.keyboardMouse.lAxis[0]) * controller->movementForce);
+		}
+
+		if (game->input.keyboardMouse.a && platformer->grounded) {
+			rigidbody->applyForce(Vec3::Top(controller->jumpForce));
+		}
+	});
+
+	forEach<Platformer>([this, dt](Platformer* p, Ptr<Entity> entity) {
+		auto rigidbody = entity->getComponent<RigidBody>();
+		// Apply drag forces in air or ground
+		auto drag = p->grounded ? p->groundDrag : p->airDrag;
+
+		rigidbody->applyForce(Vec3::Right(rigidbody->vel[0] * -drag * dt));
+	});
+}
 
 void PlatformerSystem::resolveCollisions(Ptr<hagame::ecs::Entity> entity, Vec3& velocity, std::array<bool, 4>& directions)
 {
