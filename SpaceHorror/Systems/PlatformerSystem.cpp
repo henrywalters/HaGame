@@ -37,20 +37,35 @@ void PlatformerSystem::onSystemAfterUpdate(double dt) {
 
 		entity->transform->move(velX + velY);
 	});
+
+	forEach<PlayerController>([this, dt](PlayerController* p, Ptr<Entity> entity) {
+		hagame::math::Ray ray = hagame::math::Ray(entity->getPos(), (p->lookingAt - entity->getPos()) * 1000);
+		float t;
+		auto collision = game->collisions.raycast(entity, ray, t, { "player" });
+		if (collision.has_value()) {
+			hagame::graphics::drawLine(hagame::math::Line(entity->getPos(), collision.value().point), Color::red(), DEBUG_SHADER, 0.02f);
+		}
+		else {
+			hagame::graphics::drawLine(hagame::math::Line(entity->getPos(), ray.getPointOnLine(1)), Color::red(), DEBUG_SHADER, 0.02f);
+		}
+		
+	});
 }
 
 void PlatformerSystem::onSystemPhysicsUpdate(double dt)
 {
-	forEach<PlayerController>([this, dt](PlayerController* p, Ptr<Entity> entity) {
+	auto input = game->input.player(0);
+
+	forEach<PlayerController>([this, dt, input](PlayerController* p, Ptr<Entity> entity) {
 		auto rigidbody = entity->getComponent<RigidBody>();
 		auto controller = entity->getComponent<PlayerController>();
 		auto platformer = entity->getComponent<Platformer>();
 		
 		if (platformer->grounded) {
-			rigidbody->applyForce(Vec3::Right(game->input.keyboardMouse.lAxis[0]) * controller->movementForce);
+			rigidbody->applyForce(Vec3::Right(input.lAxis[0]) * controller->movementForce);
 		}
 
-		if (game->input.keyboardMouse.a && platformer->grounded) {
+		if (input.a && platformer->grounded) {
 			rigidbody->applyForce(Vec3::Top(controller->jumpForce));
 		}
 	});

@@ -3,9 +3,13 @@
 
 #include "./../../HaGame/HaGame.h"
 #include "./../Components/Platformer.h"
+#include "./../../HaGame/Utils/ConfigParser.h"
 
 class RuntimeLevel : public hagame::Scene {
 protected:
+
+	const String CONFIG_DIR = "../../../SpaceHorror/Config";
+
 	const float PIXELS_PER_METER = 100.0f;
 	const float WIDTH_HEIGHT_RATIO = 1.3f;
 
@@ -14,6 +18,7 @@ protected:
 
 	Vec2 cellSize = Vec2(1.0f);
 
+	float lookAngle = 0;
 	Vec2 mousePos;
 
 	Ptr<hagame::ecs::Entity> camera;

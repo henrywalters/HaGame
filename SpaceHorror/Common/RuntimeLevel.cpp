@@ -67,15 +67,7 @@ void RuntimeLevel::setMousePos(Vec2 rawMousePos)
 void RuntimeLevel::setWindowSize(Vec2 size)
 {
 	orth->size = size / PIXELS_PER_METER;
-	//camera->transform->setPosition(game->window->size.resize<3>() / 2.0f);
 	cellSize = size / 10.0f;
-	for (auto entityId : ecs.getRegistry()->view<hagame::graphics::SpriteRenderer>()) {
-		auto entity = ecs.entities.getByEnttId(entityId);
-		if (entity->hasTag("resizable")) {
-			std::cout << cellSize << "\n";
-			entity->getComponent<hagame::graphics::SpriteRenderer>()->sprite->rect.size = cellSize;
-		}
-	}
 }
 
 float RuntimeLevel::binarySearchCollisionTime(Cube entityCube, Cube otherCube, Vec2 velocity, double dt)

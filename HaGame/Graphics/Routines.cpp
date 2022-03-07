@@ -96,14 +96,14 @@ void hagame::graphics::drawLine(hagame::math::Line line, Color color, ShaderProg
 	
 }
 
-void hagame::graphics::drawRect(Rect rect, Color color, ShaderProgram* shader)
+void hagame::graphics::drawRect(Rect rect, Color color, ShaderProgram* shader, float thickness)
 {
 	Vec3 pos = rect.pos.resize<3>();
 	Vec3 size = rect.size.resize<3>();
-	drawLine(hagame::math::Line(pos, pos + size.prod(Vec3::Right())), color, shader);
-	drawLine(hagame::math::Line(pos, pos + size.prod(Vec3::Top())), color, shader);
-	drawLine(hagame::math::Line(pos + size.prod(Vec3::Top()), pos + size), color, shader);
-	drawLine(hagame::math::Line(pos + size.prod(Vec3::Right()), pos + size), color, shader);
+	drawLine(hagame::math::Line(pos, pos + size.prod(Vec3::Right())), color, shader, thickness);
+	drawLine(hagame::math::Line(pos, pos + size.prod(Vec3::Top())), color, shader, thickness);
+	drawLine(hagame::math::Line(pos + size.prod(Vec3::Top()), pos + size), color, shader, thickness);
+	drawLine(hagame::math::Line(pos + size.prod(Vec3::Right()), pos + size), color, shader, thickness);
 }
 
 // Draw a cube outline with a given shader. Assumes MVP matrix is already set.
@@ -280,9 +280,19 @@ void hagame::graphics::drawScaleGizmo(Vec3 position, float size, ShaderProgram* 
 	glEnable(GL_DEPTH_TEST);
 }
 
-void hagame::graphics::drawText(ShaderProgram* shader, Font* font, String message, Color color, Vec3 pos, float maxLength)
+void hagame::graphics::drawCrosshairs(Vec3 position, float innerRadius, float outerRadius, Color color, float thickness, ShaderProgram* shader)
+{
+	//drawCircle2D(position, radius, color, shader, thickness);
+	drawLine(hagame::math::Line(position, position + Vec3::Face(1)), color, shader, thickness);
+	drawLine(hagame::math::Line(position + Vec3::Top(innerRadius), position + Vec3::Top(outerRadius)), color, shader, thickness);
+	drawLine(hagame::math::Line(position - Vec3::Top(innerRadius), position - Vec3::Top(outerRadius)), color, shader, thickness);
+	drawLine(hagame::math::Line(position + Vec3::Right(innerRadius), position + Vec3::Right(outerRadius)), color, shader, thickness);
+	drawLine(hagame::math::Line(position - Vec3::Right(innerRadius), position - Vec3::Right(outerRadius)), color, shader, thickness);
+}
+
+void hagame::graphics::drawText(ShaderProgram* shader, Font* font, String message, Color color, Vec3 pos, TextHAlignment alignmentH, TextVAlignment alignmentV)
 {
 	shader->use();
 	shader->setVec4("textColor", color);
-	textBuffer.draw(font, message, pos, maxLength);
+	textBuffer.draw(font, message, pos, alignmentH, alignmentV);
 }

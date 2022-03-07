@@ -26,7 +26,7 @@ Array<String> stringSplit(String str, char delim)
 	if (tmp.length() > 0) {
 		parts.push_back(tmp);
 	}
-
+	 
 	return parts;
 }
 
@@ -55,6 +55,44 @@ String stringReplace(String str, char replace, String with)
 		else {
 			out += str[i];
 		}
+	}
+	return out;
+}
+
+String stringTrim(String str)
+{
+	String out = "";
+	bool foundNonWhiteSpace = false;
+	int lastWhiteSpace = 0;
+	int lastNonWhiteSpace = 0;
+
+	for (int i = 0; i < str.size(); i++) {
+		if (!foundNonWhiteSpace) {
+			if (str[i] != ' ') {
+				foundNonWhiteSpace = true;
+				lastWhiteSpace = i;
+				out += str[i];
+			}
+		}
+		else {
+			if (str[i] != ' ') {
+				lastNonWhiteSpace = i;
+			}
+		}
+	}
+
+	for (int i = lastWhiteSpace + 1; i <= lastNonWhiteSpace; i++) {
+		out += str[i];
+	}
+
+	return out;
+}
+
+String stringSlice(String str, int start, int end)
+{
+	String out = "";
+	for (int i = start; i < end; i++) {
+		out += str[i];
 	}
 	return out;
 }

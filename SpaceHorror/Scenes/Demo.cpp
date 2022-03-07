@@ -18,15 +18,20 @@ void Demo::onSceneInit()
 	addSystem<CollisionSystem>();
 	addSystem<PlatformerSystem>();
 
+
+}
+
+void Demo::onSceneActivate()
+{
 	addCamera();
 
 	for (int i = 0; i < MAP.size(); i++) {
-		for (int j = 0; j < MAP[i].size();  j++) {
+		for (int j = 0; j < MAP[i].size(); j++) {
 			switch (MAP[i][j]) {
 			case '#':
 				addBoxCollider(
-					addSprite("prototype", Vec2(j, i).prod(BLOCK_SIZE), BLOCK_SIZE), 
-					BLOCK_SIZE, 
+					addSprite("prototype", Vec2(j, i).prod(BLOCK_SIZE), BLOCK_SIZE),
+					BLOCK_SIZE,
 					false
 				);
 				break;
@@ -37,51 +42,70 @@ void Demo::onSceneInit()
 		}
 	}
 
+	auto bulletConfig = hagame::utils::File(CONFIG_DIR, "Bullets.conf");
+	auto weaponConfig = hagame::utils::File(CONFIG_DIR, "Weapons.conf");
+
+	bullets = parseBulletConfig(bulletConfig);
+	weapons = parseWeaponConfig(weaponConfig, bullets);
+
 	player->addComponent<PlayerController>();
 
 	addPhysics(player, 1);
 	addBoxCollider(player, PLAYER_SIZE);
-	
+
 	game->input.keyboardMouse.mouseEvents.subscribe(MouseEvents::Moved, [this](MouseEvent e) {
-		setMousePos(e.mousePos);
+		//setMousePos(e.mousePos);
 	});
 
 	game->input.windowEvents.subscribe(hagame::input::WindowEvents::Resized, [this](hagame::input::WindowEvent e) {
 		setWindowSize(e.data);
+		game->window->setViewport(Rect(Vec2::Zero(), e.data));
 	});
-}
-
-void Demo::onSceneActivate()
-{
-	game->input.keyboardMouse.hideCursor();
 }
 
 void Demo::onSceneBeforeUpdate()
 {
+	setMousePos(game->input.keyboardMouse.mouse.position);
+
+	auto playerController = player->getComponent<PlayerController>();
+
+	if (!game->input.usingGamepad(0)) {
+		drawCrosshairs(mousePos, 0.1, 0.3, Color::green());
+		playerController->lookingAt = mousePos;
+	}
+	else {
+		auto looking = game->input.player(0).rAxis;
+		if (abs(looking[1]) > 0.1f) {
+			lookAngle += looking[1] * frameTime;
+		}
+
+		if (looking[0] > 0.9f) {
+			lookAngle = 0;
+		}
+
+		if (looking[0] < -0.9f) {
+			lookAngle = PI;
+		}
+
+		playerController->lookingAt = player->getPos() + Quat(lookAngle, Vec3::Face()).rotatePoint(Vec3::Right());
+	}
 }
 
 void Demo::onSceneUpdate(double dt)
 {
-	frameTime = dt;
-	//auto vel = game->input.keyboardMouse.lAxis * 1 * dt;
 
+	frameTime = dt;
 	auto playerBody = player->getComponent<RigidBody>();
 
-	
-	game->resources->getShaderProgram("text")->setMat4("projection", Mat4::Orthographic(0, game->window->size[0], 0, game->window->size[1], -10, 10));
-	drawText(game->resources->getShaderProgram("text"), game->resources->getFont("arial"), std::to_string(dt), Color::white(), Vec3(0, 0));
-	drawText(game->resources->getShaderProgram("text"), game->resources->getFont("arial"), player->getPos().toString() + " " + playerBody->vel.toString(), Color::white(), Vec3(0, 30));
-
-	//if (game->input.keyboardMouse.aPressed && collidedDirsY[2]) {
-	//	playerBody->applyForce(Vec3::Top(3000.0f));
-	//}
-
+	if (game->input.keyboardMouse.start) {
+		game->scenes.activate("home");
+	}
 }
 
 void Demo::onSceneAfterUpdate()
 {
 	camera->transform->setPosition(player->transform->getPosition());
-	renderPlayerConfig();
+
 	auto shader = game->resources->getShaderProgram("batch_line");
 	shader->use();
 	shader->setMVP(Mat4::Identity(), Mat4::Identity(), orth->getProjMatrix(camera->transform.get()));
@@ -92,6 +116,7 @@ void Demo::onSceneDeactivate()
 {
 	std::cout << "DEMO DEACTIVATED\n";
 	game->input.keyboardMouse.showCursor();
+	ecs.entities.clear();
 }
 
 void Demo::renderPlayerConfig()

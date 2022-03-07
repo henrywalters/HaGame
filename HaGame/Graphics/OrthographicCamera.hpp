@@ -19,8 +19,10 @@ namespace hagame {
 
 			Vec2 size;
 			
-			float zFar = 1.0f;
-			float zNear = -1.0f;
+			float zNear = 0;
+			float zFar = -16777215.0;
+
+			bool centered = true;
 
 			OrthographicCamera() {}
 			OrthographicCamera(Vec2 _size) : size(_size) {}
@@ -51,18 +53,27 @@ namespace hagame {
 			}
 
 			Mat4 getProjMatrix(Vec3 camPos) {
-				return Mat4::Orthographic(
-					camPos[0] - size[0] * 0.5f * zoomLog,
-					camPos[0] + size[0] * 0.5f * zoomLog,
-					camPos[1] - size[1] * 0.5f * zoomLog,
-					camPos[1] + size[1] * 0.5f * zoomLog,
-					//camPos[0],
-					//camPos[0] + size[0],
-					//camPos[1],
-					//camPos[1] + size[1],
-					-1.0,
-					1.0
-				);
+				if (centered) {
+					return Mat4::Orthographic(
+						camPos[0] - size[0] * 0.5f * zoomLog,
+						camPos[0] + size[0] * 0.5f * zoomLog,
+						camPos[1] - size[1] * 0.5f * zoomLog,
+						camPos[1] + size[1] * 0.5f * zoomLog,
+						zNear,
+						zFar
+					);
+				}
+				else {
+					return Mat4::Orthographic(
+						0,
+						camPos[0] + size[0] * zoomLog,
+						0,
+						camPos[1] + size[1] * zoomLog,
+						zNear,
+						zFar
+					);
+				}
+				
 			}
 
 			Vec2 getGamePos(Ptr<hagame::Transform> transform, Vec2 screenPos) {

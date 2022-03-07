@@ -4,14 +4,16 @@
 #include "./SpaceHorror.h"
 
 int main() {
+
+	std::cout << stringTrim("HelloWorld") << "\n";
+
 	hagame::Game::initializeSDL();
 
-	auto monitor = hagame::graphics::MonitorManager::GetMonitor(0);
+	auto monitor = hagame::graphics::MonitorManager::GetMonitor(0); 
 	auto window = hagame::graphics::Window(
 		Vec2(800, 800),
 		"SpaceHorror"
 	);
-
 
 	window.create();
 

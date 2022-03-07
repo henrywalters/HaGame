@@ -3,7 +3,10 @@
 
 #include "../HaGame/HaGame.h"
 #include "./Common/RuntimeLevel.cpp";
+#include "./Common/Weapons.cpp";
 #include "./Scenes/Demo.cpp"
+#include "./Scenes/Home.h"
+#include "./Scenes/Editor.h"
 #include "./Systems/PlatformerSystem.cpp"
 
 class SpaceHorror : public hagame::Game {
@@ -30,19 +33,30 @@ public:
 		loadResources();
 
 		addScene<Demo>("demo");
+		addScene<Home>("home");
+		addScene<Editor>("editor");
 
-		scenes.setActive("demo");
+		scenes.setActive("home");
 
 	}
 
 	void onGameBeforeUpdate() {
+		bool uiHovered = ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow);
+		if (!uiHovered) {
+			ImGui::SetMouseCursor(ImGuiMouseCursor_None);
+		}
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplSDL2_NewFrame(window->window);
 		ImGui::NewFrame();
 	}
 
+	void onGameUpdate() {
+		
+	}
+
 	void onGameAfterUpdate() {
 		// ImGui::ShowDemoWindow();
+
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		window->setTitle("SpaceHorror - " + std::to_string(fps / 1000000));
@@ -67,7 +81,11 @@ public:
 			"batch_line",
 		};
 
-		resources->loadFont("arial", "Fonts/arial.ttf");
+		resources->loadFont("arial", "Fonts/arial.ttf", 36);
+		resources->loadFont("horroroid", "Fonts/horroroid/horroroid.ttf", 64);
+
+		resources->loadAudioSample("creepy_home", "creepy_ambience.wav");
+		resources->loadAudioSample("thud", "Audio/thud.wav");
 
 		for (auto texture : textures) {
 			auto parts = stringSplit(texture, '.');

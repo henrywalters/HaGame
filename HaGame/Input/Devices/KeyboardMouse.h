@@ -150,6 +150,7 @@ namespace hagame {
 				}
 
 				void showCursor() {
+					std::cout << "SHOWING CURSOR\n";
 					SDL_ShowCursor(SDL_ENABLE);
 				}
 
@@ -178,7 +179,7 @@ namespace hagame {
 
 				void handleEvent(SDL_Event event) {
 
-					ImGui_ImplSDL2_ProcessEvent(&event);
+					// ImGui_ImplSDL2_ProcessEvent(&event);
 
 					switch (event.type) {
 					case SDL_MOUSEMOTION:
@@ -282,6 +283,7 @@ namespace hagame {
 					io.MouseDown[0] = mouse.left;
 					io.MouseDown[1] = mouse.right;
 					io.MouseWheel = static_cast<float>(mouse.wheel);
+					io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
 				}
 			};
 		}

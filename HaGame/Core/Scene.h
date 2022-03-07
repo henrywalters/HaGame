@@ -17,6 +17,9 @@ namespace hagame {
 
 	class Scene {
 	private:
+
+		bool active = false;
+
 		void setActiveCamera() {
 
 			bool foundCamera = false;
@@ -59,16 +62,19 @@ namespace hagame {
 		}
 
 		void activate() {
+			active = true;
 			timer.reset();
 			onSceneBeforeActivate();
 			std::cout << "Starting all systems\n";
 			ecs.systems.startAll();
 			onSceneActivate();
 			onSceneAfterActivate();
+			
 			//DEBUG_LOG("Scene start", timer.elapsed());
 		}
 
 		void deactivate() {
+			active = false;
 			timer.reset();
 			ecs.systems.stopAll();
 			onSceneDeactivate();
@@ -78,12 +84,18 @@ namespace hagame {
 		void update(double dt) {
 			timer.reset();
 			setActiveCamera();
-			onSceneBeforeUpdate();
-			ecs.systems.beforeUpdateAll(dt);
-			ecs.systems.updateAll(dt);
-			onSceneUpdate(dt);
-			ecs.systems.afterUpdateAll(dt);
-			onSceneAfterUpdate();
+			if (active)
+				onSceneBeforeUpdate();
+			if (active)
+				ecs.systems.beforeUpdateAll(dt);
+			if (active)
+				ecs.systems.updateAll(dt);
+			if (active)
+				onSceneUpdate(dt);
+			if (active)
+				ecs.systems.afterUpdateAll(dt);
+			if (active)
+				onSceneAfterUpdate();
 			//DEBUG_LOG("Scene update", timer.elapsed());
 		}
 

@@ -29,8 +29,13 @@ namespace hagame {
 				return true;
 			}
 
-			std::string toString() {
+			std::string toString() const {
 				return "Position: " + pos.toString() + " Size: " + size.toString();
+			}
+
+			friend std::ostream& operator <<(std::ostream& out, const Hypercube& cube) {
+				out << cube.toString();
+				return out;
 			}
 
 			static Hypercube Zero() {

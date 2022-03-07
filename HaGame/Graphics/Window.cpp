@@ -2,11 +2,10 @@
 #define WINDOW_CPP
 
 #include "Window.h"
-#include "Monitors.h"
 
 void hagame::graphics::Window::initGLAttribs() {
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32);
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
@@ -50,6 +49,13 @@ void hagame::graphics::Window::initGLContext() {
 
 	hagame::graphics::textBuffer.initializeForGL();
 	hagame::graphics::lineBuffer.initializeBuffers();
+
+	//m_frameBuffer = std::make_shared<FrameBuffer>();
+	//m_frameBuffer->initialize();
+
+	// m_colorTexture = std::make_shared<Texture>(size);
+
+	//m_frameBuffer->attachTexture(m_colorTexture.get());
 
 	//if (SDL_GL_SetSwapInterval(-1) < 0) {
 	//	throw new std::exception("Failed to set VSync");
@@ -103,7 +109,7 @@ void hagame::graphics::Window::create() {
 	
 	initGLAttribs();
 
-	Uint32 flags = SDL_WINDOW_OPENGL;
+	Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
 	int x = 0, y = 0, w = 0, h = 0;
 
 	switch (mode) {
@@ -151,10 +157,10 @@ void hagame::graphics::Window::clear() {
 	glClearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	glEnable(GL_STENCIL_TEST);
-	//glEnable(GL_ALPHA_TEST);
+	// glEnable(GL_ALPHA_TEST);
 	glEnable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_MULTISAMPLE);
+	//glEnable(GL_MULTISAMPLE);
 	//glEnable(GL_CULL_FACE);
 	glFrontFace(GL_CCW);
 	//glCullFace(GL_BACK);

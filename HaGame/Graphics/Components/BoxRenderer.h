@@ -46,17 +46,19 @@ namespace hagame {
 
 					auto fillSize = box.size.resize<3>();
 					fillSize[0] *= fillPercent;
-					auto fillOffset = Vec3({ -(box.size[0] - (1 - fillPercent)) / 2.0f, 0.0f, 0.0f });
+					// auto fillOffset = Vec3({ -(box.size[0] - (1 - fillPercent)) / 2.0f, 0.0f, 0.0f });
 
-					std::cout << fillSize.toString() << "\n";
+					// std::cout << fillSize.toString() << "\n";
 
 					shader->setVec4("color", fillColor.value());
-					shader->setMat4("model", Mat4::Translation(position + box.pos.resize<3>() + fillOffset) * Mat4::Scale(fillSize));
+					shader->setMat4("model", Mat4::Translation(position + box.pos.resize<3>()) * Mat4::Scale(fillSize));
 					// shader->setMat4("model", Mat4::Translation(position + box.pos.resize<3>()) * Mat4::Scale(box.size.resize<3>()));
 					vao->bind();
 					glDrawArrays(GL_TRIANGLES, 0, 6);
 					glCheckError();
 				}
+
+				glBindVertexArray(0);
 
 				glBindVertexArray(0);
 			}

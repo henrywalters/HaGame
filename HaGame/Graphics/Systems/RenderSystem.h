@@ -19,6 +19,7 @@
 #include "../Components/Sprite3DRenderer.h"
 #include "../Components/AnimatedSpriteRenderer.h"
 #include "../Components/ParticleEmitterRenderer.h"
+#include "../Components/QuadRenderer.h"
 #include "../../Utils/Timer.h"
 #include "../../Math/Sample.h"
 #include <cstddef>
@@ -38,14 +39,30 @@ namespace hagame {
 				cube = std::make_shared<Mesh>(CubeMesh);
 			}
 
-			void onSystemBeforeUpdate() {
+			void onSystemAfterUpdate(double dt) {
+				OrthographicCamera uiCamera = OrthographicCamera(scene->game->window->size);
+				Mat4 uiProjMat = uiCamera.getProjMatrix(Vec3::Zero());
 
+				forEach<TextRenderer>([this](TextRenderer* r, Ptr<ecs::Entity> entity) {
+					r->shader->use();
+					r->shader->setMat4("projection", scene->projMat);
+					if (r->font->getFontSize() != r->fontSize) {
+						r->font->setFontSize(r->fontSize);
+					}
+					drawText(r->shader, r->font, r->message, r->color, entity->getPos(), r->alignmentH, r->alignmentV);
+				});
 			}
 
 			void onSystemBeforeUpdate(double dt) {
 
 				OrthographicCamera uiCamera = OrthographicCamera(scene->game->window->size);
 				Mat4 uiProjMat = uiCamera.getProjMatrix(Vec3::Zero());
+				
+				if (scene->activeCameraEntity != nullptr) {
+					scene->ecs.entities.sortByDistance<DynamicMeshRenderer>(scene->activeCameraEntity->transform->getPosition());
+					scene->ecs.entities.sortByDistance<SpriteRenderer>(scene->activeCameraEntity->transform->getPosition());
+					scene->ecs.entities.sortByDistance<Sprite3DRenderer>(scene->activeCameraEntity->transform->getPosition());
+				}
 
 				forEach<MeshRenderer>([this, dt](MeshRenderer* r, Ptr<ecs::Entity> entity) {
 
@@ -89,8 +106,7 @@ namespace hagame {
 					r->mesh->draw(r->shader);
 				});
 
-
-				scene->ecs.entities.sortByDistance<DynamicMeshRenderer>(scene->activeCameraEntity->transform->getPosition());
+				
 
 				forEach<DynamicMeshRenderer>([this, dt](DynamicMeshRenderer* r, Ptr<ecs::Entity> entity) {
 
@@ -161,11 +177,11 @@ namespace hagame {
 				forEach<Text3dRenderer>([this](Text3dRenderer* r, Ptr<ecs::Entity> entity) {
 					r->shader->use();
 					r->shader->setMVP(entity->transform->getModelMatrix() * Mat4::Scale(Vec3(r->font->getScale())), scene->viewMat, scene->projMat);
-					drawText(r->shader, r->font, r->message, r->color, Vec3::Zero(), r->maxLength);
+					drawText(r->shader, r->font, r->message, r->color, Vec3::Zero());
 				});
 
-				scene->ecs.entities.sortByDistance<SpriteRenderer>(scene->activeCameraEntity->transform->getPosition());
-				scene->ecs.entities.sortByDistance<Sprite3DRenderer>(scene->activeCameraEntity->transform->getPosition());
+				
+
 
 				forEach<SpriteRenderer>([this](SpriteRenderer* r, Ptr<ecs::Entity> entity) {
 					if (entity != NULL && r->sprite->texture != NULL && r->shader != NULL) {
@@ -240,11 +256,19 @@ namespace hagame {
 					r->shader->setMat4("view", scene->viewMat);
 					r->shader->setMat4("projection", scene->projMat);
 					//r->shader->setMVP(
-					//	Mat4::Translation(entity->transform->getPosition() + r->box.pos.resize<3>())  * Mat4::Scale(r->box.size.resize<3>()),
+					//	Mat4::Translation(entity->transform->getPosition()),
 					//	scene->viewMat,
 					//	scene->projMat
 					//);
+					// std::cout << entity->getPos() << "\n";
 					r->draw(entity->transform->getPosition());
+				});
+
+				forEach<QuadRenderer>([this](QuadRenderer* r, Ptr<ecs::Entity> entity) {
+					r->shader->use();
+					r->shader->setMVP(entity->transform->getModelMatrix(), scene->viewMat, scene->projMat);
+					r->shader->setVec4("color", r->color);
+					r->quad->getMesh()->draw();
 				});
 
 				forEach<AnimatedSpriteRenderer>([this, dt](AnimatedSpriteRenderer* r, Ptr<ecs::Entity> entity) {

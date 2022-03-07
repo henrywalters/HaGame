@@ -78,7 +78,7 @@ namespace hagame {
 
 		void drawLine(Line line, Color color, ShaderProgram* shader = DEBUG_SHADER);
 		void drawLine(hagame::math::Line line, Color color, ShaderProgram* shader = DEBUG_SHADER, float thickness = 0.01f);
-		void drawRect(Rect rect, Color color, ShaderProgram* shader = DEBUG_SHADER);
+		void drawRect(Rect rect, Color color, ShaderProgram* shader = DEBUG_SHADER, float thickness = 0.01f);
 		void drawCubeOutline(Cube cube, Color color, ShaderProgram* shader = DEBUG_SHADER);
 		void drawSurface(hagame::math::Surface surface, Mat4 transform, Color color, ShaderProgram* shader = DEBUG_SHADER, float thickness = 0.01f);
 		void drawSurfaceNormals(hagame::math::Surface surface, Mat4 transform, Color color, ShaderProgram* shader = DEBUG_SHADER, float length = 0.5f, float thickness = 0.01f);
@@ -95,8 +95,10 @@ namespace hagame {
 		void drawRotationGizmo(Vec3 position, float radius, ShaderProgram* shader = DEBUG_SHADER, int axis = -1);
 		void drawMovementGizmo(Vec3 position, float size, ShaderProgram* shader = DEBUG_SHADER, int axis = -1);
 		void drawScaleGizmo(Vec3 position, float size, ShaderProgram* shader = DEBUG_SHADER, int axis = -1);
+
+		void drawCrosshairs(Vec3 position, float innerRadius, float outerRadius, Color color, float thickness = 0.01f, ShaderProgram* shader = DEBUG_SHADER);
 		
-		void drawText(ShaderProgram* shader, Font* font, String message, Color color, Vec3 pos = Vec3::Zero(), float maxLength = 0.0f);
+		void drawText(ShaderProgram* shader, Font* font, String message, Color color, Vec3 pos = Vec3::Zero(), TextHAlignment alignmentH = TextHAlignment::Center, TextVAlignment alignmentV = TextVAlignment::Center);
 	}
 }
 

@@ -100,9 +100,25 @@ namespace hagame {
 				return hasComponent<T>() ? &registry->get<T>(entt_id) : addComponent<T>();
 			}
 
+			template <class T>
+			T* getComponentInChildren() {
+				for (auto child : children) {
+					if (child->hasComponent<T>()) {
+						return child->getComponent<T>();
+					}
+				}
+
+				return NULL;
+			}
+
 			Vec3 getPos();
 			Quat getRot();
 			Vec3 getScale();
+
+			void move(Vec3 delta);
+			void setPos(Vec3 pos);
+			void setRot(Quat rot);
+			void setScale(Vec3 scale);
 			
 			/*
 			Vec3 getPos() { return transform->getPosition(); }

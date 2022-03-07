@@ -88,6 +88,7 @@
 #include "Utils/Path.h"
 #include "Utils/File.cpp"
 #include "Utils/FileSystem.cpp"
+#include "Utils/ConfigParser.h"
 #include "Utils/Clock.h"
 #include "Utils/Timer.h"
 #include "Utils/Aliases.h"
@@ -119,6 +120,8 @@
 #include "Core/Scene.h"
 #include "Core/Subscriber.h"
 #include "Core/Publisher.h"
+
+#include "UI/Systems/UISystem.h"
 
 #ifndef HAGAME_IMPLEMENTATION
 #define HAGAME_IMPLEMENTATION

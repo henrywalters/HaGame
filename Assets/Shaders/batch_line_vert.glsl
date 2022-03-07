@@ -12,5 +12,5 @@ out vec4 Color;
 
 void main() {
 	Color = a_color;
-	gl_Position = projection * view * model * a_transform * vec4(a_vertex.xyz, 1.0) ;
+	gl_Position = projection * a_transform * vec4(a_vertex.xyz, 1.0) ;
 }

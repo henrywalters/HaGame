@@ -12,9 +12,10 @@ namespace hagame {
 		public:
 
 			GLuint id;
-			Image image;
+			Ptr<Image> image;
 
 			Texture(std::string _path, ImageType _type = ImageType::RGBA);
+			Texture(Vec2Int size);
 
 			void bind();
 		};

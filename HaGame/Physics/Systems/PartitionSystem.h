@@ -20,7 +20,7 @@ namespace hagame {
 
 			Ptr<IPartition<Entity>> m_staticEntities;
 			Ptr<IPartition<Entity>> m_dynamicEntities;
-			Vec3 m_chunkSize = Vec3(25.0f);
+			Vec3 m_chunkSize = Vec3(1000.0f);
 
 		public:
 

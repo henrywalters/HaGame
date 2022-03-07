@@ -14,8 +14,8 @@ namespace hagame {
 				soloud->init();
 			}
 
-			void play(Sample* sample) {
-				soloud->play(sample->wav, 0.2f);
+			void play(Sample* sample, float volume = -1) {
+				soloud->play(sample->wav, volume);
 			}
 		};
 	}

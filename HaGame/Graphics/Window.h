@@ -11,6 +11,8 @@
 #include "Color.h"
 #include <iostream>
 #include "Routines.h"
+// #include "FrameBuffer.hpp"
+#include "Texture.h"
 
 namespace hagame {
 	namespace graphics {
@@ -49,7 +51,8 @@ namespace hagame {
 			void initGLContext();
 			Rect _viewport;
 			WindowRenderMode renderMode;
-			
+			// Ptr<FrameBuffer> m_frameBuffer;
+			Ptr<Texture> m_colorTexture;
 
 		public:
 			WindowMode mode;

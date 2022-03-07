@@ -60,12 +60,10 @@ namespace hagame {
 						rAxis[0] = SDL_GameControllerGetAxis(joystick, SDL_CONTROLLER_AXIS_RIGHTX);
 						rAxis[1] = SDL_GameControllerGetAxis(joystick, SDL_CONTROLLER_AXIS_RIGHTY);
 
-						// std::cout << lAxis.toString() << "\n";
-
 						lAxis[0] = abs(lAxis[0]) > JOYSTICK_DEADZONE ? lAxis[0] / 32768.0 : 0;
 						lAxis[1] = abs(lAxis[1]) > JOYSTICK_DEADZONE ? -lAxis[1] / 32768.0 : 0;
-						rAxis[0] = abs(rAxis[0]) > JOYSTICK_DEADZONE ? -rAxis[0] / 32768.0 : 0;
-						rAxis[1] = abs(rAxis[1]) > JOYSTICK_DEADZONE ? rAxis[1] / 32768.0 : 0;
+						rAxis[0] = abs(rAxis[0]) > JOYSTICK_DEADZONE ? rAxis[0] / 32768.0 : 0;
+						rAxis[1] = abs(rAxis[1]) > JOYSTICK_DEADZONE ? -rAxis[1] / 32768.0 : 0;
 
 						checkButton(a, aPressed, SDL_CONTROLLER_BUTTON_A);
 						checkButton(b, bPressed, SDL_CONTROLLER_BUTTON_B);
