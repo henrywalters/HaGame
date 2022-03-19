@@ -29,7 +29,7 @@ namespace hagame {
 				if (cam->active) {
 					activeCamera = cam->camera;
 					
-					activeCameraEntity = ecs.entities.getByEnttId(entity);
+					activeCameraEntity = ecs.entities.getByEnttId(entity).get();
 					foundCamera = true;
 					break;
 				}
@@ -110,7 +110,7 @@ namespace hagame {
 		utils::Timer timer;
 
 		ecs::ECS ecs;
-		Ptr<ecs::Entity> activeCameraEntity;
+		RawPtr<ecs::Entity> activeCameraEntity;
 		Ptr<graphics::Camera> activeCamera;
 		Mat4 viewMat;
 		Mat4 projMat;

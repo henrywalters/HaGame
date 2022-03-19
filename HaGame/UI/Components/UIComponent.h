@@ -8,6 +8,8 @@ namespace hagame {
 	namespace ui {
 		class UIComponent {
 		public:
+
+			Vec3 offset = Vec2::Zero();
 			virtual Rect getBoundingBox() = 0;
 		};
 

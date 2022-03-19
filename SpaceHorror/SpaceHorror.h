@@ -8,6 +8,7 @@
 #include "./Scenes/Home.h"
 #include "./Scenes/Editor.h"
 #include "./Systems/PlatformerSystem.cpp"
+#include "./Systems/AISystem.cpp"
 
 class SpaceHorror : public hagame::Game {
 public:

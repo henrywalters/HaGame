@@ -103,6 +103,32 @@ Optional<hagame::physics::Hit> hagame::physics::Collisions::raycast(math::Ray ra
 	return hit;
 }
 
+Array<Ptr<hagame::ecs::Entity>> hagame::physics::Collisions::raycastSweep2D(math::Ray ray, float angle, int raycasts, ecs::EntityManager& entities, Array<String> ignoreTags, Array<uint64_t> ignoreEntities)
+{
+	Array<Ptr<hagame::ecs::Entity>> out;
+	auto step = angle / (float)raycasts;
+	auto mag = ray.direction.magnitude();
+	auto startAngle = atan2f(ray.direction[1], ray.direction[0]) - angle * 0.5f;
+	std::set<long> entityIds;
+	float t;
+
+	for (int i = 0; i <= raycasts; i++) {
+		auto angle = startAngle + i * step;
+		Vec3 dir = Vec3(cos(angle) * mag, sin(angle) * mag);
+		auto hit = raycast(math::Ray(ray.origin, dir), entities, t, ignoreTags, ignoreEntities);
+		hagame::graphics::drawLine(math::Ray(ray.origin, dir).toLine(), Color::red(), DEBUG_SHADER);
+		if (hit.has_value()) {
+			if (entityIds.find(hit.value().entity->id) == entityIds.end()) {
+				out.push_back(hit.value().entity);
+				entityIds.insert(hit.value().entity->id);
+			}
+			
+		}
+	}
+
+	return out;
+}
+
 Optional<Ptr<hagame::ecs::Entity>> hagame::physics::Collisions::checkCollisions(Ptr<ecs::Entity> entity, Collider* collider, Vec3 velocity, double dt, float& t)
 {
 	if (collider != NULL && collider->dynamic) {

@@ -5,6 +5,7 @@
 #include "./../Components/Grid.h"
 #include "./../Components/Button.h"
 #include "./../Components/MultiSelect.h"
+#include "./../Components/Slider.h"
 
 namespace hagame {
 	namespace ui {
@@ -30,6 +31,8 @@ namespace hagame {
 				forEach<MultiSelect>([this](MultiSelect* ms, Ptr<hagame::ecs::Entity> entity) {
 					ms->update(entity);
 				});
+
+				forEach<Slider>([this](Slider* slider, Ptr<hagame::ecs::Entity>) {});
 			}
 
 		};

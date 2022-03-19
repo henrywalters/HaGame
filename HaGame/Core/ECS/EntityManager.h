@@ -135,7 +135,22 @@ namespace hagame {
 			}
 
 			void clear() {
+				std::vector<long> parentIds;
+				for (auto& [key, entity] : idMap) {
+					if (entity->parent == nullptr) {
+						parentIds.push_back(entity->id);
+					}
+				}
+
+				for (auto id : parentIds) {
+					remove(idMap[id]);
+				}
+
+				enttMap.clear();
+				idMap.clear();
 				registry->clear();
+
+				entityCount = 0;
 			}
 
 			template <class T>

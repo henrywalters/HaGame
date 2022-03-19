@@ -36,9 +36,11 @@ namespace hagame {
 
 			Entity(uint32_t _entt_id, uint32_t entityCount) : id(hagame::utils::UUID()), entt_id(_entt_id) {
 				name = "Entity_" + std::to_string(entityCount);
+				std::cout << "Hello " << name << "\n";
 			}
 
 			~Entity() {
+				std::cout << "Bye bye " << name << "\n";
 				registry->destroy(entt_id);
 			}
 
@@ -59,6 +61,7 @@ namespace hagame {
 				return false;
 			}
 
+			// Constructs a new instance of the component in memory. Be careful with the returned pointer! Another addComponent call or loss of scope may invalidate the pointer
 			template <class T>
 			T* addComponent() {
 				T* component = &registry->emplace<T>(entt_id);

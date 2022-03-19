@@ -49,6 +49,9 @@ using String = std::string;
 using Exception = std::exception;
 
 template <class T>
+using RawPtr = T*;
+
+template <class T>
 using Ptr = std::shared_ptr<T>;
 
 template <class T>

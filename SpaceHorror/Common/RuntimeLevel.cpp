@@ -1,8 +1,8 @@
 #include "RuntimeLevel.h"
 
-Ptr<hagame::ecs::Entity> RuntimeLevel::addCamera()
+RawPtr<hagame::ecs::Entity> RuntimeLevel::addCamera()
 {
-	camera = addEntity();
+	camera = addEntity().get();
 	auto cameraComp = camera->addComponent<hagame::graphics::CameraComponent>();
 	orth = std::make_shared<hagame::graphics::OrthographicCamera>(game->window->size / PIXELS_PER_METER);
 	cameraComp->camera = orth;
@@ -24,7 +24,7 @@ Ptr<hagame::ecs::Entity> RuntimeLevel::addSprite(String textureName, Vec2 pos, V
 	return entity;
 }
 
-void RuntimeLevel::addPhysics(Ptr<hagame::ecs::Entity> entity, float mass)
+void RuntimeLevel::addPhysics(RawPtr<hagame::ecs::Entity> entity, float mass)
 {
 	auto rb = entity->addComponent<hagame::physics::RigidBody>();
 	rb->mass = mass;
@@ -35,7 +35,7 @@ void RuntimeLevel::addPhysics(Ptr<hagame::ecs::Entity> entity, float mass)
 	// rb->forceDueToGravity = 0;
 }
 
-hagame::physics::Collider* RuntimeLevel::addBoxCollider(Ptr<hagame::ecs::Entity> entity, Vec2 size, bool dynamic)
+hagame::physics::Collider* RuntimeLevel::addBoxCollider(RawPtr<hagame::ecs::Entity> entity, Vec2 size, bool dynamic)
 {
 	auto collider = entity->addComponent<hagame::physics::Collider>();
 	auto boundingVolume = entity->addComponent<hagame::physics::BoundingVolume>(Cube(Vec2::Zero(), size));
@@ -89,4 +89,13 @@ float RuntimeLevel::binarySearchCollisionTime(Cube entityCube, Cube otherCube, V
 		}
 	}
 	return midT - 0.01;
+}
+
+Ptr<hagame::ecs::Entity> RuntimeLevel::addQuad(Vec3 pos, Vec2 size, Color color) {
+	auto entity = addEntity();
+	entity->move(pos);
+	auto quad = entity->addComponent<QuadRenderer>(size);
+	quad->color = color;
+	quad->shader = game->resources->getShaderProgram("color");
+	return entity;
 }

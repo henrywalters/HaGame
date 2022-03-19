@@ -47,6 +47,14 @@ namespace hagame {
 			// Calculate the first entity that a ray collides with at time t. Optionally ignore a list of tags or entities.
 			Optional<Hit> raycast(math::Ray ray, ecs::EntityManager& entities, float& t, Array<String> ignoreTags = {}, Array<uint64_t> ignoreEntities = {});
 
+			/*
+				Calculate the entities encountered by a swept ray in 2D.
+				ray = the swept ray center
+				angle = the amount to sweep
+				raycasts = the number of raycasts to use
+			*/
+			Array<Ptr<ecs::Entity>> raycastSweep2D(math::Ray ray, float angle, int raycasts, ecs::EntityManager& entities, Array<String> ignoreTags = {}, Array<uint64_t> ignoreEntities = {});
+
 			[[deprecated("This version of checkCollisions requires the deprecated implementation specific entityMap")]]
 			Optional<Ptr<ecs::Entity>> checkCollisions(Ptr<ecs::Entity> entity, Collider* collider, Vec3 velocity, double dt, float& t);
 

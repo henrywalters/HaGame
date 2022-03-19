@@ -24,9 +24,19 @@ namespace hagame {
 				maximum(_max)
 			{}
 
-			String toHash() {
+			String toHash() const {
 				return minimum.toString() + "_" + maximum.toString();
 			}
+
+			bool operator==(const Range& range) const {
+				return range.minimum == minimum && range.maximum == maximum;
+			}
+
+			struct Hash {
+				size_t operator()(const Range& range) const {
+					return std::hash<std::string_view>{}(range.toHash());
+				}
+			};
 		};
 	}
 }

@@ -17,12 +17,13 @@ void Demo::onSceneInit()
 	addSystem<PartitionSystem>();
 	addSystem<CollisionSystem>();
 	addSystem<PlatformerSystem>();
-
+	addSystem<AISystem>();
 
 }
 
 void Demo::onSceneActivate()
 {
+
 	addCamera();
 
 	for (int i = 0; i < MAP.size(); i++) {
@@ -30,13 +31,16 @@ void Demo::onSceneActivate()
 			switch (MAP[i][j]) {
 			case '#':
 				addBoxCollider(
-					addSprite("prototype", Vec2(j, i).prod(BLOCK_SIZE), BLOCK_SIZE),
+					addSprite("prototype", Vec2(j, i).prod(BLOCK_SIZE), BLOCK_SIZE).get(),
 					BLOCK_SIZE,
 					false
 				);
 				break;
 			case 'P':
-				player = addSprite("henry", Vec2(j, i).prod(BLOCK_SIZE), PLAYER_SIZE);
+				player = addSprite("henry", Vec2(j, i).prod(BLOCK_SIZE), PLAYER_SIZE).get();
+				break;
+			case 'W':
+				walkers.push_back(addQuad(Vec2(j, i).prod(BLOCK_SIZE) - WALKER_SIZE * 0.5f , WALKER_SIZE, PRIMARY).get());
 				break;
 			}
 		}
@@ -48,10 +52,19 @@ void Demo::onSceneActivate()
 	bullets = parseBulletConfig(bulletConfig);
 	weapons = parseWeaponConfig(weaponConfig, bullets);
 
+	player->addTag("player");
+	player->name = "player";
 	player->addComponent<PlayerController>();
 
 	addPhysics(player, 1);
 	addBoxCollider(player, PLAYER_SIZE);
+
+	for (auto walker : walkers) {
+		// walker->getComponent<QuadRenderer>()->quad->setOrigin(Vec2::Zero());
+		walker->addComponent<Walker>();
+		addPhysics(walker, 0.5f);
+		addBoxCollider(walker, WALKER_SIZE);
+	}
 
 	game->input.keyboardMouse.mouseEvents.subscribe(MouseEvents::Moved, [this](MouseEvent e) {
 		//setMousePos(e.mousePos);
@@ -115,8 +128,10 @@ void Demo::onSceneAfterUpdate()
 void Demo::onSceneDeactivate()
 {
 	std::cout << "DEMO DEACTIVATED\n";
-	game->input.keyboardMouse.showCursor();
 	ecs.entities.clear();
+	lineBuffer.clear();
+	game->input.keyboardMouse.showCursor();
+	
 }
 
 void Demo::renderPlayerConfig()

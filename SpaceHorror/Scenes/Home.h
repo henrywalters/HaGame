@@ -2,6 +2,9 @@
 #define SH_HOME_H
 
 #include "./../../HaGame/HaGame.h"
+#include "./../Common/Colors.h"
+#include "./../Components/Star.h"
+#include "./../Systems/StarSystem.h"
 
 using namespace hagame::ecs;
 using namespace hagame::graphics;
@@ -33,10 +36,11 @@ public:
 	Vec2 mousePos;
 	Vec2 screenCenter;
 
-	Ptr<Entity> cameraEntity;
 	Ptr<OrthographicCamera> orth;
 
-	Ptr<Entity> menuEntity;
+	RawPtr<Entity> cameraEntity;
+	RawPtr<Entity> menuEntity;
+	Array<RawPtr<Entity>> stars;
 
 	float iR = 5;
 	float oR = 12.5;
@@ -44,6 +48,7 @@ public:
 	void onSceneInit() {
 		addSystem<RenderSystem>();
 		addSystem<UISystem>();
+		addSystem<StarSystem>();
 
 		pFont = game->resources->loadFont("primary", PRIMARY_FONT, 124);
 		smallFont = game->resources->loadFont("secondary_small", SECONDARY_FONT, 20);
@@ -52,15 +57,13 @@ public:
 
 	void onSceneActivate() {
 
-		ecs.entities.clear();
-
 		game->audio->play(game->resources->getAudioSample("creepy_home"), 1.0f);
 
-		game->window->clearColor = Color("#1f1f1f");
+		game->window->clearColor = DARK;
 		screenCenter = game->window->size * 0.5f;
 		game->input.keyboardMouse.hideCursor();
 
-		cameraEntity = addEntity();
+		cameraEntity = addEntity().get();
 		auto camera = cameraEntity->addComponent<CameraComponent>();
 		orth = std::make_shared<OrthographicCamera>(game->window->size);
 		orth->centered = false;
@@ -73,16 +76,18 @@ public:
 		auto totalY = (titleSize[1] + subTitleSize[1]);
 
 		auto grid = addEntity();
+		grid->name = "GRID";
 		grid->addComponent<Grid>(game->window->size, 2, 1);
 
 		auto titleCol = grid->getComponent<Grid>()->addGrid(0, 0, 1, 4);
 		auto menuCol = grid->getComponent<Grid>()->addGrid(1, 0, 1, 3);
 
-		auto title = addLabel(Vec2::Zero(), TITLE, pFont, Color::red(), TextHAlignment::Center, TextVAlignment::Center);
-		auto subtitle = addLabel(Vec2::Zero(), SUBTITLE, largeFont, Color::white(), TextHAlignment::Center, TextVAlignment::Center);
+		auto title = addLabel(Vec2::Zero(), TITLE, pFont, PRIMARY, TextHAlignment::Center, TextVAlignment::Center);
+		auto subtitle = addLabel(Vec2::Zero(), SUBTITLE, largeFont, SECONDARY, TextHAlignment::Center, TextVAlignment::Center);
 
-		menuEntity = addEntity();
+		menuEntity = addEntity().get();
 		auto menu = menuEntity->addComponent<MultiSelect>(this, largeFont, Vec2(300, 300), MENU_OPTIONS);
+		menu->color = SECONDARY;
 
 		menu->onHover = [this](String selected) {
 			game->audio->play(game->resources->getAudioSample("thud"), 0.5f);
@@ -102,9 +107,9 @@ public:
 			}
 		};
 
-		menuCol->addEntity(0, 1, menuEntity.get(), [](Entity* menu) { return menu->getComponent<MultiSelect>(); });
+		menuCol->addEntity(0, 1, menuEntity, [](Entity* menu) { return menu->getComponent<MultiSelect>(); });
 
-		auto buildTag = addLabel(Vec2(game->window->size[0], 0) - buildTagSize * Vec2(1, 0), BUILD_TAG, smallFont, Color::white(), TextHAlignment::Left, TextVAlignment::Top);
+		auto buildTag = addLabel(Vec2(game->window->size[0], 0) - buildTagSize * Vec2(1, 0), BUILD_TAG, smallFont, SECONDARY, TextHAlignment::Left, TextVAlignment::Top);
 
 		menuCol->addEntity(0, 0, buildTag.get(), [](Entity* tag) { return tag->getComponent<TextRenderer>(); });
 		menuCol->setAnchor(0, 0, AnchorType::BottomRight);
@@ -112,18 +117,22 @@ public:
 		titleCol->addEntity(0, 2, title.get(), [](Entity* title) { return title->getComponent<TextRenderer>(); });
 		titleCol->addEntity(0, 1, subtitle.get(), [](Entity* title) { return title->getComponent<TextRenderer>(); });
 
-		int stars = 1000;
+		int starcount = 10;
 
-		for (int i = 0; i < stars; i++) {
+		for (int i = 0; i < starcount; i++) {
 			auto star = addEntity();
-			auto size = game->random.real(1.0f, 5.0f);
-			auto pos = Vec3(game->random.real<double>(0, game->window->size[0]), game->random.real<double>(0, game->window->size[1]), 100);
+			star->addComponent<Star>();
+			star->getComponent<Star>()->randomize(0.8f);
+			stars.push_back(star.get());
+
+			auto size = game->random.real(0.5f, 5.0f);
 			auto quad = star->addComponent<QuadRenderer>(size);
-			auto color = Color(255, 0, 0, game->random.integer(0, 50));
-			star->move(pos);
-			quad->color = color;
+			
+			quad->color = star->getComponent<Star>()->color;
 			quad->shader = game->resources->getShaderProgram("color");
 		}
+
+		randomallyPositionStars();
 
 		game->input.keyboardMouse.mouseEvents.subscribe(hagame::input::devices::MouseEvents::Moved, [this](hagame::input::devices::MouseEvent e) {
 			mousePos = e.mousePos;
@@ -134,14 +143,28 @@ public:
 			orth->size = e.data;
 			grid->getComponent<Grid>()->setSize(e.data);
 			game->window->setViewport(Rect(Vec2::Zero(), e.data));
+			randomallyPositionStars();
 		});
 	}
 
-	void onSceneDeactivate() {
+	void randomallyPositionStars() {
+		for (auto star : stars) {
+			auto pos = Vec3(game->random.real<double>(0, game->window->size[0]), game->random.real<double>(0, game->window->size[1]), 100);
+			star->setPos(pos);
+		}
+	}
 
+	void onSceneDeactivate() {
+		stars.clear();
+		lineBuffer.clear();
+		ecs.entities.clear();
 	}
 
 	void onSceneUpdate(double dt) {
+
+	}
+
+	void onSceneAfterUpdate() {
 		auto shader = game->resources->getShaderProgram("batch_line");
 
 		if (!game->input.usingGamepad(0)) {
@@ -153,7 +176,6 @@ public:
 			menuEntity->getComponent<MultiSelect>()->setSelectionByDeviceState(game->input.player(0));
 		}
 
-		
 		shader->use();
 
 		shader->setMVP(Mat4::Identity(), Mat4::Identity(), orth->getProjMatrix(cameraEntity->getPos()));
@@ -164,10 +186,6 @@ public:
 		shader->setMVP(Mat4::Identity(), Mat4::Identity(), orth->getProjMatrix(cameraEntity->getPos()));
 
 		DEBUG_SHADER = game->resources->getShaderProgram("color");
-	}
-
-	void onSceneAfterUpdate() {
-
 	}
 
 	Ptr<Entity> addQuad(Vec3 pos, Vec2 size, Color color) {
@@ -185,7 +203,7 @@ public:
 		auto btnEntity = addChild(entity);
 
 		entity->setPos(pos);
-		entity->move(Vec3::Face(1.0f));
+		// entity->move(Vec3::Face(1.0f));
 
 		auto text = textEntity->addComponent<TextRenderer>();
 		auto messageSize = font->calculateMessageSize(message);
@@ -214,7 +232,7 @@ public:
 	Ptr<Entity> addLabel(Vec2 pos, String message, Font* font, Color color, TextHAlignment alignmentH = TextHAlignment::Center, TextVAlignment alignmentV = TextVAlignment::Center) {
 		auto entity = addEntity();
 		entity->setPos(pos);
-		entity->move(Vec3::Face(1.0f));
+		//entity->move(Vec3::Face(1.0f));
 		auto text = entity->addComponent<TextRenderer>();
 		text->color = color;
 		text->font = font;

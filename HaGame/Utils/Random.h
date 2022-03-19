@@ -24,6 +24,12 @@ namespace hagame {
 				std::uniform_int_distribution<T> dist(min, max);
 				return dist(generator);
 			}
+
+			template<class T>
+			T normal(T mean, T stdev) {
+				std::normal_distribution<T> dist(mean, stdev);
+				return dist(generator);
+			}
 		};
 	}
 }
