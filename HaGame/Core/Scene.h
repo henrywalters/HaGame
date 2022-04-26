@@ -29,7 +29,7 @@ namespace hagame {
 				if (cam->active) {
 					activeCamera = cam->camera;
 					
-					activeCameraEntity = ecs.entities.getByEnttId(entity).get();
+					activeCameraEntity = ecs.entities.getByEnttId(entity);
 					foundCamera = true;
 					break;
 				}
@@ -52,7 +52,9 @@ namespace hagame {
 		virtual void onSceneBeforeUpdate() {}
 		virtual void onSceneAfterUpdate() {}
 		virtual void onSceneUpdate(double dt) {}
+		virtual void onScenePhysicsBeforeUpdate(double dt) {}
 		virtual void onScenePhysicsUpdate(double dt) {}
+		virtual void onScenePhysicsAfterUpdate(double dt) {}
 		virtual void onSceneDeactivate() {}
 
 		void initialize() {
@@ -84,18 +86,7 @@ namespace hagame {
 		void update(double dt) {
 			timer.reset();
 			setActiveCamera();
-			if (active)
-				onSceneBeforeUpdate();
-			if (active)
-				ecs.systems.beforeUpdateAll(dt);
-			if (active)
-				ecs.systems.updateAll(dt);
-			if (active)
-				onSceneUpdate(dt);
-			if (active)
-				ecs.systems.afterUpdateAll(dt);
-			if (active)
-				onSceneAfterUpdate();
+			
 			//DEBUG_LOG("Scene update", timer.elapsed());
 		}
 
@@ -126,22 +117,22 @@ namespace hagame {
 		}
 
 		// Instantiate a new entity belonging to a prexisting parent
-		Ptr<ecs::Entity> addChild(Ptr<ecs::Entity> parent) {
+		RawPtr<ecs::Entity> addChild(RawPtr<ecs::Entity> parent) {
 			return ecs.entities.add(parent);
 		}
 
 		// Attach an entity to a parent. Removes the connection from previous parent if it exists
-		Ptr<ecs::Entity> addChild(Ptr<ecs::Entity> parent, Ptr<ecs::Entity> child) {
+		RawPtr<ecs::Entity> addChild(RawPtr<ecs::Entity> parent, RawPtr<ecs::Entity> child) {
 			return ecs.entities.add(parent, child);
 		}
 
 		// Instantiate a new entity
-		Ptr<ecs::Entity> addEntity() {
+		RawPtr<ecs::Entity> addEntity() {
 			return ecs.entities.add();
 		}
 
 		// Remove an entity, and its hildren
-		void removeEntity(Ptr<ecs::Entity> entity) {
+		void removeEntity(RawPtr<ecs::Entity> entity) {
 			ecs.entities.remove(entity);
 		}
 	};

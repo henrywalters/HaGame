@@ -15,21 +15,17 @@ namespace hagame {
 				return "hagame::physics::PhysicsSystem";
 			}
 
-			void onSystemPhysicsUpdate(double dt) {
-				forEach<RigidBody>([this, dt](RigidBody* rb, Ptr<ecs::Entity> entity) {
-					rb->applyGlobalGravity();
-					//std::cout << rb->netForce << "\n";
-					rb->update(dt);
+			void onSystemPhysicsBeforeUpdate(double dt) {
+				forEach<RigidBody>([this, dt](RigidBody* rb, RawPtr<ecs::Entity> entity) {
 					rb->clearForces();
-
-					game->resources->getShaderProgram("text")->use();
-					game->resources->getShaderProgram("text")->setMat4("projection", Mat4::Orthographic(0, game->window->size[0], 0, game->window->size[1], 0, 1));
-
-
-					// entity->transform->move(rb->vel * dt);
-
+					rb->applyGlobalGravity();
 				});
-				
+			}
+
+			void onSystemPhysicsAfterUpdate(double dt) {
+				forEach<RigidBody>([this, dt](RigidBody* rb, RawPtr<ecs::Entity> entity) {
+					rb->update(dt);
+				});
 			}
 		};
 	}

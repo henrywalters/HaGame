@@ -18,11 +18,11 @@ namespace hagame {
 	namespace physics {
 
 		struct CollisionEvent {
-			Ptr<ecs::Entity> collider, target;
+			RawPtr<ecs::Entity> collider, target;
 		};
 
 		struct Hit {
-			Ptr<ecs::Entity> entity;
+			RawPtr<ecs::Entity> entity;
 			Vec3 point;
 			Vec3 normal;
 		};
@@ -39,10 +39,10 @@ namespace hagame {
 
 			Collisions() : entityMap(utils::SpatialMap<ecs::Entity, float>(Vec3(10.0f))) {}
 
-			static Sphere getBoundingSphere(Ptr<ecs::Entity> entity, Collider* collider);
+			static Sphere getBoundingSphere(RawPtr<ecs::Entity> entity, Collider* collider);
 
 			[[deprecated("This version of raycast requires the deprecated implementation specific entityMap")]]
-			Optional<Hit> raycast(Ptr<ecs::Entity> origin, math::Ray ray, float& t, Array<String> ignoreTags = {});
+			Optional<Hit> raycast(RawPtr<ecs::Entity> origin, math::Ray ray, float& t, Array<String> ignoreTags = {});
 
 			// Calculate the first entity that a ray collides with at time t. Optionally ignore a list of tags or entities.
 			Optional<Hit> raycast(math::Ray ray, ecs::EntityManager& entities, float& t, Array<String> ignoreTags = {}, Array<uint64_t> ignoreEntities = {});
@@ -53,17 +53,17 @@ namespace hagame {
 				angle = the amount to sweep
 				raycasts = the number of raycasts to use
 			*/
-			Array<Ptr<ecs::Entity>> raycastSweep2D(math::Ray ray, float angle, int raycasts, ecs::EntityManager& entities, Array<String> ignoreTags = {}, Array<uint64_t> ignoreEntities = {});
+			Array<RawPtr<ecs::Entity>> raycastSweep2D(math::Ray ray, float angle, int raycasts, ecs::EntityManager& entities, Array<String> ignoreTags = {}, Array<uint64_t> ignoreEntities = {});
 
 			[[deprecated("This version of checkCollisions requires the deprecated implementation specific entityMap")]]
-			Optional<Ptr<ecs::Entity>> checkCollisions(Ptr<ecs::Entity> entity, Collider* collider, Vec3 velocity, double dt, float& t);
+			Optional<RawPtr<ecs::Entity>> checkCollisions(RawPtr<ecs::Entity> entity, Collider* collider, Vec3 velocity, double dt, float& t);
 
 			Optional<hagame::math::collisions::Hit> checkCollision(BoundingVolume* check, BoundingVolume* against, Vec3 velocity, double dt, float& t);
 			Optional<hagame::math::collisions::Hit> checkCollision(BoundingVolume* check, Vec3 checkPos, BoundingVolume* against, Vec3 againstPos);
 
 		private:
 
-			hagame::physics::Hit hit2hit(hagame::math::collisions::Hit hit, Ptr<hagame::ecs::Entity> entity);
+			hagame::physics::Hit hit2hit(hagame::math::collisions::Hit hit, RawPtr<hagame::ecs::Entity> entity);
 		};
 	}
 }

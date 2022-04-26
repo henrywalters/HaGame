@@ -44,11 +44,63 @@ void hagame::Game::run()
 		}
 
 		if (scenes.hasActive()) {
+
 			scenes.active()->update(dt);
 
+			if (physicsUpdate)
+				scenes.active()->onScenePhysicsBeforeUpdate(physicsDt);
+
+			if (sceneChange("physics before update")) continue;
+
+			if (physicsUpdate)
+				scenes.active()->ecs.systems.physicsBeforeUpdateAll(physicsDt);
+
+			if (sceneChange("physics systems before update"));
+
+			scenes.active()->ecs.systems.beforeUpdateAll(dt);
+
+			if (sceneChange("before system update")) continue;
+
+			scenes.active()->onSceneBeforeUpdate();
+
+			if (sceneChange("before update")) continue;
+
+			scenes.active()->ecs.systems.updateAll(dt);
+
+			if (sceneChange("scene systems update")) continue;
+
+			scenes.active()->onSceneUpdate(dt);
+
+			if (sceneChange("update")) continue;
+
+			if (physicsUpdate)
+				scenes.active()->onScenePhysicsUpdate(physicsDt);
+
+			if (sceneChange("physics update")) continue;
+
 			if (physicsUpdate) {
-				scenes.active()->updatePhysics(physicsDt);
+				scenes.active()->ecs.systems.physicsUpdateAll(physicsDt);
 			}
+
+			if (sceneChange("physics systems update")) continue;
+
+			if (physicsUpdate)
+				scenes.active()->onScenePhysicsAfterUpdate(physicsDt);
+
+			if (sceneChange("physics after update")) continue;
+
+			if (physicsUpdate)
+				scenes.active()->ecs.systems.physicsAfterUpdateAll(physicsDt);
+
+			if (sceneChange("physics systems after update")) continue;
+
+			scenes.active()->ecs.systems.afterUpdateAll(dt);
+
+			if (sceneChange("system after update")) continue;
+
+			scenes.active()->onSceneAfterUpdate();
+
+			if (sceneChange("after update")) continue;
 		}
 		onGameAfterUpdate();
 		window->render();

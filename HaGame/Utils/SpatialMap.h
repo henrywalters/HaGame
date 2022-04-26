@@ -19,29 +19,29 @@ namespace hagame {
 
 			
 		public:
-			Map<long, Array<Ptr<DataType>>> map;
+			Map<long, Array<RawPtr<DataType>>> map;
 			hagame::math::Vector<3, SpatialDataType> chunkSize;
 
-			SpatialMap(hagame::math::Vector<3, SpatialDataType> _chunkSize) : map(Map<long, Array<Ptr<DataType>>>()), chunkSize(_chunkSize) {}
+			SpatialMap(hagame::math::Vector<3, SpatialDataType> _chunkSize) : map(Map<long, Array<RawPtr<DataType>>>()), chunkSize(_chunkSize) {}
 
 			void clear() {
 				map.clear();
 			}
 
-			void insert(hagame::math::Vector<3, SpatialDataType> position, Ptr<DataType> value) {
+			void insert(hagame::math::Vector<3, SpatialDataType> position, RawPtr<DataType> value) {
 				long hash = hashPosition(position);
 				if (map.find(hash) == map.end()) {
-					map[hash] = Array<Ptr<DataType>>();
+					map[hash] = Array<RawPtr<DataType>>();
 				}
 				map[hash].push_back(value);
 			}
 
-			Array<Ptr<DataType>> get(hagame::math::Vector<3, SpatialDataType> position) {
+			Array<RawPtr<DataType>> get(hagame::math::Vector<3, SpatialDataType> position) {
 				return map[hashPosition(position)];
 			}
 
-			Array<Ptr<DataType>> get(hagame::math::Vector<3, SpatialDataType> position, SpatialDataType radius) {
-				Array<Ptr<DataType>> output = Array<Ptr<DataType>>();
+			Array<RawPtr<DataType>> get(hagame::math::Vector<3, SpatialDataType> position, SpatialDataType radius) {
+				Array<RawPtr<DataType>> output = Array<RawPtr<DataType>>();
 				Vec3 points[] = {
 					Vec3::Zero(),
 					Vec3::Top() * radius,
@@ -60,8 +60,8 @@ namespace hagame {
 				return output;
 			}
 
-			Array<Ptr<DataType>> get(hagame::math::Vector<3, SpatialDataType> position, hagame::math::Vector<3, SpatialDataType> radius) {
-				Array<Ptr<DataType>> output = Array<Ptr<DataType>>();
+			Array<RawPtr<DataType>> get(hagame::math::Vector<3, SpatialDataType> position, hagame::math::Vector<3, SpatialDataType> radius) {
+				Array<RawPtr<DataType>> output = Array<RawPtr<DataType>>();
 				Vec3 points[] = {
 					Vec3::Top() * radius[1],
 					Vec3::Bottom() * radius[1],

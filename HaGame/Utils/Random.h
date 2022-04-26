@@ -30,6 +30,18 @@ namespace hagame {
 				std::normal_distribution<T> dist(mean, stdev);
 				return dist(generator);
 			}
+
+			template<class T>
+			T poisson(T mean) {
+				std::poisson_distribution<T> dist(mean);
+				return dist(generator);
+			}
+
+			template<class T>
+			T lognorm(T mean, T stddev) {
+				std::lognormal_distribution dist(mean, stddev);
+				return dist(generator);
+			}
 		};
 	}
 }

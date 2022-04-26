@@ -13,7 +13,7 @@ void hagame::graphics::Window::initGLAttribs() {
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
 	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 16);
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 32);
 
 	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 

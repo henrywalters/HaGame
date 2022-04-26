@@ -35,6 +35,7 @@ namespace hagame {
 			}
 
 			void initializeForGL() {
+				std::cout << "Initializing Text Buffer\n";
 				glGenVertexArrays(1, &VAO);
 				glGenBuffers(1, &VBO);
 				glBindVertexArray(VAO);

@@ -35,7 +35,7 @@ namespace hagame {
 			String getSystemName() { return "Partition System"; }
 
 			void onSystemStart() {
-				forEach<BoundingVolume>([this](BoundingVolume* volume, Ptr<Entity> entity) {
+				forEach<BoundingVolume>([this](BoundingVolume* volume, RawPtr<Entity> entity) {
 					if (volume->dynamic)
 						m_dynamicEntities->insert(*volume, entity->transform->getPosition(), entity);
 					else
@@ -50,7 +50,7 @@ namespace hagame {
 
 			void onSystemUpdate(double dt) {
 				m_dynamicEntities->clear();
-				forEach<BoundingVolume>([this](BoundingVolume* volume, Ptr<Entity> entity) {
+				forEach<BoundingVolume>([this](BoundingVolume* volume, RawPtr<Entity> entity) {
 					if (volume->dynamic) {
 						m_dynamicEntities->insert(*volume, entity->transform->getPosition(), entity);
 					}

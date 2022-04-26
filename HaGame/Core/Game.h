@@ -17,6 +17,22 @@
 namespace hagame {
 	// Base game class that wraps a simple game loop
 	class Game {
+	private:
+
+		bool m_changeScene = false;
+		String m_scene = "";
+
+		bool sceneChange(String trigger = "") {
+			if (m_changeScene) {
+				std::cout << "Setting scene to: " << m_scene << " triggered by: " << trigger << "\n";
+				scenes.activate(m_scene);
+				m_scene = "";
+				m_changeScene = false;
+				return true;
+			}
+			return false;
+		}
+
 	public:
 
 		utils::StateManager<Scene> scenes;
@@ -28,7 +44,7 @@ namespace hagame {
 		physics::Collisions collisions;
 
 		const long TICKS_PER_SECOND = 1000000;
-		const long PHYSICS_TICK_RATE = 16000;
+		const long PHYSICS_TICK_RATE = 32000;
 
 		bool running;
 		long lastTick;
@@ -78,6 +94,11 @@ namespace hagame {
 			scene->name = sceneName;
 			scene->game = this;
 			return scene;
+		}
+
+		void setScene(String sceneName) {
+			m_scene = sceneName;
+			m_changeScene = true;
 		}
 
 		static void initializeSDL() {

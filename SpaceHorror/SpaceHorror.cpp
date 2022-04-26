@@ -2,16 +2,16 @@
 #define WITH_SDL2
 #define NDEBUG
 #include "./SpaceHorror.h"
+#include "./../HaGame/Utils/Promise.h"
+#include "./../HaGame/Utils/TimedCallback.h"
 
 int main() {
-
-	std::cout << stringTrim("HelloWorld") << "\n";
 
 	hagame::Game::initializeSDL();
 
 	auto monitor = hagame::graphics::MonitorManager::GetMonitor(0); 
 	auto window = hagame::graphics::Window(
-		Vec2(800, 800),
+		Vec2(1400, 900),
 		"SpaceHorror"
 	);
 
@@ -20,6 +20,7 @@ int main() {
 	SpaceHorror fuckMeUp(&window);
 
 	fuckMeUp.run();
+	
 
 	return 0;
 }

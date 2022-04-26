@@ -72,7 +72,7 @@ namespace hagame {
 			}
 
 			void startAll() {
-				forAll([](Ptr<ecs::System> system) { std::cout << system->getSystemName();  system->start(); });
+				forAll([](Ptr<ecs::System> system) { system->start(); });
 			}
 
 			void stopAll() {
@@ -89,6 +89,14 @@ namespace hagame {
 
 			void physicsUpdateAll(double dt) {
 				forAll([dt](Ptr<ecs::System> system) { system->physicsUpdate(dt); });
+			}
+
+			void physicsBeforeUpdateAll(double dt) {
+				forAll([dt](Ptr<ecs::System> system) { system->physicsBeforeUpdate(dt); });
+			}
+
+			void physicsAfterUpdateAll(double dt) {
+				forAll([dt](Ptr<ecs::System> system) { system->physicsAfterUpdate(dt); });
 			}
 
 			void afterUpdateAll(double dt) {

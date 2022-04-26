@@ -19,12 +19,12 @@ namespace hagame {
 
 			Ptr<utils::SpatialMap<T, float>> m_grid;
 
-			void insertFromGrid(Array<Ptr<T>> &objects, Vec3 pos) {
+			void insertFromGrid(Array<RawPtr<T>> &objects, Vec3 pos) {
 				auto neighbors = m_grid->get(pos);
 				objects.insert(objects.end(), neighbors.begin(), neighbors.end());
 			}
 
-			void insertSurface(hagame::math::Surface surface, Vec3 pos, Ptr<T> object) {
+			void insertSurface(hagame::math::Surface surface, Vec3 pos, RawPtr<T> object) {
 				if (mode == GridInsertMode::AllPoints) {
 					for (auto tri : surface.triangles) {
 						m_grid->insert(pos + tri.a, object);
@@ -39,7 +39,7 @@ namespace hagame {
 				}
 			}
 
-			void insertBox(hagame::math::AABB box, Vec3 pos, Ptr<T> object) {
+			void insertBox(hagame::math::AABB box, Vec3 pos, RawPtr<T> object) {
 				if (mode == GridInsertMode::AllPoints) {
 					m_grid->insert(box.center + Vec3(-box.radius[0], -box.radius[1], box.radius[2]) + pos, object);
 					m_grid->insert(box.center + Vec3(-box.radius[0], box.radius[1], box.radius[2]) + pos, object);
@@ -67,7 +67,7 @@ namespace hagame {
 				return math::AABB(point.div(CHUNK_SIZE).floor().prod(CHUNK_SIZE) + CHUNK_SIZE * 0.5f, CHUNK_SIZE * 0.5f);
 			}
 
-			void insert(BoundingVolume volume, Vec3 pos, Ptr<T> object) {
+			void insert(BoundingVolume volume, Vec3 pos, RawPtr<T> object) {
 				if (volume.getType() == BoundingVolumeType::Surface)
 					insertSurface(volume.getSurface(), pos, object);
 				else
@@ -78,14 +78,14 @@ namespace hagame {
 				m_grid->clear();
 			}
 
-			Array<Ptr<T>> getNeighbors(Vec3 point) {
+			Array<RawPtr<T>> getNeighbors(Vec3 point) {
 				return m_grid->get(point);
 			}
 
-			Array<Ptr<T>> getNeighbors(BoundingVolume* volume, Vec3 pos) {
+			Array<RawPtr<T>> getNeighbors(BoundingVolume* volume, Vec3 pos) {
 				auto box = volume->getBoundingBox();
 				box.center += pos;
-				auto results = Array<Ptr<T>>();
+				auto results = Array<RawPtr<T>>();
 				if (mode == GridInsertMode::AllPoints) {
 					insertFromGrid(results, box.getMin());
 

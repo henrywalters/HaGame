@@ -36,7 +36,9 @@ namespace hagame {
 			virtual void onSystemStart() {}
 			virtual void onSystemBeforeUpdate(double dt) {}
 			virtual void onSystemUpdate(double dt) {}
+			virtual void onSystemPhysicsBeforeUpdate(double dt) {}
 			virtual void onSystemPhysicsUpdate(double dt) {}
+			virtual void onSystemPhysicsAfterUpdate(double dt) {}
 			virtual void onSystemAfterUpdate(double dt) {}
 			virtual void onSystemStop() {}
 
@@ -48,7 +50,7 @@ namespace hagame {
 			}
 
 			template <class T>
-			void forEach(std::function<void(T*, Ptr<Entity>)> lambda) {
+			void forEach(std::function<void(RawPtr<T>, RawPtr<Entity>)> lambda) {
 				for (auto entity : registry->view<T>()) {
 					lambda(&registry->get<T>(entity), scene->ecs.entities.getByEnttId(entity));
 				}
@@ -80,6 +82,18 @@ namespace hagame {
 			void physicsUpdate(double dt) {
 				if (active) {
 					onSystemPhysicsUpdate(dt);
+				}
+			}
+
+			void physicsBeforeUpdate(double dt) {
+				if (active) {
+					onSystemPhysicsBeforeUpdate(dt);
+				}
+			}
+
+			void physicsAfterUpdate(double dt) {
+				if (active) {
+					onSystemPhysicsAfterUpdate(dt);
 				}
 			}
 

@@ -24,6 +24,7 @@
 #include "Math/LineSegment.h"
 #include "Math/Ray.h"
 #include "Math/Plane.h"
+#include "Math/Interval.h"
 #include "Math/NSphere.h"
 #include "Math/Collisions.cpp"
 
@@ -97,6 +98,8 @@
 #include "Utils/Testing.h"
 #include "Utils/GridMap.h"
 #include "Utils/RectGrid.h"
+#include "Utils/Promise.h"
+#include "Utils/TimedCallback.h"
 #include "Utils/Algorithms/AStar.h"
 
 #include "Physics/Components/RigidBody.h"

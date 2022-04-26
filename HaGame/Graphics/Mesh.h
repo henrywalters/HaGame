@@ -145,9 +145,9 @@ namespace hagame {
 						face->vertices[1] = v2;
 						face->vertices[2] = v3;
 						face->index = i;
-						pointMap.insert(v1.position, face);
-						pointMap.insert(v2.position, face);
-						pointMap.insert(v3.position, face);
+						pointMap.insert(v1.position, face.get());
+						pointMap.insert(v2.position, face.get());
+						pointMap.insert(v3.position, face.get());
 						faces.push_back(face);
 
 						//vertices.insert(vertices.end(), { v1, v2, v3 });

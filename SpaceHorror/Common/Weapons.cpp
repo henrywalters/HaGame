@@ -1,6 +1,6 @@
 #include "Weapons.h"
 
-std::vector<Bullet> parseBulletConfig(hagame::utils::File file)
+std::vector<Bullet> parseBulletConfig(hagame::utils::File* file)
 {
 	std::vector<Bullet> bullets;
 	auto config = hagame::utils::ConfigFile(file);
@@ -10,7 +10,9 @@ std::vector<Bullet> parseBulletConfig(hagame::utils::File file)
 		bullet.id = ++index;
 		bullet.name = section;
 		bullet.damage = config.getFloat(section, "damage");
-		bullet.spread = config.getFloat(section, "spread");
+		bullet.spreadRunFactor = config.getFloat(section, "spread_run_factor");
+		bullet.spreadMean = config.getFloat(section, "spread_mean");
+		bullet.spreadStdDev = config.getFloat(section, "spread_stddev");
 		bullet.explodes = config.getBool(section, "explodes");
 		bullet.type = (BulletType)config.getInt(section, "type");
 
@@ -26,7 +28,7 @@ std::vector<Bullet> parseBulletConfig(hagame::utils::File file)
 	return bullets;
 }
 
-std::vector<Weapon> parseWeaponConfig(hagame::utils::File file, std::vector<Bullet> bullets)
+std::vector<Weapon> parseWeaponConfig(hagame::utils::File* file, std::vector<Bullet> bullets)
 {
 	std::vector<Weapon> weapons;
 	int index = 0;

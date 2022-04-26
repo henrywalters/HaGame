@@ -9,9 +9,13 @@
 
 #include "./../Systems/PlatformerSystem.h"
 #include "./../Systems/AISystem.h"
+#include "./../Systems/CustomRenderSystem.h"
+#include "./../Systems/WeaponSystem.h"
 
 #include "./../Components/PlayerController.h"
 #include "./../Components/AI/Walker.h"
+#include "./../Components/HealthBarRenderer.h"
+#include "./../Components/WeaponController.h"
 
 class Demo : public RuntimeLevel {
 public:
@@ -30,20 +34,13 @@ private:
 
 	RawPtr<hagame::ecs::Entity> player;
 
-	std::vector<Bullet> bullets;
-	std::vector<Weapon> weapons;
-
 	Array<RawPtr<hagame::ecs::Entity>> walkers;
 
 	const Array<String> MAP = {
 		"############################",
-		"# ----------    -----------#",
-		"#---------#--#--#----------#",
-		"#--- -P--------------------#",
-		"# ----------------####-----#",
-		"#--------------------------#",
-		"#----------------------##--#",
-		"#--W-----------------------#",
+		"# -------------------------#",
+		"#--- -P--#########---------#",
+		"# --------W----------------#",
 		"############################",
 	};
 

@@ -19,14 +19,33 @@ struct Bullet {
 	// Required parameters
 	std::string name;
 	float damage;
-	float spread;
+
+	// How much does running affect the spread of the bullet
+	float spreadRunFactor;
+	
+	// Mean of the log normal spread
+	float spreadMean;
+
+	// Std deviation of the log normal spread
+	float spreadStdDev;
+
+	// Does the bullet explode on impact?
 	bool explodes;
+
+
 	BulletType type;
 
 	// Optional parameters depending on BulletType
 	std::optional<float> speed;
 	std::optional<float> blastRadius;
 	std::optional<hagame::graphics::Sprite> projectileSprite;
+
+	float getSpread(Vec3 velocity) {
+		hagame::utils::Random random;
+		float speed = velocity.magnitude();
+		float r = sigmoid(speed) * spreadRunFactor;
+		return random.normal(spreadMean, spreadStdDev * r) + r;
+	}
 };
 
 struct Weapon {
@@ -45,7 +64,7 @@ struct Weapon {
 	
 };
 
-std::vector<Bullet> parseBulletConfig(hagame::utils::File file);
-std::vector<Weapon> parseWeaponConfig(hagame::utils::File file, std::vector<Bullet> bullets);
+std::vector<Bullet> parseBulletConfig(hagame::utils::File* file);
+std::vector<Weapon> parseWeaponConfig(hagame::utils::File* file, std::vector<Bullet> bullets);
 
 #endif

@@ -10,7 +10,7 @@ bool hagame::physics::isColliding(Rect r1, Rect r2)
 		r1.contains(r2.pos + r2.size);
 }
 
-Sphere hagame::physics::Collisions::getBoundingSphere(Ptr<hagame::ecs::Entity> entity, Collider* collider)
+Sphere hagame::physics::Collisions::getBoundingSphere(RawPtr<hagame::ecs::Entity> entity, Collider* collider)
 {
 	if (collider->type == hagame::physics::ColliderType::SphereCollider) {
 		if (!collider->boundingSphere.has_value()) {
@@ -32,13 +32,15 @@ Sphere hagame::physics::Collisions::getBoundingSphere(Ptr<hagame::ecs::Entity> e
 	}
 }
 
-Optional<hagame::physics::Hit> hagame::physics::Collisions::raycast(Ptr<hagame::ecs::Entity> origin, math::Ray ray, float& t, Array<String> ignoreTags)
+Optional<hagame::physics::Hit> hagame::physics::Collisions::raycast(RawPtr<hagame::ecs::Entity> origin, math::Ray ray, float& t, Array<String> ignoreTags)
 {
 	//Optional<Ptr<ecs::Entity>> entity = std::nullopt;
 	Optional<Hit> hit;
 	float currT;
 	for (auto& [key, neighborhood] : entityMap.map) {
 		for (auto neighbor : neighborhood) {
+
+
 			if (neighbor->id == origin->id || (ignoreTags.size() > 0 && neighbor->hasTag(ignoreTags)))
 				continue;
 
@@ -74,7 +76,8 @@ Optional<hagame::physics::Hit> hagame::physics::Collisions::raycast(math::Ray ra
 {
 	Optional<Hit> hit;
 	float currT;
-	entities.forEach([this, &hit, &currT, &t, ray](Ptr<ecs::Entity> entity) {
+	entities.forEach([this, &hit, &currT, &t, ray](RawPtr<ecs::Entity> entity) {
+
 		auto nCollider = entity->getComponent<Collider>();
 
 		if (nCollider == NULL) return;
@@ -84,7 +87,7 @@ Optional<hagame::physics::Hit> hagame::physics::Collisions::raycast(math::Ray ra
 			cube.pos += entity->transform->getPosition();
 			//auto rayHit = ray.checkCube(cube, currT);
 			auto rayHit = hagame::math::collisions::checkRayAgainstCube(ray, cube, currT);
-			if (rayHit.has_value() && (currT < t || !hit.has_value())) {
+			if (rayHit.has_value() && (!hit.has_value() || currT < t)) {
 				t = currT;
 				hit = Hit{ entity, rayHit.value().position, rayHit.value().normal };
 			}
@@ -93,7 +96,7 @@ Optional<hagame::physics::Hit> hagame::physics::Collisions::raycast(math::Ray ra
 			auto sphere = nCollider->boundingSphere.value();
 			sphere.center += entity->transform->getPosition();
 			auto rayHit = hagame::math::collisions::checkRayAgainstSphere(ray, sphere, currT);
-			if (rayHit.has_value() && (currT < t || !hit.has_value())) {
+			if (rayHit.has_value() && (!hit.has_value() || currT < t)) {
 				t = currT;
 				hit = Hit{ entity, rayHit.value().position, rayHit.value().normal };
 			}
@@ -103,9 +106,9 @@ Optional<hagame::physics::Hit> hagame::physics::Collisions::raycast(math::Ray ra
 	return hit;
 }
 
-Array<Ptr<hagame::ecs::Entity>> hagame::physics::Collisions::raycastSweep2D(math::Ray ray, float angle, int raycasts, ecs::EntityManager& entities, Array<String> ignoreTags, Array<uint64_t> ignoreEntities)
+Array<RawPtr<hagame::ecs::Entity>> hagame::physics::Collisions::raycastSweep2D(math::Ray ray, float angle, int raycasts, ecs::EntityManager& entities, Array<String> ignoreTags, Array<uint64_t> ignoreEntities)
 {
-	Array<Ptr<hagame::ecs::Entity>> out;
+	Array<RawPtr<hagame::ecs::Entity>> out;
 	auto step = angle / (float)raycasts;
 	auto mag = ray.direction.magnitude();
 	auto startAngle = atan2f(ray.direction[1], ray.direction[0]) - angle * 0.5f;
@@ -115,8 +118,9 @@ Array<Ptr<hagame::ecs::Entity>> hagame::physics::Collisions::raycastSweep2D(math
 	for (int i = 0; i <= raycasts; i++) {
 		auto angle = startAngle + i * step;
 		Vec3 dir = Vec3(cos(angle) * mag, sin(angle) * mag);
-		auto hit = raycast(math::Ray(ray.origin, dir), entities, t, ignoreTags, ignoreEntities);
-		hagame::graphics::drawLine(math::Ray(ray.origin, dir).toLine(), Color::red(), DEBUG_SHADER);
+		math::Ray tmpRay(ray.origin, dir);
+		auto hit = raycast(tmpRay, entities, t, ignoreTags, ignoreEntities);
+		hagame::graphics::drawLine(tmpRay.toLine(), Color::red(), DEBUG_SHADER);
 		if (hit.has_value()) {
 			if (entityIds.find(hit.value().entity->id) == entityIds.end()) {
 				out.push_back(hit.value().entity);
@@ -129,7 +133,7 @@ Array<Ptr<hagame::ecs::Entity>> hagame::physics::Collisions::raycastSweep2D(math
 	return out;
 }
 
-Optional<Ptr<hagame::ecs::Entity>> hagame::physics::Collisions::checkCollisions(Ptr<ecs::Entity> entity, Collider* collider, Vec3 velocity, double dt, float& t)
+Optional<RawPtr<hagame::ecs::Entity>> hagame::physics::Collisions::checkCollisions(RawPtr<ecs::Entity> entity, Collider* collider, Vec3 velocity, double dt, float& t)
 {
 	if (collider != NULL && collider->dynamic) {
 		auto bs = getBoundingSphere(entity, collider);
@@ -153,7 +157,7 @@ Optional<Ptr<hagame::ecs::Entity>> hagame::physics::Collisions::checkCollisions(
 
 		bool collided = false;
 		float tMin;
-		Ptr<ecs::Entity> collidedWith;
+		RawPtr<ecs::Entity> collidedWith;
 		float collisionT;
 
 		for (auto neighbor : entityMap.get(entity->transform->getPosition() + velocity * dt)) {
@@ -241,7 +245,6 @@ Optional<hagame::math::collisions::Hit> hagame::physics::Collisions::checkCollis
 	if (check.getType() == BoundingVolumeType::Cube && against.getType() == BoundingVolumeType::Cube) {
 		check.getCube().pos += checkPos;
 		against.getCube().pos += againstPos;
-		std::cout << check.getCube().toString() << " vs " << against.getCube().toString() << "\n";
 		return hagame::math::collisions::checkAABBAgainstAABB(hagame::math::AABB(check.getCube()), hagame::math::AABB(against.getCube()));
 	}
 
@@ -269,7 +272,7 @@ Optional<hagame::math::collisions::Hit> hagame::physics::Collisions::checkCollis
 	return std::nullopt;
 }
 
-hagame::physics::Hit hagame::physics::Collisions::hit2hit(hagame::math::collisions::Hit hit, Ptr<hagame::ecs::Entity> entity)
+hagame::physics::Hit hagame::physics::Collisions::hit2hit(hagame::math::collisions::Hit hit, RawPtr<hagame::ecs::Entity> entity)
 {
 	hagame::physics::Hit pHit;
 	pHit.normal = hit.normal;

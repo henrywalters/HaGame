@@ -24,17 +24,14 @@ public:
 	void onSceneInit() {
 		addSystem<RenderSystem>();
 		addSystem<UISystem>();
-	}
 
-	void onSceneActivate() {
-
-		cameraEntity = addEntity().get();
+		cameraEntity = addEntity();
 		auto camera = cameraEntity->addComponent<CameraComponent>();
 		orth = std::make_shared<OrthographicCamera>(game->window->size);
 		orth->centered = false;
 		camera->camera = orth;
 
-		editorEntity = addEntity().get();
+		editorEntity = addEntity();
 		auto editorGrid = editorEntity->addComponent<Grid>(Vec2(1000), 50, 50);
 		editorGrid->display = true;
 		editorGrid->color = PRUSSIAN_BLUE;
@@ -56,8 +53,8 @@ public:
 		pallet->getComponent<QuadRenderer>()->offset[2] = 5;
 
 		grid->addEntity(range, editorEntity, [](Entity* quad) { return quad->getComponent<Grid>(); });
-		grid->addEntity(sidebarRange, sidebar.get(), [](Entity* quad) { return quad->getComponent<QuadRenderer>(); });
-		grid->addEntity(palletRange, pallet.get(), [](Entity* quad) { return quad->getComponent<QuadRenderer>(); });
+		grid->addEntity(sidebarRange, sidebar, [](Entity* quad) { return quad->getComponent<QuadRenderer>(); });
+		grid->addEntity(palletRange, pallet, [](Entity* quad) { return quad->getComponent<QuadRenderer>(); });
 
 		game->input.keyboardMouse.mouseEvents.subscribe(hagame::input::devices::MouseEvents::Moved, [this](hagame::input::devices::MouseEvent e) {
 			mousePos = e.mousePos;
@@ -73,9 +70,14 @@ public:
 		});
 	}
 
-	void onSceneUpdate(double dt) {
+	void onSceneActivate() {
+
+		
+	}
+
+	void onSceneAfterUpdate() {
 		if (game->input.keyboardMouse.startPressed) {
-			game->scenes.activate("home");
+			game->setScene("home");
 		}
 		else {
 			auto qr = editorEntity->getComponent<Grid>();
@@ -83,12 +85,12 @@ public:
 
 			if (game->input.keyboardMouse.keyboard.numbers[1]) {
 				auto delta = qr->offset.div(qr->getSize());
-				qr->setSize(qr->getSize() * (1 - dt));
+				qr->setSize(qr->getSize() * (1 - 0.1));
 				qr->offset = qr->getSize().prod(delta);
 			}
 			else if (game->input.keyboardMouse.keyboard.numbers[2]) {
 				auto delta = qr->offset.div(qr->getSize());
-				qr->setSize(qr->getSize() * (1 + dt));
+				qr->setSize(qr->getSize() * (1 + 0.1));
 				qr->offset = qr->getSize().prod(delta);
 			}
 			else if (qr->getGridRect().contains(mousePos)) {
@@ -136,11 +138,11 @@ public:
 
 	void onSceneDeactivate() {
 		std::cout << "EDITOR DEACTIVATED\n";
-		ecs.entities.clear(); 
-		// lineBuffer.clear();
+		//ecs.entities.clear(); 
+		//lineBuffer.clear();
 	}
 
-	Ptr<Entity> addQuad(Vec3 pos, Vec2 size, Color color) {
+	RawPtr<Entity> addQuad(Vec3 pos, Vec2 size, Color color) {
 		auto entity = addEntity();
 		entity->move(pos);
 		auto quad = entity->addComponent<QuadRenderer>(size);

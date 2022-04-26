@@ -43,7 +43,7 @@ namespace hagame {
 					text->fontSize = font->getFontSize();
 					text->alignmentH = hagame::graphics::TextHAlignment::Center;
 
-					m_grid.addEntity(0, i, entity.get(), [](hagame::ecs::Entity* entity) {
+					m_grid.addEntity(0, i, entity, [](hagame::ecs::Entity* entity) {
 						return entity->getComponentInChildren<hagame::graphics::TextRenderer>();
 					});
 
@@ -54,7 +54,7 @@ namespace hagame {
 				return m_grid.getBoundingBox();
 			}
 
-			void update(Ptr<hagame::ecs::Entity> entity) {
+			void update(RawPtr<hagame::ecs::Entity> entity) {
 				m_grid.update(entity->getPos());
 
 				for (int i = 0; i < m_options.size(); i++) {

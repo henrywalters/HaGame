@@ -53,17 +53,13 @@ public:
 		pFont = game->resources->loadFont("primary", PRIMARY_FONT, 124);
 		smallFont = game->resources->loadFont("secondary_small", SECONDARY_FONT, 20);
 		largeFont = game->resources->loadFont("secondary_large", SECONDARY_FONT, 36);
-	}
-
-	void onSceneActivate() {
 
 		game->audio->play(game->resources->getAudioSample("creepy_home"), 1.0f);
 
-		game->window->clearColor = DARK;
 		screenCenter = game->window->size * 0.5f;
 		game->input.keyboardMouse.hideCursor();
 
-		cameraEntity = addEntity().get();
+		cameraEntity = addEntity();
 		auto camera = cameraEntity->addComponent<CameraComponent>();
 		orth = std::make_shared<OrthographicCamera>(game->window->size);
 		orth->centered = false;
@@ -85,7 +81,7 @@ public:
 		auto title = addLabel(Vec2::Zero(), TITLE, pFont, PRIMARY, TextHAlignment::Center, TextVAlignment::Center);
 		auto subtitle = addLabel(Vec2::Zero(), SUBTITLE, largeFont, SECONDARY, TextHAlignment::Center, TextVAlignment::Center);
 
-		menuEntity = addEntity().get();
+		menuEntity = addEntity();
 		auto menu = menuEntity->addComponent<MultiSelect>(this, largeFont, Vec2(300, 300), MENU_OPTIONS);
 		menu->color = SECONDARY;
 
@@ -99,11 +95,11 @@ public:
 			}
 
 			if (selected == "sandbox") {
-				game->scenes.activate("demo");
+				game->setScene("demo");
 			}
 
 			if (selected == "editor") {
-				game->scenes.activate("editor");
+				game->setScene("editor");
 			}
 		};
 
@@ -111,23 +107,23 @@ public:
 
 		auto buildTag = addLabel(Vec2(game->window->size[0], 0) - buildTagSize * Vec2(1, 0), BUILD_TAG, smallFont, SECONDARY, TextHAlignment::Left, TextVAlignment::Top);
 
-		menuCol->addEntity(0, 0, buildTag.get(), [](Entity* tag) { return tag->getComponent<TextRenderer>(); });
+		menuCol->addEntity(0, 0, buildTag, [](Entity* tag) { return tag->getComponent<TextRenderer>(); });
 		menuCol->setAnchor(0, 0, AnchorType::BottomRight);
 
-		titleCol->addEntity(0, 2, title.get(), [](Entity* title) { return title->getComponent<TextRenderer>(); });
-		titleCol->addEntity(0, 1, subtitle.get(), [](Entity* title) { return title->getComponent<TextRenderer>(); });
+		titleCol->addEntity(0, 2, title, [](Entity* title) { return title->getComponent<TextRenderer>(); });
+		titleCol->addEntity(0, 1, subtitle, [](Entity* title) { return title->getComponent<TextRenderer>(); });
 
-		int starcount = 10;
+		int starcount = 1000;
 
 		for (int i = 0; i < starcount; i++) {
 			auto star = addEntity();
 			star->addComponent<Star>();
 			star->getComponent<Star>()->randomize(0.8f);
-			stars.push_back(star.get());
+			stars.push_back(star);
 
 			auto size = game->random.real(0.5f, 5.0f);
 			auto quad = star->addComponent<QuadRenderer>(size);
-			
+
 			quad->color = star->getComponent<Star>()->color;
 			quad->shader = game->resources->getShaderProgram("color");
 		}
@@ -144,7 +140,11 @@ public:
 			grid->getComponent<Grid>()->setSize(e.data);
 			game->window->setViewport(Rect(Vec2::Zero(), e.data));
 			randomallyPositionStars();
-		});
+			});
+	}
+
+	void onSceneActivate() {
+		game->window->clearColor = DARK;
 	}
 
 	void randomallyPositionStars() {
@@ -154,10 +154,10 @@ public:
 		}
 	}
 
-	void onSceneDeactivate() {
-		stars.clear();
-		lineBuffer.clear();
-		ecs.entities.clear();
+	void onSceneDeactivate() { 
+		//stars.clear();
+		//lineBuffer.clear();
+		//ecs.entities.clear();
 	}
 
 	void onSceneUpdate(double dt) {
@@ -188,7 +188,7 @@ public:
 		DEBUG_SHADER = game->resources->getShaderProgram("color");
 	}
 
-	Ptr<Entity> addQuad(Vec3 pos, Vec2 size, Color color) {
+	RawPtr<Entity> addQuad(Vec3 pos, Vec2 size, Color color) {
 		auto entity = addEntity();
 		entity->move(pos);
 		auto quad = entity->addComponent<QuadRenderer>(size);
@@ -197,7 +197,7 @@ public:
 		return entity;
 	}
 
-	Ptr<Entity> addButton(Vec2 pos, Vec2 size, String message, Font* font, Color color, Color hoverColor, TextHAlignment alignmentH, std::function<void(Ptr<Entity>)> onClick) {
+	RawPtr<Entity> addButton(Vec2 pos, Vec2 size, String message, Font* font, Color color, Color hoverColor, TextHAlignment alignmentH, std::function<void(RawPtr<Entity>)> onClick) {
 		auto entity = addEntity();
 		auto textEntity = addChild(entity);
 		auto btnEntity = addChild(entity);
@@ -218,18 +218,18 @@ public:
 		auto button = btnEntity->addComponent<Button>(size);
 		button->onClick = onClick;
 		
-		button->onEnter = [hoverColor, this](Ptr<Entity> entity) {
+		button->onEnter = [hoverColor, this](RawPtr<Entity> entity) {
 			game->audio->play(game->resources->getAudioSample("thud"), 0.4f);
 			entity->parent->getComponentInChildren<TextRenderer>()->color = hoverColor;
 		};
-		button->onLeave = [color](Ptr<Entity> entity) {
+		button->onLeave = [color](RawPtr<Entity> entity) {
 			entity->parent->getComponentInChildren<TextRenderer>()->color = color;
 		};
 		
 		return entity;
 	}
 
-	Ptr<Entity> addLabel(Vec2 pos, String message, Font* font, Color color, TextHAlignment alignmentH = TextHAlignment::Center, TextVAlignment alignmentV = TextVAlignment::Center) {
+	RawPtr<Entity> addLabel(Vec2 pos, String message, Font* font, Color color, TextHAlignment alignmentH = TextHAlignment::Center, TextVAlignment alignmentV = TextVAlignment::Center) {
 		auto entity = addEntity();
 		entity->setPos(pos);
 		//entity->move(Vec3::Face(1.0f));

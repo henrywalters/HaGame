@@ -15,6 +15,9 @@ public:
 	SpaceHorror(hagame::graphics::Window* window) : Game(window) {}
 
 	void onGameStart() {
+
+		// window->turnOnVSync();
+
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -81,6 +84,9 @@ public:
 			"particle",
 			"batch_line",
 		};
+
+		resources->loadFile("bullets_conf", "../SpaceHorror/Config/Bullets.conf");
+		resources->loadFile("weapons_conf", "../SpaceHorror/Config/Weapons.conf");
 
 		resources->loadFont("arial", "Fonts/arial.ttf", 36);
 		resources->loadFont("horroroid", "Fonts/horroroid/horroroid.ttf", 64);

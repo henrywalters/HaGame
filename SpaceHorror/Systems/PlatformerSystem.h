@@ -10,19 +10,19 @@ public:
 
 	String getSystemName() { return "PlatformerSystem"; }
 
-	void onSystemAfterUpdate(double dt);
+	void onSystemUpdate(double dt);
 	void onSystemPhysicsUpdate(double dt);
 
 private:
 
 	struct EntityHit {
-		Ptr<Entity> entity;
+		RawPtr<Entity> entity;
 		Vec3 normal;
 		float t;
 	};
 
 	// Return the allowable velocity after collisions as well the directions collisions are occuring. Ordered by N,E,S,W
-	void resolveCollisions(Ptr<hagame::ecs::Entity> entity, Vec3& velocity, std::array<bool, 4>& directions);
+	void resolveCollisions(RawPtr<hagame::ecs::Entity> entity, Vec3& velocity, std::array<bool, 4>& directions);
 };
 
 #endif

@@ -12,7 +12,7 @@ public:
 	}
 
 	void onSystemUpdate(double dt) {
-		forEach<Star>([this, dt](Star* star, Ptr<hagame::ecs::Entity> entity) {
+		forEach<Star>([this, dt](Star* star, RawPtr<hagame::ecs::Entity> entity) {
 			star->update(dt);
 			entity->getComponent<hagame::graphics::QuadRenderer>()->color = star->color;
 		});

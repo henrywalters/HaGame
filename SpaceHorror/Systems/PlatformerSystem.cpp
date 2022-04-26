@@ -1,7 +1,7 @@
 #include "PlatformerSystem.h"
 
-void PlatformerSystem::onSystemAfterUpdate(double dt) {
-	forEach<Platformer>([this, dt](Platformer* p, Ptr<hagame::ecs::Entity> entity) {
+void PlatformerSystem::onSystemUpdate(double dt) {
+	forEach<Platformer>([this, dt](Platformer* p, RawPtr<hagame::ecs::Entity> entity) {
 		auto rigidbody = entity->getComponent<hagame::physics::RigidBody>();
 		auto platformer = entity->getComponent<Platformer>();
 		auto velocity = rigidbody->vel;
@@ -38,7 +38,8 @@ void PlatformerSystem::onSystemAfterUpdate(double dt) {
 		entity->transform->move(velX + velY);
 	});
 
-	forEach<PlayerController>([this, dt](PlayerController* p, Ptr<Entity> entity) {
+	forEach<PlayerController>([this, dt](PlayerController* p, RawPtr<Entity> entity) {
+		auto input = game->input.player(0);
 		hagame::math::Ray ray = hagame::math::Ray(entity->getPos(), (p->lookingAt - entity->getPos()) * 1000);
 		float t;
 		auto collision = game->collisions.raycast(entity, ray, t, { "player" });
@@ -48,6 +49,10 @@ void PlatformerSystem::onSystemAfterUpdate(double dt) {
 		else {
 			hagame::graphics::drawLine(hagame::math::Line(entity->getPos(), ray.getPointOnLine(1)), Color::red(), DEBUG_SHADER, 0.02f);
 		}
+
+		if (input.aPressed) {
+			p->timeOfLastJump = game->secondsElapsed;
+		}
 		
 	});
 }
@@ -56,21 +61,29 @@ void PlatformerSystem::onSystemPhysicsUpdate(double dt)
 {
 	auto input = game->input.player(0);
 
-	forEach<PlayerController>([this, dt, input](PlayerController* p, Ptr<Entity> entity) {
+	forEach<PlayerController>([this, dt, input](PlayerController* p, RawPtr<Entity> entity) {
 		auto rigidbody = entity->getComponent<RigidBody>();
 		auto controller = entity->getComponent<PlayerController>();
 		auto platformer = entity->getComponent<Platformer>();
+
+		auto jumpForce = rigidbody->forceDueToGravity.normalized() * -controller->jumpForce;
 		
 		if (platformer->grounded) {
 			rigidbody->applyForce(Vec3::Right(input.lAxis[0]) * controller->movementForce);
+
+			// Allow a bit of buffer before landing to jump
+			if (p->timeOfLastJump > 0) {
+
+				if (game->secondsElapsed - p->timeOfLastJump < p->jumpBufferSeconds) {
+					rigidbody->applyForce(jumpForce);
+				}
+				p->timeOfLastJump = -1;
+			}
 		}
 
-		if (input.a && platformer->grounded) {
-			rigidbody->applyForce(Vec3::Top(controller->jumpForce));
-		}
 	});
 
-	forEach<Platformer>([this, dt](Platformer* p, Ptr<Entity> entity) {
+	forEach<Platformer>([this, dt](Platformer* p, RawPtr<Entity> entity) {
 		auto rigidbody = entity->getComponent<RigidBody>();
 		// Apply drag forces in air or ground
 		auto drag = p->grounded ? p->groundDrag : p->airDrag;
@@ -79,7 +92,7 @@ void PlatformerSystem::onSystemPhysicsUpdate(double dt)
 	});
 }
 
-void PlatformerSystem::resolveCollisions(Ptr<hagame::ecs::Entity> entity, Vec3& velocity, std::array<bool, 4>& directions)
+void PlatformerSystem::resolveCollisions(RawPtr<hagame::ecs::Entity> entity, Vec3& velocity, std::array<bool, 4>& directions)
 {
 
 	if (velocity[0] == 0.0f && velocity[1] == 0.0f) return;
@@ -111,7 +124,7 @@ void PlatformerSystem::resolveCollisions(Ptr<hagame::ecs::Entity> entity, Vec3& 
 		directions[i] = false;
 	}
 
-	scene->ecs.entities.forEach<hagame::physics::Collider>([&hits, &t, velMag, ray, entity, cube, dirColliders, &directions](hagame::physics::Collider* nCollider, Ptr<hagame::ecs::Entity> neighbor) {
+	scene->ecs.entities.forEach<hagame::physics::Collider>([&hits, &t, velMag, ray, entity, cube, dirColliders, &directions](hagame::physics::Collider* nCollider, RawPtr<hagame::ecs::Entity> neighbor) {
 		if (neighbor == entity) return;
 
 		auto nCube = nCollider->boundingCube.value();

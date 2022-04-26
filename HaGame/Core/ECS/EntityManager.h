@@ -11,11 +11,11 @@ namespace hagame {
 		private:
 
 			entt::basic_registry<uint32_t>* registry;
-			Map<uint32_t, Ptr<Entity>> enttMap;
-			Map<uint32_t, Ptr<Entity>> idMap;
+			Map<uint32_t, UniqPtr<Entity>> enttMap;
+			Map<uint32_t, RawPtr<Entity>> idMap;
 			int entityCount = 0;
 
-			void removeChild(Ptr<Entity> parent, Ptr<Entity> child) {
+			void removeChild(RawPtr<Entity> parent, RawPtr<Entity> child) {
 				for (int i = 0; i < parent->children.size(); i++) {
 					if (parent->children[i]->id == child->id) {
 						parent->children.erase(parent->children.begin() + i);
@@ -40,41 +40,42 @@ namespace hagame {
 			}
 			*/
 			
-			Ptr<Entity> add() {
-				Ptr<Entity> entity = std::make_shared<Entity>(registry->create(), entityCount);
+			RawPtr<Entity> add() {
+				auto entityId = registry->create();
+				enttMap[entityId] = std::make_unique<Entity>(entityId, entityCount);
+				//Ptr<Entity> entity = std::make_shared<Entity>(registry->create(), entityCount);
 				entityCount++;
-				entity->registry = registry;
-				entity->transform = std::make_shared<hagame::Transform>();
-				entity->transform->entity = entity.get();
-				enttMap[entity->entt_id] = entity;
-				idMap[entity->id] = entity;
-				return entity;
+				enttMap[entityId]->registry = registry;
+				enttMap[entityId]->transform = std::make_shared<hagame::Transform>();
+				enttMap[entityId]->transform->entity = enttMap[entityId].get();
+				idMap[entityId] = enttMap[entityId].get();
+				return enttMap[entityId].get();
 			}
 
-			void forEach(std::function<void(Ptr<Entity>)> lambda) {
+			void forEach(std::function<void(RawPtr<Entity>)> lambda) {
 				for (auto& [id, entity] : enttMap) {
-					lambda(entity);
+					lambda(entity.get());
 				}
 			}
 
-			void forEach(std::function<void(Ptr<Entity>)> lambda, Array<uint64_t> ignoreEntities, Array<String> ignoreTags) {
+			void forEach(std::function<void(RawPtr<Entity>)> lambda, Array<uint64_t> ignoreEntities, Array<String> ignoreTags) {
 				for (auto& [id, entity] : enttMap) {
 					if (!hasElement(ignoreEntities, (uint64_t)entity->uuid) && !entity->hasTag(ignoreTags)) {
-						lambda(entity);
+						lambda(entity.get());
 					}
 					
 				}
 			}
 
 			template <class T>
-			void forEach(std::function<void(T*, Ptr<Entity>)> lambda) {
+			void forEach(std::function<void(RawPtr<T>, RawPtr<Entity>)> lambda) {
 				for (auto entity : registry->view<T>()) {
 					lambda(&registry->get<T>(entity), getByEnttId(entity));
 				}
 			}
 
 			template <class T>
-			void forEach(std::function<void(T*, Ptr<Entity>)> lambda, Array<uint64_t> ignoreEntities, Array<String> ignoreTags) {
+			void forEach(std::function<void(RawPtr<T>, Ptr<Entity>)> lambda, Array<uint64_t> ignoreEntities, Array<String> ignoreTags) {
 				for (auto entity : registry->view<T>()) {
 					if (!hasElement(ignoreEntities, (uint64_t)entity->uuid) && !entity->hasTag(ignoreTags)) {
 						lambda(&registry->get<T>(entity), getByEnttId(entity));
@@ -83,8 +84,8 @@ namespace hagame {
 			}
 
 			// Instantiate a new Entity belonging to the parent
-			Ptr<Entity> add(Ptr<Entity> parent) {
-				Ptr<Entity> entity = add();
+			RawPtr<Entity> add(RawPtr<Entity> parent) {
+				RawPtr<Entity> entity = add();
 				entity->parent = parent;
 				parent->children.push_back(entity);
 				entity->transform->setPosition(Vec3::Zero());
@@ -92,7 +93,7 @@ namespace hagame {
 			}
 
 			// Add an existing entity to a parent
-			Ptr<Entity> add(Ptr<Entity> parent, Ptr<Entity> child) {
+			RawPtr<Entity> add(RawPtr<Entity> parent, RawPtr<Entity> child) {
 
 				// If the child is currently the parent of the target parent, remove the relationship
 				if (parent->parent != NULL && parent->parent->id == child->id) {
@@ -105,23 +106,22 @@ namespace hagame {
 
 				child->transform->setPosition(child->transform->getPosition() - parent->transform->getPosition());
 				child->parent = parent;
-				child->transform->entity = child.get();
+				child->transform->entity = child;
 				parent->children.push_back(child);
 				return child;
 			}
 
-			Ptr<Entity> get(uint32_t id) {
+			RawPtr<Entity> get(uint32_t id) {
 				return idMap[id];
 			}
 
-			Ptr<Entity> getByEnttId(uint32_t id) {
-				return enttMap[id];
+			RawPtr<Entity> getByEnttId(uint32_t id) {
+				return enttMap[id].get();
 			}
 
 			// Remove an entity, and its children
-			void remove(Ptr<Entity> entity) {
+			void remove(RawPtr<Entity> entity) {
 				for (auto child : entity->children) {
-					child->parent.reset();
 					remove(child);
 				}
 
@@ -130,20 +130,18 @@ namespace hagame {
 				}
 
 				enttMap[entity->entt_id].reset();
-				idMap[entity->id].reset();
-				entity.reset();
 			}
 
 			void clear() {
 				std::vector<long> parentIds;
 				for (auto& [key, entity] : idMap) {
 					if (entity->parent == nullptr) {
-						parentIds.push_back(entity->id);
+						parentIds.push_back(entity->entt_id);
 					}
 				}
 
 				for (auto id : parentIds) {
-					remove(idMap[id]);
+					remove(enttMap[id].get());
 				}
 
 				enttMap.clear();

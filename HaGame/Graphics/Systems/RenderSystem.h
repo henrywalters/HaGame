@@ -41,11 +41,12 @@ namespace hagame {
 
 			void onSystemAfterUpdate(double dt) {
 				OrthographicCamera uiCamera = OrthographicCamera(scene->game->window->size);
+				uiCamera.centered = false;
 				Mat4 uiProjMat = uiCamera.getProjMatrix(Vec3::Zero());
 
-				forEach<TextRenderer>([this](TextRenderer* r, Ptr<ecs::Entity> entity) {
+				forEach<TextRenderer>([this, uiProjMat](TextRenderer* r, RawPtr<ecs::Entity> entity) {
 					r->shader->use();
-					r->shader->setMat4("projection", scene->projMat);
+					r->shader->setMat4("projection", uiProjMat);
 					if (r->font->getFontSize() != r->fontSize) {
 						r->font->setFontSize(r->fontSize);
 					}
@@ -64,7 +65,7 @@ namespace hagame {
 					scene->ecs.entities.sortByDistance<Sprite3DRenderer>(scene->activeCameraEntity->transform->getPosition());
 				}
 
-				forEach<MeshRenderer>([this, dt](MeshRenderer* r, Ptr<ecs::Entity> entity) {
+				forEach<MeshRenderer>([this, dt](MeshRenderer* r, RawPtr<ecs::Entity> entity) {
 
 					r->shader->use();
 
@@ -108,7 +109,7 @@ namespace hagame {
 
 				
 
-				forEach<DynamicMeshRenderer>([this, dt](DynamicMeshRenderer* r, Ptr<ecs::Entity> entity) {
+				forEach<DynamicMeshRenderer>([this, dt](DynamicMeshRenderer* r, RawPtr<ecs::Entity> entity) {
 
 					r->shader->use();
 
@@ -143,7 +144,7 @@ namespace hagame {
 					}
 				});
 
-				forEach<RigidBodyRenderer>([this](RigidBodyRenderer* r, Ptr<ecs::Entity> entity) {
+				forEach<RigidBodyRenderer>([this](RigidBodyRenderer* r, RawPtr<ecs::Entity> entity) {
 					auto rb = entity->getComponent<hagame::physics::RigidBody>();
 					if (rb) {
 						r->shader->setMVP(entity->transform->getModelMatrix(), scene->viewMat, scene->projMat);
@@ -152,13 +153,13 @@ namespace hagame {
 					}
 				});
 
-				forEach<BoundingBoxRenderer>([this](BoundingBoxRenderer* r, Ptr<ecs::Entity> entity) {
+				forEach<BoundingBoxRenderer>([this](BoundingBoxRenderer* r, RawPtr<ecs::Entity> entity) {
 					r->shader->setMVP(Mat4::Identity(), scene->viewMat, scene->projMat);
 					Cube bb = transformBoundingBox(r->boundingBox, entity->transform->getModelMatrix().resize<3, 3>(), entity->transform->getPosition());
 					hagame::graphics::drawCubeOutline(bb, hagame::graphics::Color::green(), r->shader);
 				});
 
-				forEach<AxisRenderer>([this](AxisRenderer* r, Ptr<ecs::Entity> entity) {
+				forEach<AxisRenderer>([this](AxisRenderer* r, RawPtr<ecs::Entity> entity) {
 					r->shader->setMVP(Mat4::Identity(), scene->viewMat, scene->projMat);
 					hagame::graphics::drawLine(hagame::math::Line(entity->transform->getPosition(), entity->transform->getPosition() + (entity->transform->face() * r->axisLength)), r->zColor, r->shader);
 					hagame::graphics::drawLine(hagame::math::Line(entity->transform->getPosition(), entity->transform->getPosition() + (entity->transform->right() * r->axisLength)), r->xColor, r->shader);
@@ -174,7 +175,7 @@ namespace hagame {
 					cube->draw(r->shader);
 				});
 
-				forEach<Text3dRenderer>([this](Text3dRenderer* r, Ptr<ecs::Entity> entity) {
+				forEach<Text3dRenderer>([this](Text3dRenderer* r, RawPtr<ecs::Entity> entity) {
 					r->shader->use();
 					r->shader->setMVP(entity->transform->getModelMatrix() * Mat4::Scale(Vec3(r->font->getScale())), scene->viewMat, scene->projMat);
 					drawText(r->shader, r->font, r->message, r->color, Vec3::Zero());
@@ -183,7 +184,7 @@ namespace hagame {
 				
 
 
-				forEach<SpriteRenderer>([this](SpriteRenderer* r, Ptr<ecs::Entity> entity) {
+				forEach<SpriteRenderer>([this](SpriteRenderer* r, RawPtr<ecs::Entity> entity) {
 					if (entity != NULL && r->sprite->texture != NULL && r->shader != NULL) {
 
 						r->shader->use();
@@ -204,7 +205,7 @@ namespace hagame {
 					
 				});
 
-				forEach<Sprite3DRenderer>([this](Sprite3DRenderer* r, Ptr<ecs::Entity> entity) {
+				forEach<Sprite3DRenderer>([this](Sprite3DRenderer* r, RawPtr<ecs::Entity> entity) {
 					if (entity != NULL && r->sprite->texture != NULL && r->shader != NULL) {
 						r->shader->use();
 
@@ -222,7 +223,7 @@ namespace hagame {
 					}
 				});
 
-				forEach<Sprite2DRenderer>([this, uiProjMat](Sprite2DRenderer* r, Ptr<ecs::Entity> entity) {
+				forEach<Sprite2DRenderer>([this, uiProjMat](Sprite2DRenderer* r, RawPtr<ecs::Entity> entity) {
 					if (entity != NULL && r->sprite->texture != NULL && r->shader != NULL) {
 						r->shader->use();
 
@@ -239,7 +240,7 @@ namespace hagame {
 					}
 					});
 
-				forEach<ParticleEmitterRenderer>([this](ParticleEmitterRenderer* r, Ptr<ecs::Entity> entity) {
+				forEach<ParticleEmitterRenderer>([this](ParticleEmitterRenderer* r, RawPtr<ecs::Entity> entity) {
 					r->emitter->update(scene->game->secondsElapsed);
 					r->emitter->sortByDistance(entity->transform->getPosition(), scene->activeCameraEntity->transform->getPosition());
 					r->shader->use();
@@ -251,7 +252,7 @@ namespace hagame {
 					r->emitter->draw();
 				});
 
-				forEach<BoxRenderer>([this](BoxRenderer* r, Ptr<ecs::Entity> entity) {
+				forEach<BoxRenderer>([this](BoxRenderer* r, RawPtr<ecs::Entity> entity) {
 					r->shader->use();
 					r->shader->setMat4("view", scene->viewMat);
 					r->shader->setMat4("projection", scene->projMat);
@@ -264,14 +265,14 @@ namespace hagame {
 					r->draw(entity->transform->getPosition());
 				});
 
-				forEach<QuadRenderer>([this](QuadRenderer* r, Ptr<ecs::Entity> entity) {
+				forEach<QuadRenderer>([this](QuadRenderer* r, RawPtr<ecs::Entity> entity) {
 					r->shader->use();
 					r->shader->setMVP(entity->transform->getModelMatrix(), scene->viewMat, scene->projMat);
 					r->shader->setVec4("color", r->color);
 					r->quad->getMesh()->draw();
 				});
 
-				forEach<AnimatedSpriteRenderer>([this, dt](AnimatedSpriteRenderer* r, Ptr<ecs::Entity> entity) {
+				forEach<AnimatedSpriteRenderer>([this, dt](AnimatedSpriteRenderer* r, RawPtr<ecs::Entity> entity) {
 					if (r->sprites->hasActive()) {
 						r->sprites->active()->update(dt);
 						r->shader->use();

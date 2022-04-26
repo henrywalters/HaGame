@@ -10,6 +10,7 @@ namespace hagame {
 		class Quad : public DynamicMesh {
 			Ptr<Mesh> m_mesh;
 			Vec2 m_origin;
+			Vec2 m_offset;
 			float m_width, m_height;
 
 			void computeMesh() {
@@ -22,10 +23,10 @@ namespace hagame {
 				//Vec3 d = Vec3({ m_width / 2.0f, -m_height / 2.0f, 0.0f });
 
 				Vec2 points[4] = {
-					Vec2(0, 0) - m_origin,
-					Vec2(0, m_height) - m_origin,
-					Vec2(m_width, m_height) - m_origin,
-					Vec2(m_width, 0) - m_origin
+					Vec2(0, 0) - m_origin + m_offset,
+					Vec2(0, m_height) - m_origin + m_offset,
+					Vec2(m_width, m_height) - m_origin + m_offset,
+					Vec2(m_width, 0) - m_origin + m_offset
 				};
 
 				Triangle triA = Triangle(points[0], points[1], points[2]);
@@ -79,6 +80,13 @@ namespace hagame {
 			}
 
 			Vec2 getOrigin() const { return m_origin; }
+
+			void setOffset(Vec2 offset) {
+				m_offset = offset;
+				computeMesh();
+			}
+
+			Vec2 getOffset() const { return m_offset; }
 
 			void setSize(Vec2 size, bool updateOrigin = true) {
 				m_width = size[0];

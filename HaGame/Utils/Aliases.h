@@ -69,11 +69,29 @@ using Tuple = std::tuple<A, B>;
 #endif
 
 template <class T>
+const std::function<T(T)> IdentityFn = [](T el) { return el };
+
+template <class T, class V>
+int getIndex(Array<T> arr, V el, std::function<V(T)> lambda) {
+	for (int i = 0; i < arr.size(); i++) {
+		if (lambda(arr[i]) == el) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+template <class T>
 bool hasElement(Array<T> arr, T el) {
 	for (T item : arr) {
 		if (item == el) return true;
 	}
 	return false;
+}
+
+template <class T, class V>
+bool hasElement(Array<T> arr, V el, std::function<V(T)> lambda) {
+	return getIndex(arr) != -1;
 }
 
 template <class T>

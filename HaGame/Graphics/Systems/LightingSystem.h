@@ -20,21 +20,21 @@ namespace hagame {
 					"material"
 				};
 
-				forEach<LightComponent>([this, shaders](LightComponent* light, Ptr<ecs::Entity> entity) {
+				forEach<LightComponent>([this, shaders](LightComponent* light, RawPtr<ecs::Entity> entity) {
 					for (auto shader : shaders) {
 						game->resources->getShaderProgram(shader)->use();
 						game->resources->getShaderProgram(shader)->setLight("light", entity->transform->getPosition(), light->light);
 					}
 				});
 
-				forEach<DirLightComponent>([this, shaders](DirLightComponent* light, Ptr<ecs::Entity> entity) {
+				forEach<DirLightComponent>([this, shaders](DirLightComponent* light, RawPtr<ecs::Entity> entity) {
 					for (auto shader : shaders) {
 						game->resources->getShaderProgram(shader)->use();
 						game->resources->getShaderProgram(shader)->setLight("light", light->light);
 					}
 				});
 
-				forEach<PointLightComponent>([this, shaders](PointLightComponent* light, Ptr<ecs::Entity> entity) {
+				forEach<PointLightComponent>([this, shaders](PointLightComponent* light, RawPtr<ecs::Entity> entity) {
 					for (auto shader : shaders) {
 						game->resources->getShaderProgram(shader)->use();
 						game->resources->getShaderProgram(shader)->setLight("light", entity->transform->getPosition(), light->light);

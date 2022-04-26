@@ -126,6 +126,12 @@ T sign(hagame::math::Vector<N, T> vector) {
 	}
 }
 
+// Useful function for mapping [-inf,inf] to (0,1)
+template <class T>
+T sigmoid(T x) {
+	return 1 / (1 + exp(-x));
+}
+
 // Compute the barycentric coordinates (u, v, w) for point p with respect to triangle T (ABC)
 template <class T>
 hagame::math::Vector<3, T> computeBarycentric(hagame::math::Vector<3, T> a, hagame::math::Vector<3, T> b, hagame::math::Vector<3, T> c, hagame::math::Vector<3, T> p) {

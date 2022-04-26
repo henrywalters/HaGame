@@ -18,8 +18,8 @@ typedef std::function<void(Vec3, double)> ai_action_t;
 class AI {
 public:
 
-	void update(Ptr<hagame::ecs::Entity> _entity, hagame::ecs::ECS* ecs, hagame::physics::Collisions* collisions, Vec3 pos, double dt) {
-		entity = _entity.get();
+	void update(RawPtr<hagame::ecs::Entity> _entity, hagame::ecs::ECS* ecs, hagame::physics::Collisions* collisions, Vec3 pos, double dt) {
+		entity = _entity;
 		auto state = decide(ecs, collisions, pos, dt);
 		// std::cout << (int)state << "\n";
 		switch (state) {

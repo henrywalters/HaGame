@@ -13,15 +13,15 @@ namespace hagame {
 
 		template <class T>
 		struct IPartition {
-			virtual void insert(BoundingVolume volume, Vec3 pos, Ptr<T> object) {
+			virtual void insert(BoundingVolume volume, Vec3 pos, RawPtr<T> object) {
 				throw new std::exception("Unimplemented");
 			};
 
-			virtual Array<Ptr<T>> getNeighbors(Vec3 point) {
+			virtual Array<RawPtr<T>> getNeighbors(Vec3 point) {
 				throw new std::exception("Unimplemented");
 			}
 
-			virtual Array<Ptr<T>> getNeighbors(BoundingVolume* volume, Vec3 pos) {
+			virtual Array<RawPtr<T>> getNeighbors(BoundingVolume* volume, Vec3 pos) {
 				throw new std::exception("Unimplemented");
 			}
 

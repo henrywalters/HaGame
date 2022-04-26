@@ -20,19 +20,19 @@ namespace hagame {
 				Vec2 mousePos = game->input.keyboardMouse.mouse.position;
 				mousePos[1] = game->window->size[1] - mousePos[1];
 
-				forEach<Button>([this, mousePos](Button* b, Ptr<hagame::ecs::Entity> entity) {
+				forEach<Button>([this, mousePos](Button* b, RawPtr<hagame::ecs::Entity> entity) {
 					b->update(entity, mousePos, game->input.keyboardMouse.mouse.leftPressed);
 				});
 
-				forEach<Grid>([this](Grid* grid, Ptr<hagame::ecs::Entity> entity) {
+				forEach<Grid>([this](Grid* grid, RawPtr<hagame::ecs::Entity> entity) {
 					grid->update(entity->getPos());
 				});
 
-				forEach<MultiSelect>([this](MultiSelect* ms, Ptr<hagame::ecs::Entity> entity) {
+				forEach<MultiSelect>([this](MultiSelect* ms, RawPtr<hagame::ecs::Entity> entity) {
 					ms->update(entity);
 				});
 
-				forEach<Slider>([this](Slider* slider, Ptr<hagame::ecs::Entity>) {});
+				forEach<Slider>([this](Slider* slider, RawPtr<hagame::ecs::Entity>) {});
 			}
 
 		};

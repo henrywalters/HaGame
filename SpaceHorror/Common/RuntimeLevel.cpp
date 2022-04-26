@@ -1,8 +1,13 @@
 #include "RuntimeLevel.h"
 
+using namespace hagame::input::devices;
+using namespace hagame::graphics;
+using namespace hagame::physics;
+using namespace hagame::ui;
+
 RawPtr<hagame::ecs::Entity> RuntimeLevel::addCamera()
 {
-	camera = addEntity().get();
+	camera = addEntity();
 	auto cameraComp = camera->addComponent<hagame::graphics::CameraComponent>();
 	orth = std::make_shared<hagame::graphics::OrthographicCamera>(game->window->size / PIXELS_PER_METER);
 	cameraComp->camera = orth;
@@ -10,9 +15,25 @@ RawPtr<hagame::ecs::Entity> RuntimeLevel::addCamera()
 	return camera;
 }
 
-Ptr<hagame::ecs::Entity> RuntimeLevel::addSprite(String textureName, Vec2 pos, Vec2 size)
+RawPtr<hagame::ecs::Entity> RuntimeLevel::addHUD()
 {
-	Ptr<hagame::ecs::Entity> entity = addEntity();
+	auto gridEntity = addEntity();
+	auto grid = gridEntity->addComponent<Grid>(game->window->size, 6, 6);
+	grid->display = false;
+
+	auto ammoDisplay = addEntity();
+	auto ammoText = ammoDisplay->addComponent<TextRenderer>();
+	ammoText->shader = game->resources->getShaderProgram("text");
+	ammoText->color = SECONDARY;
+	ammoText->font = game->resources->getFont("secondary_small");
+	ammoText->message = "0 / 0";
+
+	grid->addEntity(5, 5, ammoDisplay, [](Entity* entity) { return entity->getComponent<TextRenderer>(); });
+}
+
+RawPtr<hagame::ecs::Entity> RuntimeLevel::addSprite(String textureName, Vec2 pos, Vec2 size)
+{
+	auto entity = addEntity();
 	entity->addTag("resizable");
 	auto renderer = entity->addComponent<hagame::graphics::SpriteRenderer>();
 	renderer->shader = game->resources->getShaderProgram("sprite");
@@ -28,7 +49,6 @@ void RuntimeLevel::addPhysics(RawPtr<hagame::ecs::Entity> entity, float mass)
 {
 	auto rb = entity->addComponent<hagame::physics::RigidBody>();
 	rb->mass = mass;
-	rb->forceDueToGravity = -9.8;
 
 	auto platformer = entity->addComponent<Platformer>();
 
@@ -67,6 +87,7 @@ void RuntimeLevel::setMousePos(Vec2 rawMousePos)
 void RuntimeLevel::setWindowSize(Vec2 size)
 {
 	orth->size = size / PIXELS_PER_METER;
+	uiOrth->size = size;
 	cellSize = size / 10.0f;
 }
 
@@ -91,7 +112,7 @@ float RuntimeLevel::binarySearchCollisionTime(Cube entityCube, Cube otherCube, V
 	return midT - 0.01;
 }
 
-Ptr<hagame::ecs::Entity> RuntimeLevel::addQuad(Vec3 pos, Vec2 size, Color color) {
+RawPtr<hagame::ecs::Entity> RuntimeLevel::addQuad(Vec3 pos, Vec2 size, Color color) {
 	auto entity = addEntity();
 	entity->move(pos);
 	auto quad = entity->addComponent<QuadRenderer>(size);

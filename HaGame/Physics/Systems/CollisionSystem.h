@@ -28,7 +28,7 @@ namespace hagame {
 
 			void onSystemBeforeUpdate(double dt) {
 				game->collisions.entityMap.clear();
-				forEach<Collider>([this, dt](Collider* c, Ptr<ecs::Entity> entity) {
+				forEach<Collider>([this, dt](Collider* c, RawPtr<ecs::Entity> entity) {
 					if (c->active) {
 						game->collisions.entityMap.insert(entity->transform->getPosition(), entity);
 					}
@@ -36,7 +36,7 @@ namespace hagame {
 			}
 
 			void onSystemAfterUpdate(double dt) {
-				forEach<Collider>([this, dt](Collider* c, Ptr<ecs::Entity> entity) {
+				forEach<Collider>([this, dt](Collider* c, RawPtr<ecs::Entity> entity) {
 					if (c->active) {
 						// auto neighbors = 
 					}

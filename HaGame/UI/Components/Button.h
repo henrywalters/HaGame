@@ -19,11 +19,11 @@ namespace hagame {
 				return m_rect;
 			}
 			
-			std::function<void(Ptr<Entity>)> onEnter = [](Ptr<Entity> entity) {};
-			std::function<void(Ptr<Entity>)> onLeave = [](Ptr<Entity> entity) {};
-			std::function<void(Ptr<Entity>)> onClick = [](Ptr<Entity> entity) {};
+			std::function<void(RawPtr<Entity>)> onEnter = [](RawPtr<Entity> entity) {};
+			std::function<void(RawPtr<Entity>)> onLeave = [](RawPtr<Entity> entity) {};
+			std::function<void(RawPtr<Entity>)> onClick = [](RawPtr<Entity> entity) {};
 
-			void update(Ptr<Entity> entity, Vec2 mousePos, bool mouseDown) {
+			void update(RawPtr<Entity> entity, Vec2 mousePos, bool mouseDown) {
 
 				m_rect.pos = entity->getPos();
 				m_rect.pos[0] -= m_rect.size[0] * 0.5f;

@@ -18,15 +18,15 @@ namespace hagame {
 
 			void onSystemUpdate(double dt) {
 
-				Ptr<ecs::Entity> camera;
+				RawPtr<ecs::Entity> camera;
 
-				forEach<CameraComponent>([this, &camera](CameraComponent* cam, Ptr<ecs::Entity> entity) {
+				forEach<CameraComponent>([this, &camera](CameraComponent* cam, RawPtr<ecs::Entity> entity) {
 					if (cam->active) {
 						camera = entity;
 					}
 				});
 
-				forEach<FPSCameraController>([this, dt, camera](FPSCameraController* cam, Ptr<ecs::Entity> entity) {
+				forEach<FPSCameraController>([this, dt, camera](FPSCameraController* cam, RawPtr<ecs::Entity> entity) {
 
 					auto params = cam->inputFn();
 					cam->yaw += params.look[0] * dt * cam->xSensitivity;

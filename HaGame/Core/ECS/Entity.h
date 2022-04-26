@@ -23,8 +23,8 @@ namespace hagame {
 
 			entt::basic_registry<uint32_t>* registry;
 
-			Ptr<Entity> parent;
-			Array<Ptr<Entity>> children;
+			RawPtr<Entity> parent = nullptr;
+			Array<RawPtr<Entity>> children;
 			// Array<Component*> components;
 
 			Ptr<Transform> transform;
@@ -36,11 +36,11 @@ namespace hagame {
 
 			Entity(uint32_t _entt_id, uint32_t entityCount) : id(hagame::utils::UUID()), entt_id(_entt_id) {
 				name = "Entity_" + std::to_string(entityCount);
-				std::cout << "Hello " << name << "\n";
+				//std::cout << "Hello " << name << "\n";
 			}
 
 			~Entity() {
-				std::cout << "Bye bye " << name << "\n";
+				//std::cout << "Bye bye " << name << "\n";
 				registry->destroy(entt_id);
 			}
 
