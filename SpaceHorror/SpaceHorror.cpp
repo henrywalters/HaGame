@@ -5,6 +5,8 @@
 #include "./../HaGame/Utils/Promise.h"
 #include "./../HaGame/Utils/TimedCallback.h"
 
+#include "./../HaGame/Utils/DataStructures/CyclicalLinkedList.h"
+
 int main() {
 
 	hagame::Game::initializeSDL();
@@ -15,12 +17,28 @@ int main() {
 		"SpaceHorror"
 	);
 
+
+	auto cl = hagame::utils::CyclicalLinkedList<int>();
+
+	for (int i = 0; i < 10; i++) {
+		cl.push(i);
+	}
+
+	for (int i = 5; i >= 0; i--) {
+		cl.pushBefore(i);
+	}
+
+	while (!cl.isEmpty()) {
+		std::cout << cl.value() << "\n";
+		cl.pop();
+	}
+
 	window.create();
 
 	SpaceHorror fuckMeUp(&window);
 
 	fuckMeUp.run();
-	
+
 
 	return 0;
 }

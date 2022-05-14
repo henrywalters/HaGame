@@ -55,11 +55,11 @@ namespace hagame {
 					hagame::graphics::drawRect(m_rect, color, hagame::graphics::DEBUG_SHADER, 1);
 
 					for (int i = 1; i < m_rows; i++) {
-						hagame::graphics::drawLine(hagame::math::Line(m_rect.pos + Vec2(0, i * m_cellSize[1]), m_rect.pos + Vec2(m_rect.size[0], i * m_cellSize[1])), color, hagame::graphics::DEBUG_SHADER, 1);
+						hagame::graphics::drawLine(hagame::math::Line(m_rect.pos + Vec2(0, i * m_cellSize[1]), m_rect.pos + Vec2(m_rect.size[0], i * m_cellSize[1])), color, hagame::graphics::DEBUG_SHADER, 2);
 					}
 
 					for (int i = 1; i < m_cols; i++) {
-						hagame::graphics::drawLine(hagame::math::Line(m_rect.pos + Vec2(i * m_cellSize[0], 0), m_rect.pos + Vec2(i * m_cellSize[0], m_rect.size[1])), color, hagame::graphics::DEBUG_SHADER, 1);
+						hagame::graphics::drawLine(hagame::math::Line(m_rect.pos + Vec2(i * m_cellSize[0], 0), m_rect.pos + Vec2(i * m_cellSize[0], m_rect.size[1])), color, hagame::graphics::DEBUG_SHADER, 2);
 					}
 				}
 

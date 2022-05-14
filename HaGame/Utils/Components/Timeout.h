@@ -1,0 +1,4 @@
+#ifndef TIMEOUT_COMPONENT_H
+#define TIMEOUT_COMPONENT_H
+
+#endif

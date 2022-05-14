@@ -2,6 +2,7 @@
 #define CONFIG_PARSER_H
 
 #include <string>
+#include <charconv>
 #include <unordered_map>
 #include "./File.h"
 
@@ -46,20 +47,44 @@ namespace hagame {
 		class ConfigFile {
 		public:
 
-			ConfigFile(hagame::utils::File* file) {
+			ConfigFile() {}
+
+			ConfigFile(hagame::utils::File* file)
+			{
 				m_parsed = parseConfigFile(file);
 			}
 
-			void assertKey(std::string section, std::string key) {
+			bool hasKey(std::string section, std::string key) {
+				return m_parsed.find(section) != m_parsed.end() && m_parsed[section].find(key) != m_parsed[section].end();
+			}
+
+			void assertSection(std::string section) {
 				if (m_parsed.find(section) == m_parsed.end()) {
 					std::cout << "Section: " << section << " does not exist\n";
-					throw new std::exception("Section does not exist");
+					// throw new std::exception("Section does not exist");
 				}
+			}
+
+			void assertKey(std::string section, std::string key) {
+				
+				assertSection(section);
 
 				if (m_parsed[section].find(key) == m_parsed[section].end()) {
 					std::cout << "Key: " << key << " in section: " << section << " does not exist\n";
-					throw new std::exception("Key does not exist");
+					//throw new std::exception("Key does not exist");
 				}
+			}
+
+			template <class T>
+			T getValue(String section, String key) {
+				auto value = T{};
+				auto raw = getRaw(section, key);
+				auto [ptr, err] = std::from_chars(raw.data(), raw.data() + raw.size(), value);
+				if (err != std::errc{}) {
+					std::cout << "Raw = " << raw << "\n";
+					//throw new std::exception("Failed to convert line to numeric value");
+				}
+				return value;
 			}
 
 			std::vector<std::string> getSections() {
@@ -68,6 +93,10 @@ namespace hagame {
 					sections.push_back(section);
 				}
 				return sections;
+			}
+
+			void addSection(String section) {
+				m_parsed.insert(std::make_pair(section, std::unordered_map<std::string, std::string>()));
 			}
 
 			std::string getRaw(std::string section, std::string key) {
@@ -91,10 +120,62 @@ namespace hagame {
 				return std::stoi(getRaw(section, key)) == 1 ? true : false;
 			}
 
+			template <class T, size_t N>
+			void getArray(std::string section, std::string key, T (&arr)[N]) {
+				assertKey(section, key);
+				std::array<T, N> out;
+				auto line = getRaw(section, key);
+				auto parts = stringSplit(line, ',');
+				for (int i = 0; i < N; i++) {
+					auto value = T{};
+					auto [ptr, err] = std::from_chars(parts[i].data(), parts[i].data() + parts[i].size(), value);
+					if (err != std::errc{}) {
+						throw new std::exception("Failed to convert line to numeric value");
+					}
+					arr[i] = value;
+				}
+			}
+
+			template <class T>
+			void setValue(std::string section, std::string key, T value) {
+				m_parsed[section].insert(std::make_pair(key, std::to_string(value)));
+			}
+
+			template <class T, size_t N>
+			void setArray(std::string section, std::string key, T arr[N]) {
+				String raw = "";
+				for (int i = 0; i < N; i++) {
+					raw += std::to_string(arr[i]);
+					if (i < N - 1) {
+						raw += ',';
+					}
+				}
+				m_parsed[section].insert(std::make_pair(key, raw));
+			}
+
+			void writeToFile(hagame::utils::File* file) {
+				auto lines = std::vector<std::string>();
+				for (auto& [sectionName, section] : m_parsed) {
+					lines.push_back("[" + sectionName + "]\n");
+					for (auto& [keyName, rawValue] : section) {
+						lines.push_back(keyName + "=" + rawValue + "\n");
+					}
+					lines.push_back("\n");
+				}
+				file->writeLines(lines);
+			}
+
 		private:
 			ParsedConfigFile m_parsed;
 		};
 
+
+		class Configurable {
+		public:
+			virtual void loadFromConfig(ConfigFile config) = 0;
+			virtual ConfigFile saveToConfig() = 0;
+		protected:
+		};
 	}
 }
 

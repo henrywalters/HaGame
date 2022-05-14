@@ -16,7 +16,7 @@ protected:
 	const float PIXELS_PER_METER = 100.0f;
 	const float WIDTH_HEIGHT_RATIO = 1.3f;
 
-	const Vec2 PLAYER_SIZE = Vec2(1.0f);
+	const Vec2 PLAYER_SIZE = Vec2(0.5f, 1.0f);
 	const Vec2 BLOCK_SIZE = Vec2(1.5f);
 	const Vec2 WALKER_SIZE = Vec2(0.25);
 

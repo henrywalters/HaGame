@@ -7,13 +7,18 @@ namespace hagame {
 	namespace graphics {
 		class OrthographicCamera : public Camera {
 
-			float MAX_LOG_ZOOM = 10.0f;
+			float MAX_LOG_ZOOM = 2.0f;
+			float MAX_LOG_ZOOM_ABS = 1.99f;
+			float MIN_LOG_ZOOM_ABS = 0.01f;
 			float ZOOM_MIDPOINT = 1.0f;
-			float MIN_ZOOM = -3.0f;
-			float MAX_ZOOM = 10.0f;
+			float LOG_ZOOM_RATE = 0.1;
 
 			float zoom = ZOOM_MIDPOINT;
 			float zoomLog = 1.0f;
+
+			float calculateInputZoomForLogZoom(float z) {
+				return (log(MAX_LOG_ZOOM / z - 1) / -LOG_ZOOM_RATE) + ZOOM_MIDPOINT;
+			}
 
 		public:
 
@@ -32,8 +37,11 @@ namespace hagame {
 			}
 
 			void setZoom(float _zoom) {
-				zoom = clamp(_zoom, MIN_ZOOM, MAX_ZOOM);
-				zoomLog = MAX_LOG_ZOOM / (1 + pow(E, -(zoom - ZOOM_MIDPOINT)));
+				zoom = clamp(_zoom, calculateInputZoomForLogZoom(MIN_LOG_ZOOM_ABS), calculateInputZoomForLogZoom(MAX_LOG_ZOOM_ABS));
+				std::cout << "ZOOM = " << zoom << "\n";
+				std::cout << exp(-zoom) << "\n";
+				zoomLog = (MAX_LOG_ZOOM / (1 + exp(-LOG_ZOOM_RATE * (zoom - ZOOM_MIDPOINT))));
+				std::cout << "ZOOM LOG = " << zoomLog << "\n";
 			}
 
 			void zoomIn(float delta) {

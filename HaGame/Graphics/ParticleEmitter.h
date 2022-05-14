@@ -11,11 +11,13 @@
 #include "./../Utils/Aliases.h"
 #include "../Vendor/imgui/imgui.h"
 #include "../Utils/Timer.h"
+#include "../Utils/ConfigParser.h"
+#include "../Core/Publisher.h"
 
 namespace hagame {
 	namespace graphics {
 
-		const int MAX_PARTICLE_COUNT = 10000;
+		const int MAX_PARTICLE_COUNT = 1000;
 
 		struct Particle {
 			Vec3 pos;
@@ -24,15 +26,13 @@ namespace hagame {
 			float speed;
 			Vec3 dir;
 			double createdAt;
-			float aliveFor;
+			double aliveFor;
 		};
 
-		struct EmitterSettings {
-			// If this is set to true, the emitter will never stop
-			bool infiniteLifeTime = true;
+		struct EmitterSettings : public hagame::utils::Configurable {
 
-			// If infiniteLife is set to false, the emitter will emit for this long
-			float lifeTime = 1.0f;
+			// If this is set to true, particles will not continuously be emitted, rather, they will be shot out all at once
+			bool singleShot = false;
 
 			// The delay between each emission
 			float delay = 0.016f;
@@ -55,15 +55,54 @@ namespace hagame {
 			Color endColor = Color(1.0f, 1.0f, 0.0f, 0.25f);
 
 			Vec3 accel = Vec3({0, 0.01f, 0});
+			Vec3 dir = Vec3({ 0, 1, 0 });
+
+			void loadFromConfig(hagame::utils::ConfigFile config) {
+				singleShot = config.getBool("Settings", "singleShot");
+				delay = config.getValue<float>("Settings", "delay");
+				particlesEmitted = config.getValue<int>("Settings", "particlesEmitted");
+				angle = config.getValue<float>("Settings", "angle");
+				minSpeed = config.getValue<float>("Settings", "minSpeed");
+				minSize = config.getValue<float>("Settings", "minSize");
+				minLife = config.getValue<float>("Settings", "minLife");
+				maxSpeed = config.getValue<float>("Settings", "maxSpeed");
+				maxSize = config.getValue<float>("Settings", "maxSize");
+				maxLife = config.getValue<float>("Settings", "maxLife");
+				config.getArray<float, 4>("Settings", "startColor", startColor.vector);
+				config.getArray<float, 4>("Settings", "endColor", endColor.vector);
+				config.getArray<float, 3>("Settings", "accel", accel.vector);
+				config.getArray<float, 3>("Settings", "dir", dir.vector);
+			}
+
+			hagame::utils::ConfigFile saveToConfig() {
+				hagame::utils::ConfigFile config;
+				config.addSection("Settings");
+				config.setValue("Settings", "singleShot", singleShot);
+				config.setValue("Settings", "delay", delay);
+				config.setValue("Settings", "particlesEmitted", particlesEmitted);
+				config.setValue("Settings", "angle", angle);
+				config.setValue("Settings", "minSpeed", minSpeed);
+				config.setValue("Settings", "minSize", minSize);
+				config.setValue("Settings", "minLife", minLife);
+				config.setValue("Settings", "maxSpeed", maxSpeed);
+				config.setValue("Settings", "maxSize", maxSize);
+				config.setValue("Settings", "maxLife", maxLife);
+				config.setArray<float, 4>("Settings", "startColor", startColor.vector);
+				config.setArray<float, 4>("Settings", "endColor", endColor.vector);
+				config.setArray<float, 3>("Settings", "accel", accel.vector);
+				config.setArray<float, 3>("Settings", "dir", dir.vector);
+				return config;
+			}
 		};
 
-		class ParticleEmitter {
+		class ParticleEmitter : public hagame::utils::Configurable {
 			Ptr<VertexBuffer<Particle>> particleBuffer;
 			Ptr<Quad> quad;
 			Ptr<Disc> disc;
 			Array<Particle> particles;
 			utils::Random rand;
 
+			double emitIn = 0.0;
 			double lastEmission = 0.0;
 
 			double sortTime = 0.0;
@@ -99,7 +138,7 @@ namespace hagame {
 				auto r1 = Quat(rand.real(-settings.angle / 2.0f, settings.angle / 2.0f), Vec3::Right());
 				auto r2 = Quat(rand.real(-settings.angle / 2.0f, settings.angle / 2.0f), Vec3::Face());
 
-				Vec3 dir = Vec3::Top();
+				Vec3 dir = settings.dir;
 				dir = r1.rotatePoint(dir);
 				dir = r2.rotatePoint(dir);
 
@@ -112,29 +151,43 @@ namespace hagame {
 
 			ParticleEmitter() {
 				initializeBuffers();
-				Particle p, p2, p3;
-				p.pos = Vec3::Zero();
-				p.color = Color::blue();
-				p.size = Vec2(0.25f);
-				particles.push_back(p);
-
-				p2.pos = Vec3(1.0f);
-				p2.color = Color::red();
-				p2.size = Vec2(0.25f);
-				particles.push_back(p2);
-
-				p3.pos = Vec3(2.5f);
-				p3.color = Color::white();
-				p3.size = Vec2(0.25f);
-				particles.push_back(p3);
-
 				updateBuffers();
+
+				emitIn = settings.delay;
+			}
+
+
+			void loadFromConfig(hagame::utils::ConfigFile config) {
+				settings.loadFromConfig(config);
+			}
+
+			hagame::utils::ConfigFile saveToConfig() {
+				return settings.saveToConfig();
+			}
+
+			void fire(double elapsedTime) {
+				if (settings.singleShot) {
+					for (int i = 0; i < settings.particlesEmitted; i++) {
+						Particle p;
+						p.color = Color(255, 0, 0, 0.25f);
+						p.size = Vec2(rand.real(settings.minSize, settings.maxSize));
+						p.pos = Vec3::Zero();
+						p.dir = getRandomDir();
+						p.speed = rand.real(settings.minSpeed, settings.maxSpeed);
+						p.createdAt = elapsedTime;
+						p.aliveFor = rand.real(settings.minLife, settings.maxLife);
+						particles.push_back(p);
+					}
+				}
 			}
 
 			void update(double elapsedTime) {
 
-				if (elapsedTime - lastEmission >= settings.delay) {
+				if (!settings.singleShot && elapsedTime - lastEmission >= emitIn) {
+
 					lastEmission = elapsedTime;
+
+					emitIn = settings.delay;
 
 					for (int i = 0; i < settings.particlesEmitted; i++) {
 						Particle p;
@@ -180,27 +233,25 @@ namespace hagame {
 			}
 
 			void drawUI() {
-				ImGui::Begin("Emitter Settings");
-
 				ImGui::Text(("Triangle count: " + std::to_string(particles.size() * disc->getDivisions())).c_str());
 				ImGui::Text(("Sort time: " + std::to_string(sortTime)).c_str());
 				ImGui::Text(("Update time: " + std::to_string(updateTime)).c_str());
 				ImGui::Text(("Render time: " + std::to_string(renderTime)).c_str());
 
-				ImGui::ColorPicker4("Start Color", settings.startColor.vector);
-				ImGui::ColorPicker4("End Color", settings.endColor.vector);
+				ImGui::Checkbox("SingleShot?", &settings.singleShot);
+				ImGui::ColorEdit4("Start Color", settings.startColor.vector);
+				ImGui::ColorEdit4("End Color", settings.endColor.vector);
 				ImGui::DragFloat("Min speed", &settings.minSpeed, 0.01f, 0.0f, 5.0f);
 				ImGui::DragFloat("Max speed", &settings.maxSpeed, 0.01f, 0.0f, 5.0f);
 				ImGui::DragInt("Particles", &settings.particlesEmitted, 1, 0, 1000);
 				ImGui::DragFloat("Delay", &settings.delay, 0.001, 0.0f, 1.0f);
-				ImGui::DragFloat3("Acceleration", settings.accel.vector, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat3("Direction", settings.dir.vector, 0.05f, -10.0f, 10.0f);
+				ImGui::DragFloat3("Acceleration", settings.accel.vector, 0.05f, -10.0f, 10.0f);
 				ImGui::DragFloat("Angle", &settings.angle, 0.1f, 0.0f, PI * 2);
 				ImGui::DragFloat("Min particle life", &settings.minLife, 0.01f, 0.0f, 5.0f);
 				ImGui::DragFloat("Max particle life", &settings.maxLife, 0.01f, 0.0f, 5.0f);
 				ImGui::DragFloat("Min particle Size", &settings.minSize, 0.00001f, 0.0f, 0.1f, "%.6f");
 				ImGui::DragFloat("Max particle Size", &settings.maxSize, 0.00001f, 0.0f, 0.1f, "%.6f");
-
-				ImGui::End();
 			}
 
 			void draw() {

@@ -6,7 +6,7 @@
 #include "./Common/Weapons.cpp";
 #include "./Scenes/Demo.cpp"
 #include "./Scenes/Home.h"
-#include "./Scenes/Editor.h"
+#include "./Scenes/Editor.cpp"
 #include "./Systems/PlatformerSystem.cpp"
 #include "./Systems/AISystem.cpp"
 
@@ -47,7 +47,7 @@ public:
 	void onGameBeforeUpdate() {
 		bool uiHovered = ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow);
 		if (!uiHovered) {
-			ImGui::SetMouseCursor(ImGuiMouseCursor_None);
+			// ImGui::SetMouseCursor(ImGuiMouseCursor_None);
 		}
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplSDL2_NewFrame(window->window);

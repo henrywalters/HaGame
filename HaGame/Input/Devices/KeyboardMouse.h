@@ -179,8 +179,6 @@ namespace hagame {
 
 				void handleEvent(SDL_Event event) {
 
-					// ImGui_ImplSDL2_ProcessEvent(&event);
-
 					switch (event.type) {
 					case SDL_MOUSEMOTION:
 						mouse.position[0] = event.motion.x;
@@ -278,6 +276,7 @@ namespace hagame {
 
 				void updateImgui(double dt) {
 					ImGuiIO& io = ImGui::GetIO();
+					
 					io.DeltaTime = dt;
 					io.MousePos = ImVec2(mouse.position[0], mouse.position[1]);
 					io.MouseDown[0] = mouse.left;

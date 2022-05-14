@@ -39,6 +39,7 @@ struct Bullet {
 	std::optional<float> speed;
 	std::optional<float> blastRadius;
 	std::optional<hagame::graphics::Sprite> projectileSprite;
+	std::optional<std::string> blastParticle;
 
 	float getSpread(Vec3 velocity) {
 		hagame::utils::Random random;
@@ -46,6 +47,10 @@ struct Bullet {
 		float r = sigmoid(speed) * spreadRunFactor;
 		return random.normal(spreadMean, spreadStdDev * r) + r;
 	}
+};
+
+struct BulletParticles {
+	hagame::graphics::EmitterSettings hit;
 };
 
 struct Weapon {
@@ -58,10 +63,15 @@ struct Weapon {
 	int totalCapacity;
 	bool automatic;
 	Bullet bullet;
+	std::optional<std::string> blastParticle;
 
 	// Depending on automatic or not
 	std::optional<float> fireRate;
 	
+};
+
+struct WeaponParticles {
+	hagame::graphics::EmitterSettings shoot;
 };
 
 std::vector<Bullet> parseBulletConfig(hagame::utils::File* file);

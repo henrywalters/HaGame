@@ -16,6 +16,10 @@ std::vector<Bullet> parseBulletConfig(hagame::utils::File* file)
 		bullet.explodes = config.getBool(section, "explodes");
 		bullet.type = (BulletType)config.getInt(section, "type");
 
+		if (config.hasKey(section, "blastParticle")) {
+			bullet.blastParticle = config.getRaw(section, "blastParticle");
+		}
+
 		if (bullet.type == BulletType::Projectile) {
 			bullet.speed = config.getFloat(section, "speed");
 		}
@@ -44,6 +48,10 @@ std::vector<Weapon> parseWeaponConfig(hagame::utils::File* file, std::vector<Bul
 		
 		if (weapon.automatic) {
 			weapon.fireRate = config.getFloat(section, "fireRate");
+		}
+
+		if (config.hasKey(section, "blastParticle")) {
+			weapon.blastParticle = config.getRaw(section, "blastParticle");
 		}
 
 		auto bulletName = config.getRaw(section, "bullet");

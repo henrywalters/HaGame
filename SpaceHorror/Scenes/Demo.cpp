@@ -51,6 +51,8 @@ void Demo::onSceneInit()
 	player->addTag("player");
 	player->name = "player";
 	player->addComponent<PlayerController>();
+	auto blastEmitter = player->addComponent<ParticleEmitterRenderer>();
+	blastEmitter->shader = game->resources->getShaderProgram("particle");
 	auto weaponController = player->addComponent<WeaponController>();
 	weaponController->playerControlled = true;
 

@@ -86,6 +86,8 @@ namespace hagame {
 				}
 
 				while (SDL_PollEvent(&event)) {
+
+					ImGui_ImplSDL2_ProcessEvent(&event);
 					
 					if (event.type == SDL_QUIT) {
 						_onQuit();

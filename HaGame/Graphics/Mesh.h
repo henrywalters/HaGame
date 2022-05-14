@@ -58,8 +58,6 @@ namespace hagame {
 			Ptr<ElementBuffer<unsigned int>> ebo;
 			Ptr<VertexArray> vao;
 
-			unsigned int VAO, VBO, EBO;
-
 			void initializeBuffers() {
 				vbo = VertexBuffer<Vertex>::Dynamic(vertices.size());
 				ebo = ElementBuffer<unsigned int>::Dynamic(indices.size());
@@ -86,12 +84,6 @@ namespace hagame {
 				vbo->update(0, vertices);
 				ebo->update(0, indices);
 				glBindVertexArray(0);
-			}
-
-			void removeBuffers() {
-				glDeleteVertexArrays(1, &VAO);
-				glDeleteBuffers(1, &VBO);
-				glDeleteBuffers(1, &EBO);
 			}
 
 		public:
@@ -194,7 +186,7 @@ namespace hagame {
 			}
 
 			~Mesh() {
-				removeBuffers();
+
 			}
 
 			void update(Array<Vertex> _vertices, Array<unsigned int> _indices) {

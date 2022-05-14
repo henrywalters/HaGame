@@ -248,7 +248,7 @@ namespace hagame {
 					r->shader->setVec3("cameraRight", scene->activeCameraEntity->transform->right());
 					r->shader->setVec3("pos", entity->transform->getPosition());
 					r->shader->setMVP(Mat4::Identity(), scene->viewMat, scene->projMat);
-					r->emitter->drawUI();
+					// r->emitter->drawUI();
 					r->emitter->draw();
 				});
 

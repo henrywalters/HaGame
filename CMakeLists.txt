@@ -11,19 +11,14 @@ message("CMAKE_MODULE_PATH = ${CMAKE_SOURCE_DIR}/modules")
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/modules")
  
 find_package(SDL2 REQUIRED)
-# find_package(SDL2_mixer REQUIRED)
  
 find_package(OpenGL REQUIRED)
 
 message(STATUS "OpenGL_FOUND:= ${OpenGL_FOUND}")
- 
-# find_package(GLM REQUIRED)
- 
+
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR}/extern/glew-2.1.0)
 
 find_package(GLEW REQUIRED)
-
-#find_package(GLUT REQUIRED)
 
 message(STATUS "OpenGL LIBS: ${OPENGL_INCLUDE_DIR}")  
 message(STATUS "GLEW_LIBS: ${GLEW_LIBRARIES}")
@@ -60,6 +55,9 @@ target_link_libraries(ImSim ${LIBS})
 add_executable(SpaceHorror SpaceHorror/SpaceHorror.cpp)
 target_link_libraries(SpaceHorror ${LIBS})
 
+add_executable(ParticleEditor Tools/ParticleEditor/ParticleEditor.cpp)
+target_link_libraries(ParticleEditor ${LIBS})
+
 target_compile_options(ImSim PRIVATE "/bigobj")
 target_compile_options(SpaceHorror PRIVATE "/bigobj")
 
@@ -73,6 +71,7 @@ if (MSVC_VERSION GREATER_EQUAL "1900")
         target_compile_options(Goom2 PRIVATE "/std:c++17")
         target_compile_options(ImSim PRIVATE "/std:c++17")
         target_compile_options(SpaceHorror PRIVATE "/std:c++17")
+        target_compile_options(ParticleEditor PRIVATE "/std:c++17")
     endif()
 else()
     set_property(TARGET HaGame PROPERTY CXX_STANDARD 17)
@@ -81,6 +80,8 @@ else()
     set_property(TARGET Goom2 PROPERTY CXX_STANDARD 17)
     set_property(TARGET ImSim PROPERTY CXX_STANDARD 17)
     set_property(TARGET SpaceHorror PROPERTY CXX_STANDARD 17)
+    set_property(TARGET ParticleEditor PROPERTY CXX_STANDARD 17)
+
 endif() 
 
 # Copy SDL2 DLLs to output folder on Windows

@@ -183,6 +183,8 @@
 // #include "Vendor/soloud/dr_mp3.h"
 // #include "Vendor/soloud/dr_wav.h"
 
+#include "Vendor/ImGuiFileDialog/ImGuiFileDialog.h"
+#include "Vendor/ImGuiFileDialog/ImGuiFileDialog.cpp"
 
 // TODO: Reference additional headers your program requires here.
 

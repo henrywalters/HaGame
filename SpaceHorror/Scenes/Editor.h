@@ -11,6 +11,36 @@ using namespace hagame::ui;
 class Editor : public hagame::Scene {
 public:
 
+	void onSceneInit();
+
+	void onSceneUpdate(double dt);
+
+private:
+
+	enum class Tools {
+		TileEditor,
+		EnemyEditor,
+		FxEditor,
+		Connector,
+	};
+
+	const Array<String> TOOL_NAMES = {
+		"Tile Editor",
+		"Enemy Editor",
+		"FX Editor",
+		"Connector"
+	};
+
+	Tools selectedTool = Tools::TileEditor;
+
+	const char* CONTROL_SETTINGS = "Control Settings";
+
+	const Vec2 GRID_SIZE = Vec2(1000.0f);
+
+	float zoomSpeed = 10.0f;
+	float cameraSpeed = 100.0f;
+
+	Vec2 worldPos;
 	Vec2 mousePos;
 	Vec2 dragStartPos;
 	Vec2 startOffset;
@@ -21,126 +51,30 @@ public:
 
 	RawPtr<Entity> editorEntity;
 
-	void onSceneInit() {
-		addSystem<RenderSystem>();
-		addSystem<UISystem>();
+	void updateCamera(double dt);
 
-		cameraEntity = addEntity();
-		auto camera = cameraEntity->addComponent<CameraComponent>();
-		orth = std::make_shared<OrthographicCamera>(game->window->size);
-		orth->centered = false;
-		camera->camera = orth;
+	void updateGrid();
 
-		editorEntity = addEntity();
-		auto editorGrid = editorEntity->addComponent<Grid>(Vec2(1000), 50, 50);
-		editorGrid->display = true;
-		editorGrid->color = PRUSSIAN_BLUE;
+	void render();
 
-		auto gridEntity = addEntity();
-		auto grid = gridEntity->addComponent<Grid>(game->window->size, 12, 12);
-		// grid->display = true;
+	// Entry point for all the tools used
+	void renderGUI();
 
-		Range range = Range(Vec2Int(0, 2), Vec2Int(10, 10));
-		Range sidebarRange = Range(Vec2Int(10, 0), Vec2Int(12, 12));
-		Range palletRange = Range(Vec2Int(0, 0), Vec2Int(12, 2));
+	void renderMenuBar();
 
-		//quad = addQuad(Vec2::Zero(), grid->getRange(range).size * 0.80f, Color::green());
-		auto sidebar = addQuad(Vec2::Zero(), grid->getRange(sidebarRange).size, GRAY);
-		auto pallet = addQuad(Vec2::Zero(), grid->getRange(palletRange).size, GRAY);
+	void renderToolBox();
 
-		//quad->getComponent<QuadRenderer>()->offset[2] = 10;
-		sidebar->getComponent<QuadRenderer>()->offset[2] = 5;
-		pallet->getComponent<QuadRenderer>()->offset[2] = 5;
+	void renderSelectedTool();
 
-		grid->addEntity(range, editorEntity, [](Entity* quad) { return quad->getComponent<Grid>(); });
-		grid->addEntity(sidebarRange, sidebar, [](Entity* quad) { return quad->getComponent<QuadRenderer>(); });
-		grid->addEntity(palletRange, pallet, [](Entity* quad) { return quad->getComponent<QuadRenderer>(); });
+	void renderControlSettings();
 
-		game->input.keyboardMouse.mouseEvents.subscribe(hagame::input::devices::MouseEvents::Moved, [this](hagame::input::devices::MouseEvent e) {
-			mousePos = e.mousePos;
-			mousePos[1] = game->window->size[1] - mousePos[1];
-		});
+	void tileEditor();
 
-		game->input.windowEvents.subscribe(hagame::input::WindowEvents::Resized, [this, grid, pallet, sidebar, sidebarRange, palletRange](hagame::input::WindowEvent e) {
-			orth->size = e.data;
-			grid->setSize(e.data);
-			sidebar->getComponent<QuadRenderer>()->quad->setSize(grid->getRange(sidebarRange).size, false);
-			pallet->getComponent<QuadRenderer>()->quad->setSize(grid->getRange(palletRange).size, false);
-			game->window->setViewport(Rect(Vec2::Zero(), e.data));
-		});
-	}
+	void enemyEditor();
 
-	void onSceneActivate() {
+	void fxEditor();
 
-		
-	}
-
-	void onSceneAfterUpdate() {
-		if (game->input.keyboardMouse.startPressed) {
-			game->setScene("home");
-		}
-		else {
-			auto qr = editorEntity->getComponent<Grid>();
-			qr->offset += game->input.player(0).lAxis * -1;
-
-			if (game->input.keyboardMouse.keyboard.numbers[1]) {
-				auto delta = qr->offset.div(qr->getSize());
-				qr->setSize(qr->getSize() * (1 - 0.1));
-				qr->offset = qr->getSize().prod(delta);
-			}
-			else if (game->input.keyboardMouse.keyboard.numbers[2]) {
-				auto delta = qr->offset.div(qr->getSize());
-				qr->setSize(qr->getSize() * (1 + 0.1));
-				qr->offset = qr->getSize().prod(delta);
-			}
-			else if (qr->getGridRect().contains(mousePos)) {
-
-				if (game->input.player(0).rTrigger && !isDragging) {
-					isDragging = true;
-					dragStartPos = mousePos;
-					startOffset = qr->offset;
-				}
-
-				auto idx = qr->getCellIdx(mousePos);
-				auto cell = qr->getCell(idx);
-				cell.size *= 1.2f;
-				cell.pos += editorEntity->getPos() - qr->offset - cell.size * 0.1f;
-				drawRect(cell, PRIMARY, DEBUG_SHADER, 1.0f);
-			}
-
-			if (!game->input.player(0).rTrigger) {
-				isDragging = false;
-			}
-
-			if (isDragging) {
-				auto dragDelta = mousePos - dragStartPos;
-				qr->offset = startOffset + dragDelta;
-			}
-
-			drawCrosshairs(mousePos, 5, 15, SECONDARY, 2.0f);
-
-			auto shader = game->resources->getShaderProgram("batch_line");
-
-			shader->use();
-
-			shader->setMVP(Mat4::Identity(), Mat4::Identity(), orth->getProjMatrix(cameraEntity->getPos()));
-			lineBuffer.draw();
-
-			shader = game->resources->getShaderProgram("color");
-			shader->use();
-			shader->setMVP(Mat4::Identity(), Mat4::Identity(), orth->getProjMatrix(cameraEntity->getPos()));
-
-			DEBUG_SHADER = game->resources->getShaderProgram("color");
-		}
-
-
-	}
-
-	void onSceneDeactivate() {
-		std::cout << "EDITOR DEACTIVATED\n";
-		//ecs.entities.clear(); 
-		//lineBuffer.clear();
-	}
+	void connector();
 
 	RawPtr<Entity> addQuad(Vec3 pos, Vec2 size, Color color) {
 		auto entity = addEntity();

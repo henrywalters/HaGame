@@ -54,12 +54,15 @@ namespace hagame {
 
 			void forEach(std::function<void(RawPtr<Entity>)> lambda) {
 				for (auto& [id, entity] : enttMap) {
+					if (entity == nullptr) continue;
 					lambda(entity.get());
 				}
 			}
 
 			void forEach(std::function<void(RawPtr<Entity>)> lambda, Array<uint64_t> ignoreEntities, Array<String> ignoreTags) {
 				for (auto& [id, entity] : enttMap) {
+					if (entity == nullptr) continue;
+
 					if (!hasElement(ignoreEntities, (uint64_t)entity->uuid) && !entity->hasTag(ignoreTags)) {
 						lambda(entity.get());
 					}

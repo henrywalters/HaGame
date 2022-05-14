@@ -122,6 +122,7 @@ Array<RawPtr<hagame::ecs::Entity>> hagame::physics::Collisions::raycastSweep2D(m
 		auto hit = raycast(tmpRay, entities, t, ignoreTags, ignoreEntities);
 		hagame::graphics::drawLine(tmpRay.toLine(), Color::red(), DEBUG_SHADER);
 		if (hit.has_value()) {
+			std::cout << hit.value().entity->name << "\n";
 			if (entityIds.find(hit.value().entity->id) == entityIds.end()) {
 				out.push_back(hit.value().entity);
 				entityIds.insert(hit.value().entity->id);

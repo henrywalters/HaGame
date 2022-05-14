@@ -13,7 +13,7 @@ struct Walker : public AI {
 	bool init = false;
 	Ptr<hagame::utils::Promise<long, String, false>> turnAroundDelay;
 
-	float force = 150.0f;
+	float force = 30.0f;
 	float sightDistance = 5.0f;
 	int meanDelay = 7.5;
 
@@ -84,7 +84,7 @@ struct Walker : public AI {
 			5,
 			ecs->entities,
 			{},
-			{}
+			{entity->uuid}
 		);
 
 		for (auto hit : hits) {
