@@ -3,6 +3,7 @@
 
 #include "./../../../HaGame/HaGame.h"
 #include "./AI.h"
+#include "./../Platformer.h"
 
 using namespace hagame::ecs;
 using namespace hagame::physics;
@@ -14,7 +15,6 @@ struct Walker : public AI {
 	Ptr<hagame::utils::Promise<long, String, false>> turnAroundDelay;
 
 	float force = 30.0f;
-	float sightDistance = 5.0f;
 	int meanDelay = 7.5;
 
 	void idle(Vec3 pos, double dt) {
@@ -24,6 +24,7 @@ struct Walker : public AI {
 		if (turnAroundDelay == nullptr) {
 
 			lookingAt = random.integer(0, 2) == 1 ? Vec3::Right() : Vec3::Left();
+
 			movementForce = lookingAt * force;
 
 			turnAroundDelay = hagame::utils::TimedCallback<false>(random.poisson<int>(meanDelay));
@@ -31,6 +32,10 @@ struct Walker : public AI {
 			turnAroundDelay->then([this](long time) {
 				turnAround();
 			});
+		}
+
+		if (!entity->getComponent<Platformer>()->grounded) {
+			movementForce = Vec3::Zero();
 		}
 	}
 
@@ -47,7 +52,7 @@ struct Walker : public AI {
 
 		if (turnAround < 8) {
 			lookingAt *= -1;
-			movementForce = lookingAt * force;
+			movementForce = Vec3::Right().prod(lookingAt * force);
 		}
 		else {
 			movementForce = Vec3::Zero();
@@ -58,29 +63,18 @@ struct Walker : public AI {
 	void pursue(Vec3 pos, double dt) {
 		if (target.has_value()) {
 			auto delta = target.value()->getPos() - pos;
-			lookingAt[0] = sign(delta[0]);
-			movementForce = lookingAt * force;
+			lookingAt = delta.normalized();
+			movementForce = Vec3::Right().prod(lookingAt * force);
 		}
 	}
 
 	AIState decide(ECS* ecs, Collisions* collisions, Vec3 pos, double dt) {
 
-		if (turnAroundDelay != nullptr) {
-			turnAroundDelay->update();
-		}
-
 		float t;
-		//auto hit = collisions->raycast(hagame::math::Ray(pos, lookingAt * sightDistance), ecs->entities, t, {}, { entity->uuid });
 
-		//if (hit.has_value()) {
-		//	std::cout << hit.value().entity->name << "\n";
-		//}
-
-		
-		// std::cout << hagame::math::Ray(pos, lookingAt * sightDistance).toString() << "\n";
 		auto hits = collisions->raycastSweep2D(
 			hagame::math::Ray(pos, lookingAt * sightDistance),
-			PI / 3.0f,
+			fov,
 			5,
 			ecs->entities,
 			{},
@@ -88,13 +82,15 @@ struct Walker : public AI {
 		);
 
 		for (auto hit : hits) {
-			std::cout << hit->name << "\n";
 			if (hit->hasTag("player")) {
 				target = hit;
 				return (hit->getPos() - pos).magnitude() > 1 ? AIState::Pursue : AIState::Attack;
 			}
 		}
 		
+		if (turnAroundDelay != nullptr) {
+			turnAroundDelay->update();
+		}
 
 		return AIState::Idle;
 	}

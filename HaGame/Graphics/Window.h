@@ -6,13 +6,16 @@
 #include "Monitors.h"
 #include <string>
 #include <SDL.h>
-#include <gl/glew.h>
+#include <GL/glew.h>
 #include <SDL_opengl.h>
 #include "Color.h"
 #include <iostream>
 #include "Routines.h"
-// #include "FrameBuffer.hpp"
+#include "FrameBuffer.hpp"
 #include "Texture.h"
+#include "RawTexture.h"
+#include "Quad.hpp"
+#include "ShaderProgram.h"
 
 namespace hagame {
 	namespace graphics {
@@ -51,8 +54,12 @@ namespace hagame {
 			void initGLContext();
 			Rect _viewport;
 			WindowRenderMode renderMode;
-			// Ptr<FrameBuffer> m_frameBuffer;
-			Ptr<Texture> m_colorTexture;
+			Ptr<FrameBuffer> m_frameBuffer;
+			Ptr<RawTexture<GL_RGBA>> m_colorTexture;
+			Ptr<RawTexture<GL_RGBA16F>> m_normalTexture;
+			Ptr<RawTexture<GL_RGBA16F>> m_positionTexture;
+			Ptr<Quad> m_renderQuad;
+			RawPtr<ShaderProgram> m_renderShader;
 
 		public:
 			WindowMode mode;
@@ -80,6 +87,14 @@ namespace hagame {
 			Window(Vec2 _pos, Vec2 _size, std::string _title);
 
 			static Window ForMonitor(Monitor monitor);
+
+			static Vec2 UltrawideResolution(int scale = 1.0f);
+
+			static Vec2 StandardResolution(int scale = 1.0f);
+
+			void setRenderShader(ShaderProgram* shader) {
+				m_renderShader = shader;
+			}
 
 			// Create (and open) the window
 			void create();

@@ -40,12 +40,27 @@ public:
 
 	Vec3 getMovementForce() { return movementForce; }
 
+	void renderLineOfSight(Vec3 pos) {
+		auto fovDegrees = (int)(fov * RAD_TO_DEG) * 2;
+		auto step = fov / (float)fovDegrees;
+		auto startAngle = atan2f(lookingAt[1], lookingAt[0]) - fov * 0.5f;
+
+		for (int i = 0; i < fovDegrees; i++) {
+			auto angle = startAngle + i * step;
+			auto dir = Vec3(cos(angle) * sightDistance, sin(angle) * sightDistance);
+			hagame::graphics::drawLine(hagame::math::Line(pos, pos + dir), lineOfSightColor);
+		}
+	}
+
 protected:
 
 	Map<String, ai_custom_action_t*> customStates;
 	Optional<hagame::ecs::Entity*> target;
 	Vec3 lookingAt;
 	Vec3 movementForce;
+	float fov = PI / 3.0f;
+	float sightDistance = 5.0f;
+	Color lineOfSightColor = Color(0.0f, 1.0f, 0.0f, 0.5f);
 	hagame::ecs::Entity* entity;
 
 	// All AI components must override the function to determine its current state
@@ -68,6 +83,8 @@ protected:
 			std::cout << "AI WARNING: IGNORING CUSTOM STATE: " << state << "\n";
 		}
 	}
+
+
 };
 
 #endif

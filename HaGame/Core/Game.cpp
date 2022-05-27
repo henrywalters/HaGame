@@ -2,8 +2,10 @@
 
 void hagame::Game::run()
 {
-
 	onGameStart();
+
+	resources->loadShaderProgram("screen", "Shaders/screen_vert.glsl", "Shaders/screen_frag.glsl");
+	window->setRenderShader(resources->getShaderProgram("screen"));
 
 	scenes.forEach([](String name, Ptr<hagame::Scene> scene) {
 		scene->initialize();

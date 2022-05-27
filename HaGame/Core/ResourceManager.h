@@ -2,6 +2,7 @@
 #define RESOURCE_MANAGER
 #include "../Utils/FileSystem.h"
 #include "../Utils/Aliases.h"
+#include "../Utils/ConfigParser.h"
 #include "../Graphics/ShaderProgram.h"
 #include "../Graphics/Texture.h"
 #include "../Graphics/Cubemap.h"
@@ -20,6 +21,7 @@ namespace hagame {
 		Map<String, Ptr<hagame::graphics::Cubemap>> cubemaps;
 		Map<String, Ptr<hagame::graphics::Image>> images;
 		Map<String, Ptr<hagame::graphics::Mesh>> meshes;
+		Map<String, Ptr<hagame::utils::ConfigFile>> configFiles;
 		Map<String, Ptr<hagame::utils::File>> files;
 		Map<String, Ptr<hagame::graphics::Font>> fonts;
 		Map<String, Ptr<hagame::audio::Sample>> audioSamples;
@@ -33,8 +35,13 @@ namespace hagame {
 
 		hagame::utils::FileSystem* getFileSystem();
 
+		bool hasFile(String fileName);
 		hagame::utils::File* loadFile(String fileName, String rawFileName);
 		hagame::utils::File* getFile(String fileName);
+
+		bool hasConfigFile(String fileName);
+		hagame::utils::ConfigFile* loadConfigFile(String fileName, String rawFileName);
+		hagame::utils::ConfigFile* getConfigFile(String fileName);
 
 		// Create a shader program from files that match fs_path/{shaderName}_vert.glsl and fs_path/{shaderName}_frag.glsl
 		hagame::graphics::ShaderProgram* loadShaderProgram(String shaderName);

@@ -13,7 +13,7 @@ namespace hagame {
 
 			Vec3Bool fixAxis = Vec3Bool(false);
 			float mass = 1.0f;
-			Vec3 forceDueToGravity = Vec3(0, -9.8f, 0);
+			Vec3 forceDueToGravity = Vec3(0, 9.8f, 0);
 
 			RigidBody() {}
 
@@ -26,7 +26,12 @@ namespace hagame {
 			}
 
 			void applyGlobalGravity() {
-				applyForce(forceDueToGravity * mass);
+				applyForce(forceDueToGravity * -1 * mass);
+			}
+
+			void applyFrictionForce(float coef) {
+				auto forceNormal = forceDueToGravity * mass;
+				applyForce(vel * forceNormal.magnitude() * -coef);
 			}
 
 			void update(double dt) {

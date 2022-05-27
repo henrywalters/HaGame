@@ -2,6 +2,7 @@
 #define DEMO_H
 
 #include "./../../HaGame/HaGame.h"
+#include "./../../HaGame/UI/EntityTree.h"
 
 #include "./../Common/RuntimeLevel.h"
 #include "./../Common/Weapons.h"
@@ -11,6 +12,7 @@
 #include "./../Systems/AISystem.h"
 #include "./../Systems/CustomRenderSystem.h"
 #include "./../Systems/WeaponSystem.h"
+#include "./../Systems/HealthSystem.h"
 
 #include "./../Components/PlayerController.h"
 #include "./../Components/AI/Walker.h"
@@ -36,11 +38,17 @@ private:
 
 	Array<RawPtr<hagame::ecs::Entity>> walkers;
 
+	hagame::ui::EntityTree entityTree;
+
 	const Array<String> MAP = {
 		"############################",
-		"# -------------------------#",
-		"#--- -P--#########---------#",
-		"# --------W----------------#",
+		"#----------B-------------- #",
+		"#--- ---##S-----------M--E #",
+		"# -------- ----------------#",
+		"#--------------------------#",
+		"#--------------------------#",
+		"#--------------------------#",
+		"#--WP----------------------#",
 		"############################",
 	};
 

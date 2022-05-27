@@ -13,32 +13,37 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/modules")
 find_package(SDL2 REQUIRED)
  
 find_package(OpenGL REQUIRED)
-
+ 
 message(STATUS "OpenGL_FOUND:= ${OpenGL_FOUND}")
 
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR}/extern/glew-2.1.0)
 
 find_package(GLEW REQUIRED)
+find_package(GLUT REQUIRED)
+
+find_package(TinyEXR REQUIRED)
 
 message(STATUS "OpenGL LIBS: ${OPENGL_INCLUDE_DIR}")  
 message(STATUS "GLEW_LIBS: ${GLEW_LIBRARIES}")
 message(STATUS "GLUT_LIBS: ${GLUT_INCLUDE_DIRS}")
-message(STATUS "SDL2_DIR = ${SDL2_INCLUDE_DIRS}")
+message(STATUS "SDL2_DIR = ${SDL2_INCLUDE_DIRS}") 
 message(STATUS "GLM_INCLUDE_DIR = ${GLM_INCLUDE_DIRS}")
 message(STATUS "SDL2_LIB = ${SDL2_LIB}")
 
 message(STATUS "GLEW_FOUND:= ${GLEW_FOUND}")
 
-include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_MIXER_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIR} ${GLM_INCLUDE_DIRS})
+include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_MIXER_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${GLUT_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIR} ${GLM_INCLUDE_DIRS})
 
 
-set(LIBS ${SDL2_LIBS} ${SDL2_MIXER_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})
+set(LIBS ${SDL2_LIBS} ${SDL2_MIXER_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${GLUT_LIBRARIES})
 
 add_executable(HaGame HaGame/HaGame.cpp)
 
+add_dependencies(HaGame tinyexr)
+
 target_link_libraries(HaGame ${LIBS})
 
-message(STATUS "LIBS: ${LIBS} ")
+message(STATUS "LIBS: ${LIBS} ") 
 
 add_executable(HaGameEditor Editor/Editor.cpp "Editor/Editor.h" "Editor/Systems/CameraController.h" "Editor/Systems/Renderer.h" "Editor/Systems/MousePicker.h" "Editor/Systems/UI.h")
 target_link_libraries(HaGameEditor ${LIBS})

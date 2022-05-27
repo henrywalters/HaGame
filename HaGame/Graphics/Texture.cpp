@@ -13,7 +13,7 @@ hagame::graphics::Texture::Texture(std::string path, ImageType type): image(std:
 	glGenerateMipmap(GL_TEXTURE_2D);
 }
 
-hagame::graphics::Texture::Texture(Vec2Int size)
+hagame::graphics::Texture::Texture(Vec2Int size): image(std::make_shared<Image>())
 {
 	glGenTextures(1, &id);
 	glBindTexture(GL_TEXTURE_2D, id);

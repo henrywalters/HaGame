@@ -96,3 +96,27 @@ String stringSlice(String str, int start, int end)
 	}
 	return out;
 }
+
+Array<String> stringPartition(String str, char start, char end)
+{
+	Array<String> partitions;
+	String part = "";
+	bool inPart = false;
+
+	for (int i = 0; i < str.size(); i++) {
+		auto c = str[i];
+		if (c == start) {
+			part = "";
+			inPart = true;
+		}
+		else if (c == end && inPart) {
+			partitions.push_back(part);
+			inPart = false;
+		}
+		else {
+			part += c;
+		}
+	}
+
+	return partitions;
+}

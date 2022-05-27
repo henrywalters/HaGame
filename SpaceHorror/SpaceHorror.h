@@ -9,6 +9,7 @@
 #include "./Scenes/Editor.cpp"
 #include "./Systems/PlatformerSystem.cpp"
 #include "./Systems/AISystem.cpp"
+#include "./../HaGame/Graphics/EXR.h"
 
 class SpaceHorror : public hagame::Game {
 public:
@@ -75,12 +76,14 @@ public:
 			"crosshair.png",
 			"scifi_block.png",
 			"prototype.jpg",
+			"explosive_barrel.png"
 		};
 
 		Array<String> shaders = {
 			"color",
 			"text",
 			"sprite",
+			"sprite2d",
 			"particle",
 			"batch_line",
 		};
@@ -93,6 +96,12 @@ public:
 
 		resources->loadAudioSample("creepy_home", "creepy_ambience.wav");
 		resources->loadAudioSample("thud", "Audio/thud.wav");
+
+		// These textures are used by the editor
+		resources->loadTexture("audio_texture", "Textures/HaGame/ui/audio.png");
+		resources->loadTexture("font_texture", "Textures/HaGame/ui/font.png");
+		resources->loadTexture("mesh_texture", "Textures/HaGame/ui/mesh.png");
+		resources->loadTexture("shader_texture", "Textures/HaGame/ui/shader.png");
 
 		for (auto texture : textures) {
 			auto parts = stringSplit(texture, '.');

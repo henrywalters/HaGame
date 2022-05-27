@@ -38,6 +38,8 @@ namespace hagame {
 			unsigned char* data;
 			ImageType type;
 
+			Image(): path(""), type(ImageType::RGBA) {}
+
 			Image(String _path, ImageType _type): path(_path), type(_type) {
 				data = stbi_load(path.c_str(), &size[0], &size[1], &channels, getStbiEnum(type));
 
@@ -48,7 +50,8 @@ namespace hagame {
 			}
 
 			~Image() {
-				stbi_image_free(data);
+				if (size.magnitude() > 0)
+					stbi_image_free(data);
 			}
 
 			Color getColor(Vec2Int idx) {

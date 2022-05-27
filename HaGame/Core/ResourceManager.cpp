@@ -14,6 +14,11 @@ hagame::utils::FileSystem* hagame::ResourceManager::getFileSystem()
 	return fs.get();
 }
 
+bool hagame::ResourceManager::hasFile(String fileName)
+{
+	return hasKey(files, fileName);
+}
+
 hagame::utils::File* hagame::ResourceManager::loadFile(String fileName, String rawFileName)
 {
 	auto file = std::make_shared<hagame::utils::File>(fs->getFile(rawFileName));
@@ -28,6 +33,28 @@ hagame::utils::File* hagame::ResourceManager::getFile(String fileName)
 	}
 
 	return files[fileName].get();
+}
+
+bool hagame::ResourceManager::hasConfigFile(String fileName)
+{
+	return hasKey(configFiles, fileName);
+}
+
+hagame::utils::ConfigFile* hagame::ResourceManager::loadConfigFile(String fileName, String rawFileName)
+{
+	auto rawFile = fs->getFile(rawFileName);
+	auto file = std::make_shared<hagame::utils::ConfigFile>(&rawFile);
+	configFiles[fileName] = file;
+	return configFiles[fileName].get();
+}
+
+hagame::utils::ConfigFile* hagame::ResourceManager::getConfigFile(String fileName)
+{
+	if (!hasKey(configFiles, fileName)) {
+		throw new Exception("File does not exist");
+	}
+
+	return configFiles[fileName].get();
 }
 
 hagame::graphics::ShaderProgram* hagame::ResourceManager::loadShaderProgram(String shaderName)

@@ -168,6 +168,10 @@ namespace hagame {
 				return getCellGlobal(idx[0], idx[1]);
 			}
 
+			bool hasEntity(int col, int row) {
+				return m_entities.find(col) != m_entities.end() && m_entities[col].find(row) != m_entities[col].end();
+			}
+
 			void addEntity(int col, int row, hagame::ecs::Entity* entity, std::function<UIComponent* (hagame::ecs::Entity*)> getUI) {
 
 				if (m_entities.find(col) == m_entities.end()) {

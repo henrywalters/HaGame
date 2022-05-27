@@ -1,6 +1,12 @@
 #include "PlatformerSystem.h"
 
 void PlatformerSystem::onSystemUpdate(double dt) {
+
+	forEach<MovingPlatform>([this, dt](MovingPlatform* p, RawPtr<hagame::ecs::Entity> entity) {
+		p->update(dt);
+		entity->setPos(p->getCurrentPos());
+	});
+
 	forEach<Platformer>([this, dt](Platformer* p, RawPtr<hagame::ecs::Entity> entity) {
 		auto rigidbody = entity->getComponent<hagame::physics::RigidBody>();
 		auto platformer = entity->getComponent<Platformer>();
@@ -66,7 +72,7 @@ void PlatformerSystem::onSystemPhysicsUpdate(double dt)
 		auto controller = entity->getComponent<PlayerController>();
 		auto platformer = entity->getComponent<Platformer>();
 
-		auto jumpForce = rigidbody->forceDueToGravity.normalized() * -controller->jumpForce;
+		auto jumpForce = rigidbody->forceDueToGravity.normalized() * controller->jumpForce;
 		
 		if (platformer->grounded) {
 			rigidbody->applyForce(Vec3::Right(input.lAxis[0]) * controller->movementForce);
@@ -87,8 +93,8 @@ void PlatformerSystem::onSystemPhysicsUpdate(double dt)
 		auto rigidbody = entity->getComponent<RigidBody>();
 		// Apply drag forces in air or ground
 		auto drag = p->grounded ? p->groundDrag : p->airDrag;
-
-		rigidbody->applyForce(Vec3::Right(rigidbody->vel[0] * -drag * dt));
+		rigidbody->applyFrictionForce(drag);
+		//rigidbody->applyForce(Vec3::Right(rigidbody->vel[0] * -drag * dt));
 	});
 }
 

@@ -50,12 +50,26 @@ void hagame::graphics::Window::initGLContext() {
 	hagame::graphics::textBuffer.initializeForGL();
 	hagame::graphics::lineBuffer.initializeBuffers();
 
-	//m_frameBuffer = std::make_shared<FrameBuffer>();
-	//m_frameBuffer->initialize();
+	m_renderQuad = std::make_shared<Quad>(Vec2(2.0f));
+	m_renderQuad->setOrigin(Vec2(1.0f));
 
-	// m_colorTexture = std::make_shared<Texture>(size);
+	m_frameBuffer = std::make_shared<FrameBuffer>();
+	m_frameBuffer->initialize();
+	m_frameBuffer->bind();
+	m_frameBuffer->initializeRenderBufferObject(size.cast<int>());
+	m_colorTexture = std::make_shared<RawTexture<GL_RGBA>>(size.cast<int>());
+	m_normalTexture = std::make_shared<RawTexture<GL_RGBA16F>>(size.cast<int>());
+	m_positionTexture = std::make_shared<RawTexture<GL_RGBA16F>>(size.cast<int>());
 
-	//m_frameBuffer->attachTexture(m_colorTexture.get());
+	m_frameBuffer->attachRawTexture(m_colorTexture.get());
+	m_frameBuffer->attachRawTexture(m_normalTexture.get(), 1);
+	m_frameBuffer->attachRawTexture(m_positionTexture.get(), 2);
+
+	if (!m_frameBuffer->isComplete()) {
+		throw new std::exception("FAILED TO GENERATE FRAMEBUFFER");
+	}
+
+	m_frameBuffer->unbind();
 
 	//if (SDL_GL_SetSwapInterval(-1) < 0) {
 	//	throw new std::exception("Failed to set VSync");
@@ -105,6 +119,16 @@ hagame::graphics::Window hagame::graphics::Window::ForMonitor(Monitor monitor)
 	return Window(bounds.pos, bounds.size);
 }
 
+Vec2 hagame::graphics::Window::UltrawideResolution(int scale)
+{
+	return Vec2(21 * scale, 9 * scale);
+}
+
+Vec2 hagame::graphics::Window::StandardResolution(int scale)
+{
+	return Vec2(16 * scale, 9 * scale);
+}
+
 void hagame::graphics::Window::create() {
 	
 	initGLAttribs();
@@ -128,6 +152,7 @@ void hagame::graphics::Window::create() {
 		x = SDL_WINDOWPOS_CENTERED, y = SDL_WINDOWPOS_CENTERED, w = size[0], h = size[1];
 		break;
 	case WindowMode::FULLSCREEN:
+		x = pos[0], y = pos[1], w = size[0], h = size[1];
 		flags |= SDL_WINDOW_FULLSCREEN;
 		break;
 	}
@@ -153,6 +178,7 @@ void hagame::graphics::Window::destroy() {
 }
 
 void hagame::graphics::Window::clear() {
+	m_frameBuffer->bind();
 	glStencilMask(0xFF);
 	glClearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -171,6 +197,17 @@ void hagame::graphics::Window::clear() {
 }
 
 void hagame::graphics::Window::render() {
+	unsigned int attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+	glDrawBuffers(3, attachments);
+	m_frameBuffer->unbind();
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+	m_renderShader->use();
+	glDisable(GL_DEPTH_TEST);
+	glActiveTexture(GL_TEXTURE0);
+	m_colorTexture->bind();
+	m_renderQuad->getMesh()->draw();
+
 	SDL_GL_SwapWindow(window);
 }
 

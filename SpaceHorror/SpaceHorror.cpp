@@ -2,35 +2,34 @@
 #define WITH_SDL2
 #define NDEBUG
 #include "./SpaceHorror.h"
-#include "./../HaGame/Utils/Promise.h"
-#include "./../HaGame/Utils/TimedCallback.h"
+#include "./Common/Config.h"
 
-#include "./../HaGame/Utils/DataStructures/CyclicalLinkedList.h"
+const String GAME_TITLE = "Space Horror";
+const String GAME_CONFIG = "Game";
+const String LAUNCH_SETTINGS = "LaunchSettings";
 
 int main() {
 
 	hagame::Game::initializeSDL();
 
-	auto monitor = hagame::graphics::MonitorManager::GetMonitor(0); 
-	auto window = hagame::graphics::Window(
-		Vec2(1400, 900),
-		"SpaceHorror"
+	auto config = Config();
+	auto gameConfig = config.load(GAME_CONFIG);
+	auto monitor = hagame::graphics::MonitorManager::GetMonitor(
+		gameConfig->getValue<int>(LAUNCH_SETTINGS, "monitor")
 	);
 
+	hagame::graphics::Window window;
 
-	auto cl = hagame::utils::CyclicalLinkedList<int>();
-
-	for (int i = 0; i < 10; i++) {
-		cl.push(i);
+	if (gameConfig->getBool("LaunchSettings", "fullscreen")) {
+		window.pos = monitor.displayBounds.pos;
+		window.size = monitor.displayBounds.size;
+		window.mode = WindowMode::FULLSCREEN;
 	}
-
-	for (int i = 5; i >= 0; i--) {
-		cl.pushBefore(i);
-	}
-
-	while (!cl.isEmpty()) {
-		std::cout << cl.value() << "\n";
-		cl.pop();
+	else {
+		gameConfig->getArray<float, 2>(LAUNCH_SETTINGS, "window_size", window.size.vector);
+		window.pos = monitor.displayBounds.pos + monitor.displayBounds.size * 0.5 - window.size * 0.5;
+		window.mode = WindowMode::BORDERED;
+		window.title = GAME_TITLE;
 	}
 
 	window.create();

@@ -24,17 +24,17 @@ namespace hagame {
 
 		struct Event {
 			// If removing an entity, this will be filled
-			Ptr<ecs::Entity> entity = NULL;
+			RawPtr<ecs::Entity> entity = NULL;
 
 			// If adding a child, this will be the target parent
-			Ptr<ecs::Entity> target = NULL;
+			RawPtr<ecs::Entity> target = NULL;
 		};
 
 		// Listen to events using this member
 		Publisher<EventType, Event> events;
 
 		// Render a tree for a single entity. Likely, there are many root entities that this should be called for
-		void render(Game* game, Ptr<ecs::Entity> entity) {
+		void render(Game* game, RawPtr<ecs::Entity> entity) {
 			if (entity == NULL)
 				return;
 
@@ -106,7 +106,7 @@ namespace hagame {
 
 	private:
 
-		Optional<Ptr<ecs::Entity>> selectedEntity = std::nullopt;
+		Optional<RawPtr<ecs::Entity>> selectedEntity = std::nullopt;
 		
 	};
 

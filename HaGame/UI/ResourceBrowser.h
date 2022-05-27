@@ -99,7 +99,7 @@ namespace hagame {
 			Tab textureTab{
 				"Textures",
 				"TEXTURE",
-				[](std::any resource, Vec2 imageSize) { return std::any_cast<Ptr<graphics::Texture>>(resource)->image.size.cast<float>().fill(imageSize); },
+				[](std::any resource, Vec2 imageSize) { return std::any_cast<Ptr<graphics::Texture>>(resource)->image->size.cast<float>().fill(imageSize); },
 				[](Game* game, std::any resource) { return std::any_cast<Ptr<graphics::Texture>>(resource)->id; },
 				[](Game* game) { return make_any(game->resources->textures); }
 			};

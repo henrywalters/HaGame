@@ -28,6 +28,12 @@ public:
 				renderer->shader = game->resources->getShaderProgram("particle");
 				renderer->emitter->settings.dir = hit.value().normal;
 			}
+
+			auto health = hit.value().entity->getComponent<Health>();
+			if (health != nullptr) {
+				health->damage(weapon.bullet.damage);
+			}
+			
 		}
 	}
 
@@ -73,7 +79,6 @@ public:
 
 		forEach<BulletHole>([this](RawPtr<BulletHole> hole, RawPtr<Entity> entity) {
 			if (game->secondsElapsed - hole->createdAt >= hole->aliveFor) {
-				// std::cout << "REMOVING BULLET\n";
 				scene->removeEntity(entity);
 			}
 		});
@@ -102,7 +107,6 @@ public:
 				if (firing && weaponController->fire(true)) {
 					auto mouseDelta = m_mousePos - entity->getPos();
 					auto deltaAngle = atan2(mouseDelta[1], mouseDelta[0]);
-					std::cout << firing << "\n";
 
 					auto emitter = entity->getComponent<hagame::graphics::ParticleEmitterRenderer>();
 

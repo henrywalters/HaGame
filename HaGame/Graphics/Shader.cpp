@@ -9,6 +9,7 @@ hagame::graphics::Shader hagame::graphics::Shader::Load(GLuint type, std::string
 	glCompileShader(shader.id);
 	glGetShaderiv(shader.id, GL_COMPILE_STATUS, &shaderCompiled);
 	if (shaderCompiled != GL_TRUE) {
+		std::cout << "######## SHADER SOURCE CODE #######\n" << source << "\n######## END SOURCE CODE ########\n";
 		std::cout << shader.getShaderLog() << std::endl;
 		throw new std::exception("Failed to compile shader. Please refer to console for more details");
 	}

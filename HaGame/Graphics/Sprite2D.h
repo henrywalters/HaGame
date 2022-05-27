@@ -18,7 +18,8 @@ namespace hagame {
 		public:
 			Texture* texture;
 			Ptr<Quad> quad;
-			Vec2 pos;
+			Vec3 pos;
+			Color color = Color::white();
 
 			void draw() {
 				glActiveTexture(GL_TEXTURE0);

@@ -21,12 +21,16 @@ void Demo::onSceneInit()
 	addSystem<CustomRenderSystem>();
 	addSystem<PhysicsSystem>();
 	addSystem<WeaponSystem>();
+	addSystem<HealthSystem>();
 
 	addCamera();
 	uiOrth = std::make_shared<OrthographicCamera>(game->window->size);
 	uiOrth->centered = false;
 
 	addHUD();
+
+	Vec3 start, end;
+	RawPtr<Entity> mover;
 
 	for (int i = 0; i < MAP.size(); i++) {
 		for (int j = 0; j < MAP[i].size(); j++) {
@@ -44,9 +48,32 @@ void Demo::onSceneInit()
 			case 'W':
 				walkers.push_back(addQuad(Vec2(j, i).prod(BLOCK_SIZE) - WALKER_SIZE * 0.5f, WALKER_SIZE, PRIMARY));
 				break;
+			case 'S':
+				start = Vec2(j, i).prod(BLOCK_SIZE);
+				break;
+			case 'E':
+				end = Vec2(j, i).prod(BLOCK_SIZE);
+				break;
+			case 'M':
+				mover = addSprite("prototype", Vec2(j, i).prod(BLOCK_SIZE), BLOCK_SIZE);
+				break;
+			case 'B':
+				addBoxCollider(
+					addSprite("explosive_barrel", Vec2(j, i).prod(BLOCK_SIZE), BLOCK_SIZE),
+					BLOCK_SIZE,
+					false
+				);
+				break;
 			}
 		}
 	}
+	
+	std::cout << start << " -> " << end << "\n";
+
+	auto mPlatform = mover->addComponent<MovingPlatform>();
+	mPlatform->start = start;
+	mPlatform->end = end;
+	addBoxCollider(mover, BLOCK_SIZE, true);
 
 	player->addTag("player");
 	player->name = "player";
@@ -84,7 +111,7 @@ void Demo::onSceneInit()
 
 void Demo::onSceneActivate()
 {
-	player->getComponent<WeaponController>()->setWeapon(getSystem<WeaponSystem>()->getWeaponByName("Shotgun"), 3, 12);
+	player->getComponent<WeaponController>()->setWeapon(getSystem<WeaponSystem>()->getWeaponByName("AssaultRifle"), 3, 12);
 }
 
 void Demo::onSceneBeforeUpdate()
@@ -98,6 +125,13 @@ void Demo::onSceneUpdate(double dt)
 
 	frameTime = dt;
 	auto playerBody = player->getComponent<RigidBody>();
+
+	ImGui::Begin("Entity Tree");
+	ecs.entities.forEach([this](auto entity) {
+		if (entity->parent == nullptr)
+			entityTree.render(game, entity);
+	});
+	ImGui::End();
 
 	renderPlayerConfig();
 }
@@ -139,6 +173,7 @@ void Demo::renderPlayerConfig()
 	ImGui::Begin("Player Settings");
 	platform->updateImGui();
 	controller->updateImGui();
+	ImGui::Text(rigidbody->vel.toString().c_str()); 
 	ImGui::DragFloat3("Gravity", rigidbody->forceDueToGravity.vector, 0.1f, -100.0f, 100.0f);
 	ImGui::End();
 }

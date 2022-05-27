@@ -62,6 +62,7 @@ namespace hagame {
 				if (scene->activeCameraEntity != nullptr) {
 					scene->ecs.entities.sortByDistance<DynamicMeshRenderer>(scene->activeCameraEntity->transform->getPosition());
 					scene->ecs.entities.sortByDistance<SpriteRenderer>(scene->activeCameraEntity->transform->getPosition());
+					scene->ecs.entities.sortByDistance<Sprite2DRenderer>(scene->activeCameraEntity->transform->getPosition());
 					scene->ecs.entities.sortByDistance<Sprite3DRenderer>(scene->activeCameraEntity->transform->getPosition());
 				}
 
@@ -227,14 +228,16 @@ namespace hagame {
 					if (entity != NULL && r->sprite->texture != NULL && r->shader != NULL) {
 						r->shader->use();
 
-						auto translation = Mat4::Translation(r->sprite->pos.resize<3>(1.0f));
+						auto translation = Mat4::Translation(entity->getPos() + r->sprite->pos);
 						//auto rotation = Mat4::Rotation(entity->transform->getRotation() * Quat(r->sprite->rotation, Vec3::Face()));
 						//auto scale = Mat4::Scale(r->sprite->rect.size.resize<3>());
+
+						r->shader->setVec4("color", r->sprite->color);
 
 						r->shader->setMVP(
 							translation,
 							Mat4::Identity(),
-							uiProjMat
+							scene->projMat
 						);
 						r->sprite->draw();
 					}

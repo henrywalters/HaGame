@@ -4,6 +4,7 @@
 #include "./../../HaGame/HaGame.h"
 #include "../Components/Platformer.h"
 #include "../Components/PlayerController.h"
+#include "../Components/MovingPlatform.h"
 
 class PlatformerSystem : public hagame::ecs::System {
 public:

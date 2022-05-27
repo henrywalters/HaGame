@@ -11,6 +11,7 @@ public:
 	String getSystemName() { return "AISystem"; }
 
 	void onSystemUpdate(double dt);
+	void onSystemPhysicsBeforeUpdate(double dt);
 	void onSystemPhysicsUpdate(double dt);
 
 };
