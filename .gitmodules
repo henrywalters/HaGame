@@ -1,10 +1,12 @@
 [submodule "HaGame/Vendor/imgui"]
 	path = HaGame/Vendor/imgui
 	url = git@github.com:ocornut/imgui.git
-
 [submodule "HaGame/Vendor/ImGuizmo"]
 	path = HaGame/Vendor/ImGuizmo
 	url = https://github.com/CedricGuillemet/ImGuizmo.git
 [submodule "HaGame/Vendor/ImGuiFileDialog"]
 	path = HaGame/Vendor/ImGuiFileDialog
 	url = https://github.com/aiekick/ImGuiFileDialog.git
+[submodule "HaGame/Vendor/tinyexr"]
+	path = HaGame/Vendor/tinyexr
+	url = git@github.com:henrywalters/tinyexr.git

@@ -21,7 +21,8 @@ list(APPEND CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR}/extern/glew-2.1.0)
 find_package(GLEW REQUIRED)
 find_package(GLUT REQUIRED)
 
-find_package(TinyEXR REQUIRED)
+# find_package(TinyEXR REQUIRED)
+# add_library(tinyexr STATIC IMPORTED ${TINYEXR_SOURCE})
 
 message(STATUS "OpenGL LIBS: ${OPENGL_INCLUDE_DIR}")  
 message(STATUS "GLEW_LIBS: ${GLEW_LIBRARIES}")
@@ -38,8 +39,6 @@ include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_MIXER_INCLUDE_DIRS} ${GLEW_INCLU
 set(LIBS ${SDL2_LIBS} ${SDL2_MIXER_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${GLUT_LIBRARIES})
 
 add_executable(HaGame HaGame/HaGame.cpp)
-
-add_dependencies(HaGame tinyexr)
 
 target_link_libraries(HaGame ${LIBS})
 
@@ -63,9 +62,11 @@ target_link_libraries(SpaceHorror ${LIBS})
 add_executable(ParticleEditor Tools/ParticleEditor/ParticleEditor.cpp)
 target_link_libraries(ParticleEditor ${LIBS})
 
+add_executable(EXRLoader Tools/EXRLoader/EXRLoader.cpp) 
+
 target_compile_options(ImSim PRIVATE "/bigobj")
 target_compile_options(SpaceHorror PRIVATE "/bigobj")
-
+ 
 if (MSVC_VERSION GREATER_EQUAL "1900")
     include(CheckCXXCompilerFlag)
     CHECK_CXX_COMPILER_FLAG("/std:c++latest" _cpp_latest_flag_supported)
@@ -77,6 +78,7 @@ if (MSVC_VERSION GREATER_EQUAL "1900")
         target_compile_options(ImSim PRIVATE "/std:c++17")
         target_compile_options(SpaceHorror PRIVATE "/std:c++17")
         target_compile_options(ParticleEditor PRIVATE "/std:c++17")
+        target_compile_options(EXRLoader PRIVATE "/std:c++17")
     endif()
 else()
     set_property(TARGET HaGame PROPERTY CXX_STANDARD 17)

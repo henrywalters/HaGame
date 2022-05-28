@@ -6,6 +6,7 @@
 #ifndef HAGAME_H
 #define HAGAME_H
 
+#define NOMINMAX true
 #define WITH_SDL2
 
 #include <iostream>
@@ -133,6 +134,8 @@
 #include "Core/ECS/Entity.cpp"
 
 #endif
+
+#include "Vendor/tinyexr/tinyexr.cc"
 
 #include "Vendor/json.hpp"
 
