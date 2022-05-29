@@ -86,6 +86,7 @@ public:
 			"sprite2d",
 			"particle",
 			"batch_line",
+			"exr"
 		};
 
 		resources->loadEXR("test_exr", "Textures/SpaceHorror/Player/0001.exr");

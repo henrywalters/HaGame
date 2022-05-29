@@ -11,11 +11,15 @@ namespace hagame {
 		class EXR {
 		public:
 
-			EXR(String path) {
+			EXR(String path):
+				m_quad(std::make_shared<Quad>())
+			{
 				parse(path);
 			}
 
 			void parse(String path) {
+
+				Array<Vec2Int> sizes;
 
 				float* data;
 				Vec2Int size;
@@ -59,17 +63,37 @@ namespace hagame {
 					m_textures.insert(
 						std::make_pair(
 							layer,
-							std::make_shared<RawTexture<GL_RGBA16F>>(size, data)
+							std::make_shared<RawTexture<GL_RGBA>>(size, data)
 						)
 					);
 				}
+
+				if (!elementsAllEqual(sizes)) {
+					throw new std::exception("EXR only allows same sized layers");
+				}
+
+				m_quad->setSize(size.cast<float>());
+			}
+
+			void draw() {
+				for (int i = 0; i < m_layers.size(); i++) {
+					glActiveTexture(GL_TEXTURE0 + i);
+					m_textures[m_layers[i]]->bind();
+				}
+				m_quad->getMesh()->draw();
+			}
+
+			void setSize(Vec2 size) {
+				m_quad->setSize(size);
 			}
 
 		private:
 
 			const char* m_error = nullptr;
 			Array<String> m_layers;
-			Map<String, Ptr<RawTexture<GL_RGBA16F>>> m_textures;
+			Map<String, Ptr<RawTexture<GL_RGBA>>> m_textures;
+			Ptr<Quad> m_quad;
+
 			const Array<String> xyzLayers = {
 				"Normal"
 			};

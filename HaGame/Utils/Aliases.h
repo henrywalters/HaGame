@@ -95,6 +95,24 @@ bool hasElement(Array<T> arr, V el, std::function<V(T)> lambda) {
 }
 
 template <class T>
+bool elementsAllEqual(Array<T> arr) {
+	bool init = false;
+	T value;
+
+	for (auto el : arr) {
+		if (!init) {
+			init = true;
+			value = el;
+		}
+		else {
+			if (el != value) return false;
+		}
+	}
+
+	return true;
+}
+
+template <class T>
 using Set = std::set<T>;
 
 template <class T>

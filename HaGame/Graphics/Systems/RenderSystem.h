@@ -17,6 +17,7 @@
 #include "../Components/SpriteRenderer.h"
 #include "../Components/Sprite2DRenderer.h"
 #include "../Components/Sprite3DRenderer.h"
+#include "../Components/EXRRenderer.h"
 #include "../Components/AnimatedSpriteRenderer.h"
 #include "../Components/ParticleEmitterRenderer.h"
 #include "../Components/QuadRenderer.h"
@@ -241,7 +242,20 @@ namespace hagame {
 						);
 						r->sprite->draw();
 					}
-					});
+				});
+
+				forEach<EXRRenderer>([this](RawPtr<EXRRenderer> r, RawPtr<ecs::Entity> entity) {
+					r->shader->use();
+					auto translation = Mat4::Translation(entity->getPos());
+
+					r->shader->setMVP(
+						translation,
+						Mat4::Identity(),
+						scene->projMat
+					);
+
+					r->exr->draw();
+				});
 
 				forEach<ParticleEmitterRenderer>([this](ParticleEmitterRenderer* r, RawPtr<ecs::Entity> entity) {
 					r->emitter->update(scene->game->secondsElapsed);

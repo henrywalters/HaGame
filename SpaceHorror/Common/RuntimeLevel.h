@@ -16,7 +16,7 @@ protected:
 	const float PIXELS_PER_METER = 100.0f;
 	const float WIDTH_HEIGHT_RATIO = 1.3f;
 
-	const Vec2 PLAYER_SIZE = Vec2(0.5f, 1.0f);
+	const Vec2 PLAYER_SIZE = Vec2(2.0f, 2.0f);
 	const Vec2 BLOCK_SIZE = Vec2(1.5f);
 	const Vec2 WALKER_SIZE = Vec2(0.25);
 
@@ -36,6 +36,7 @@ protected:
 	RawPtr<hagame::ecs::Entity> addHUD();
 	RawPtr<hagame::ecs::Entity> RuntimeLevel::addQuad(Vec3 pos, Vec2 size, Color color);
 	RawPtr<hagame::ecs::Entity> addSprite(String textureName, Vec2 pos, Vec2 size = Vec2(1.0f));
+	RawPtr<hagame::ecs::Entity> addEXR(String exrName, Vec2 pos, Vec2 size);
 	void addPhysics(RawPtr<hagame::ecs::Entity> entity, float mass);
 	hagame::physics::Collider* addBoxCollider(RawPtr<hagame::ecs::Entity> entity, Vec2 size, bool dynamic = true);
 	hagame::physics::Collider* addCircleCollider(Ptr<hagame::ecs::Entity> entity, float radius, bool dynamic = true);

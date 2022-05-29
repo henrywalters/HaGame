@@ -35,12 +35,22 @@ RawPtr<hagame::ecs::Entity> RuntimeLevel::addSprite(String textureName, Vec2 pos
 {
 	auto entity = addEntity();
 	entity->addTag("resizable");
-	auto renderer = entity->addComponent<hagame::graphics::SpriteRenderer>();
-	renderer->shader = game->resources->getShaderProgram("sprite");
-	renderer->sprite = std::make_shared<hagame::graphics::Sprite>(
-		game->resources->getTexture(textureName),
-		Rect(Vec2::Zero(), cellSize.prod(size))
-	);
+	auto renderer = entity->addComponent<hagame::graphics::Sprite2DRenderer>();
+	renderer->shader = game->resources->getShaderProgram("sprite2d");
+	renderer->sprite = std::make_shared<hagame::graphics::Sprite2D>();
+	renderer->sprite->quad = std::make_shared<Quad>(size);
+	renderer->sprite->texture = game->resources->getTexture(textureName);
+	entity->transform->setPosition(pos.resize<3>());
+	return entity;
+}
+
+RawPtr<hagame::ecs::Entity> RuntimeLevel::addEXR(String exrName, Vec2 pos, Vec2 size)
+{
+	auto entity = addEntity();
+	auto renderer = entity->addComponent<hagame::graphics::EXRRenderer>();
+	renderer->shader = game->resources->getShaderProgram("exr");
+	renderer->exr = game->resources->getEXR(exrName);
+	renderer->exr->setSize(size);
 	entity->transform->setPosition(pos.resize<3>());
 	return entity;
 }

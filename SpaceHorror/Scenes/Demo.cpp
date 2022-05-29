@@ -43,7 +43,7 @@ void Demo::onSceneInit()
 				);
 				break;
 			case 'P':
-				player = addSprite("henry", Vec2(j, i).prod(BLOCK_SIZE), PLAYER_SIZE);
+				player = addEXR("test_exr", Vec2(j, i).prod(BLOCK_SIZE), PLAYER_SIZE);
 				break;
 			case 'W':
 				walkers.push_back(addQuad(Vec2(j, i).prod(BLOCK_SIZE) - WALKER_SIZE * 0.5f, WALKER_SIZE, PRIMARY));
