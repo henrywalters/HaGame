@@ -50,6 +50,7 @@
 #include "Graphics/Primitives.h"
 #include "Graphics/Font.h"
 #include "Graphics/Text.h"
+#include "Graphics/EXR.h"
 #include "Graphics/Texture.cpp"
 #include "Graphics/LineBuffer.cpp"
 #include "Graphics/Material.cpp"
@@ -134,8 +135,6 @@
 #include "Core/ECS/Entity.cpp"
 
 #endif
-
-#include "Vendor/tinyexr/tinyexr.cc"
 
 #include "Vendor/json.hpp"
 

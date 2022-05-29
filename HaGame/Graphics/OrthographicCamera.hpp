@@ -38,10 +38,7 @@ namespace hagame {
 
 			void setZoom(float _zoom) {
 				zoom = clamp(_zoom, calculateInputZoomForLogZoom(MIN_LOG_ZOOM_ABS), calculateInputZoomForLogZoom(MAX_LOG_ZOOM_ABS));
-				std::cout << "ZOOM = " << zoom << "\n";
-				std::cout << exp(-zoom) << "\n";
 				zoomLog = (MAX_LOG_ZOOM / (1 + exp(-LOG_ZOOM_RATE * (zoom - ZOOM_MIDPOINT))));
-				std::cout << "ZOOM LOG = " << zoomLog << "\n";
 			}
 
 			void zoomIn(float delta) {

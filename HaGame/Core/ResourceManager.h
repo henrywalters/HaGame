@@ -5,6 +5,7 @@
 #include "../Utils/ConfigParser.h"
 #include "../Graphics/ShaderProgram.h"
 #include "../Graphics/Texture.h"
+#include "../Graphics/EXR.h"
 #include "../Graphics/Cubemap.h"
 #include "../Graphics/Image.h"
 #include "../Graphics/Mesh.h"
@@ -17,6 +18,7 @@ namespace hagame {
 		Ptr<hagame::utils::FileSystem> fs;
 
 		Map<String, Ptr<hagame::graphics::ShaderProgram>> shaderPrograms;
+		Map<String, Ptr<hagame::graphics::EXR>> exrs;
 		Map<String, Ptr<hagame::graphics::Texture>> textures;
 		Map<String, Ptr<hagame::graphics::Cubemap>> cubemaps;
 		Map<String, Ptr<hagame::graphics::Image>> images;
@@ -53,6 +55,9 @@ namespace hagame {
 
 		hagame::graphics::Texture* loadTexture(String textureName, String path);
 		hagame::graphics::Texture* getTexture(String textureName);
+
+		hagame::graphics::EXR* loadEXR(String exrName, String path);
+		hagame::graphics::EXR* getEXR(String exrName);
 
 		hagame::graphics::Cubemap* loadCubemap(String cubemapName, String paths[6]);
 		hagame::graphics::Cubemap* getCubemap(String cubemapName);

@@ -88,6 +88,8 @@ public:
 			"batch_line",
 		};
 
+		resources->loadEXR("test_exr", "Textures/SpaceHorror/Player/0001.exr");
+
 		resources->loadFile("bullets_conf", "../SpaceHorror/Config/Bullets.conf");
 		resources->loadFile("weapons_conf", "../SpaceHorror/Config/Weapons.conf");
 

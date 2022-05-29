@@ -24,6 +24,14 @@ namespace hagame {
 				setParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			}
 
+			RawTexture(Vec2Int size, float* data) {
+				glGenTextures(1, &id);
+				glBindTexture(GL_TEXTURE_2D, id);
+				glTexImage2D(GL_TEXTURE_2D, 0, TextureType, size[0], size[1], 0, GL_RGBA, GL_FLOAT, data);
+				setParameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+				setParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			}
+
 			void setParameter(GLuint param, GLuint value) {
 				glTexParameteri(GL_TEXTURE_2D, param, value);
 			}

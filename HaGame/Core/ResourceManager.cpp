@@ -124,6 +124,22 @@ hagame::graphics::Texture* hagame::ResourceManager::getTexture(String textureNam
 	return textures[textureName].get();
 }
 
+hagame::graphics::EXR* hagame::ResourceManager::loadEXR(String exrName, String path)
+{
+	auto exr = std::make_shared<hagame::graphics::EXR>(fs->getFullPath(path));
+	exrs[exrName] = exr;
+	return exrs[exrName].get();
+}
+
+hagame::graphics::EXR* hagame::ResourceManager::getEXR(String exrName)
+{
+	if (!hasKey(exrs, exrName)) {
+		throw new Exception("EXR does not exist");
+	}
+
+	return exrs[exrName].get();
+}
+
 hagame::graphics::Cubemap* hagame::ResourceManager::loadCubemap(String cubemapName, String paths[6])
 {
 	String fullPaths[6];
