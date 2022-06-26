@@ -15,6 +15,8 @@ namespace hagame {
 			Vec3 b;
 			Vec3 c;
 
+			Triangle() {}
+
 			Triangle(Vec3 _a, Vec3 _b, Vec3 _c) : a(_a), b(_b), c(_c) {}
 
 			Vec3 getBarycentricCoords(Vec3 point) {

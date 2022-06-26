@@ -14,6 +14,7 @@
 #include <list>
 #include <tuple>
 #include "../Math/Vector.h"
+#include "../Math/Polygon.h"
 #include "../Math/Matrix.h"
 #include "../Math/Hypercube.h"
 #include "../Math/NSphere.h"
@@ -204,6 +205,9 @@ using CubeUInt32 = hagame::math::Hypercube<3, uint32_t>;
 
 using Circle = hagame::math::NSphere<2, float>;
 using Sphere = hagame::math::NSphere<3, float>;
+
+using Polygon2D = hagame::math::Polygon<2, float>;
+using Polygon3D = hagame::math::Polygon<3, float>;
 
 // Vector functions
 

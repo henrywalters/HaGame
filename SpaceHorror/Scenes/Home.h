@@ -86,6 +86,7 @@ public:
 		menu->color = SECONDARY;
 
 		menu->onHover = [this](String selected) {
+			std::cout << selected << "\n";
 			game->audio->play(game->resources->getAudioSample("thud"), 0.5f);
 		};
 
@@ -95,7 +96,7 @@ public:
 			}
 
 			if (selected == "sandbox") {
-				game->setScene("demo");
+				game->setScene("runtime");
 			}
 
 			if (selected == "editor") {
@@ -144,6 +145,7 @@ public:
 	}
 
 	void onSceneActivate() {
+		game->window->ambientColor = Color::white();
 		game->window->clearColor = DARK;
 	}
 

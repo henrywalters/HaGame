@@ -53,23 +53,40 @@ void hagame::graphics::Window::initGLContext() {
 	m_renderQuad = std::make_shared<Quad>(Vec2(2.0f));
 	m_renderQuad->setOrigin(Vec2(1.0f));
 
-	m_frameBuffer = std::make_shared<FrameBuffer>();
-	m_frameBuffer->initialize();
-	m_frameBuffer->bind();
-	m_frameBuffer->initializeRenderBufferObject(size.cast<int>());
-	m_colorTexture = std::make_shared<RawTexture<GL_RGBA>>(size.cast<int>());
+	m_lightBuffer = std::make_shared<FrameBuffer>();
+	m_lightBuffer->initialize();
+	m_lightBuffer->bind();
+	m_lightBuffer->initializeRenderBufferObject(size.cast<int>());
+	m_lightColorTexture = std::make_shared<RawTexture<GL_RGBA>>(size.cast<int>());
+	m_lightBuffer->attachRawTexture(m_lightColorTexture.get());
+
+	m_geometryBuffer = std::make_shared<FrameBuffer>();
+	m_geometryBuffer->initialize();
+	m_geometryBuffer->bind();
+	m_geometryBuffer->initializeRenderBufferObject(size.cast<int>());
+	m_geometryColorTexture = std::make_shared<RawTexture<GL_RGBA>>(size.cast<int>());
 	m_normalTexture = std::make_shared<RawTexture<GL_RGBA16F>>(size.cast<int>());
 	m_positionTexture = std::make_shared<RawTexture<GL_RGBA16F>>(size.cast<int>());
 
-	m_frameBuffer->attachRawTexture(m_colorTexture.get());
-	m_frameBuffer->attachRawTexture(m_normalTexture.get(), 1);
-	m_frameBuffer->attachRawTexture(m_positionTexture.get(), 2);
+	m_geometryBuffer->attachRawTexture(m_geometryColorTexture.get());
+	m_geometryBuffer->attachRawTexture(m_normalTexture.get(), 1);
+	m_geometryBuffer->attachRawTexture(m_positionTexture.get(), 2);
 
-	if (!m_frameBuffer->isComplete()) {
-		throw new std::exception("FAILED TO GENERATE FRAMEBUFFER");
+	renderPasses.create(RenderMode::Geometry, size.cast<int>()); // Layout 0
+	renderPasses.create(RenderMode::Light, size.cast<int>()); // Layout 1
+	renderPasses.create(RenderMode::Normal, size.cast<int>()); // Layout 2
+	renderPasses.create(RenderMode::Specular, size.cast<int>()); // Layout 3
+	renderPasses.create(RenderMode::Unlit, size.cast<int>()); // Layout 4
+
+	if (!m_geometryBuffer->isComplete()) {
+		throw new std::exception("FAILED TO GENERATE GEOMETRY FRAMEBUFFER");
 	}
 
-	m_frameBuffer->unbind();
+	if (!m_lightBuffer->isComplete()) {
+		throw new std::exception("FAILED TO GENERATE LIGHT FRAMEBUFFER");
+	}
+
+	m_geometryBuffer->unbind();
 
 	//if (SDL_GL_SetSwapInterval(-1) < 0) {
 	//	throw new std::exception("Failed to set VSync");
@@ -177,11 +194,26 @@ void hagame::graphics::Window::destroy() {
 	SDL_DestroyWindow(window);
 }
 
-void hagame::graphics::Window::clear() {
-	m_frameBuffer->bind();
-	glStencilMask(0xFF);
+void hagame::graphics::Window::clearGeometry() {
+	m_geometryBuffer->bind();
 	glClearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	resetGl();
+}
+
+void hagame::graphics::Window::clearLight()
+{
+	m_lightBuffer->bind();
+	glClearColor(ambientColor[0], ambientColor[1], ambientColor[2], ambientColor[3]);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	resetGl();
+}
+
+void hagame::graphics::Window::resetGl()
+{
+	// m_geometryBuffer->bind();
+	glStencilMask(0xFF);
+
 	glEnable(GL_STENCIL_TEST);
 	// glEnable(GL_ALPHA_TEST);
 	glEnable(GL_BLEND);
@@ -191,21 +223,47 @@ void hagame::graphics::Window::clear() {
 	glFrontFace(GL_CCW);
 	//glCullFace(GL_BACK);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	// glBlendEquation(GL_FUNC_ADD);
 	glDepthFunc(GL_LESS);
 	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 }
 
-void hagame::graphics::Window::render() {
+void hagame::graphics::Window::activateGeometryBuffer()
+{
+	m_geometryBuffer->bind();
+}
+
+void hagame::graphics::Window::activateLightBuffer()
+{
+	m_lightBuffer->bind();
+}
+
+void hagame::graphics::Window::renderGeometry()
+{
+	m_geometryBuffer->bind();
 	unsigned int attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
 	glDrawBuffers(3, attachments);
-	m_frameBuffer->unbind();
+	m_geometryBuffer->unbind();
+}
+
+void hagame::graphics::Window::renderLight()
+{
+	m_lightBuffer->bind();
+	unsigned int attachments[1] = { GL_COLOR_ATTACHMENT0 };
+	glDrawBuffers(1, attachments);
+	m_lightBuffer->unbind();
+}
+
+void hagame::graphics::Window::render() {
+
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	m_renderShader->use();
 	glDisable(GL_DEPTH_TEST);
-	glActiveTexture(GL_TEXTURE0);
-	m_colorTexture->bind();
+
+	renderPasses.activateTextures();
+
 	m_renderQuad->getMesh()->draw();
 
 	SDL_GL_SwapWindow(window);

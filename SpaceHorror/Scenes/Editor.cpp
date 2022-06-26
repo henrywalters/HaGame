@@ -141,7 +141,7 @@ Optional<Editor::Error> Editor::saveLevel()
 	for (auto tile : tiles) {
 		tileConfig->addSection(tile->name);
 		std::vector<std::array<int, 2>> placements;
-		tile->placements.forEach([&placements](auto x, auto y, auto entity) {
+		tile->placements.forEach([&placements](auto x, auto y, Entity* entity) {
 			std::array<int, 2> coords;
 			coords[0] = x;
 			coords[1] = y;

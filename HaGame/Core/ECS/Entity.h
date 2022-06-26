@@ -29,6 +29,7 @@ namespace hagame {
 
 			Ptr<Transform> transform;
 
+			bool active = true;
 			uint32_t entt_id;
 			utils::UUID id;
 			utils::UUID uuid;

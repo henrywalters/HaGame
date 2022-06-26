@@ -102,6 +102,10 @@ namespace hagame {
 			void afterUpdateAll(double dt) {
 				forAll([dt](Ptr<ecs::System> system) { system->afterUpdate(dt); });
 			}
+
+			void postTickAll() {
+				forAll([](Ptr<ecs::System> system) { system->postTick(); });
+			}
 		};
 	}
 }

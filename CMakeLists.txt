@@ -39,6 +39,7 @@ include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_MIXER_INCLUDE_DIRS} ${GLEW_INCLU
 set(LIBS ${SDL2_LIBS} ${SDL2_MIXER_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${GLUT_LIBRARIES})
 
 add_executable(HaGame HaGame/HaGame.cpp)
+add_library(HaGameLib HaGame/HaGame.cpp)
 
 target_link_libraries(HaGame ${LIBS})
 
@@ -57,7 +58,7 @@ add_executable(ImSim ImSim/ImSim.cpp)
 target_link_libraries(ImSim ${LIBS})
 
 add_executable(SpaceHorror SpaceHorror/SpaceHorror.cpp)
-target_link_libraries(SpaceHorror ${LIBS})
+target_link_libraries(SpaceHorror ${LIBS} HaGameLib)
 
 add_executable(ParticleEditor Tools/ParticleEditor/ParticleEditor.cpp)
 target_link_libraries(ParticleEditor ${LIBS})
@@ -66,6 +67,7 @@ add_executable(EXRLoader Tools/EXRLoader/EXRLoader.cpp)
 
 target_compile_options(ImSim PRIVATE "/bigobj")
 target_compile_options(SpaceHorror PRIVATE "/bigobj")
+target_compile_options(ParticleEditor PRIVATE "/bigobj")
  
 if (MSVC_VERSION GREATER_EQUAL "1900")
     include(CheckCXXCompilerFlag)

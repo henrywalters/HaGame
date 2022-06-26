@@ -1,15 +1,13 @@
 ﻿// HaGame3D_v1.cpp : Defines the entry point for the application.
 //
 #define SDL_MAIN_HANDLED // insert this
-#include "Demos/ECS.hpp"
-
 
 int main()
 {
 
 
-	auto ecs = hagame::ECSDemo();
-	ecs.run();
+	//auto ecs = hagame::ECSDemo();
+	//ecs.run();
 
 	//breakout.run();
 

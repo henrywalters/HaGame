@@ -90,13 +90,24 @@ String hagame::ResourceManager::processShaderFile(hagame::utils::File file) {
 }
 
 hagame::graphics::ShaderProgram* hagame::ResourceManager::loadShaderProgram(String programName, String vertPath, String fragPath) {
-	std::string vertSrc = processShaderFile(fs->getFile(vertPath));
-	std::string fragSrc = processShaderFile(fs->getFile(fragPath));
-	hagame::graphics::Shader vertShader = hagame::graphics::Shader::LoadVertex(vertSrc);
-	hagame::graphics::Shader fragShader = hagame::graphics::Shader::LoadFragment(fragSrc);
-	Ptr<hagame::graphics::ShaderProgram> program = std::make_shared<hagame::graphics::ShaderProgram>(programName, vertShader, fragShader);
+	auto vertSrc = processShaderFile(fs->getFile(vertPath));
+	auto fragSrc = processShaderFile(fs->getFile(fragPath));
+	auto vertShader = hagame::graphics::Shader::LoadVertex(vertSrc);
+	auto fragShader = hagame::graphics::Shader::LoadFragment(fragSrc);
+	auto program = std::make_shared<hagame::graphics::ShaderProgram>(programName, vertShader, fragShader);
 	shaderPrograms[programName] = program;
 	return shaderPrograms[programName].get();
+}
+
+hagame::graphics::ShaderProgram* hagame::ResourceManager::recompileShaderProgram(String programName, String vertPath, String fragPath)
+{
+	auto shader = getShaderProgram(programName);
+	auto vertSrc = processShaderFile(fs->getFile(vertPath));
+	auto fragSrc = processShaderFile(fs->getFile(fragPath));
+	if (shader->vertexShader->compile(vertSrc, false) && shader->fragmentShader->compile(fragSrc, false)) {
+		shader->link();
+	}
+	return shader;
 }
 
 hagame::graphics::ShaderProgram* hagame::ResourceManager::getShaderProgram(String programName)

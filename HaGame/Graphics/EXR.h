@@ -25,7 +25,8 @@ namespace hagame {
 				Vec2Int size;
 
 				m_layers.clear();
-				m_textures.clear();
+				m_rgbaTextures.clear();
+				m_rgbTextures.clear();
 
 				checkError(EXRLayers(path.c_str(), m_layers, &m_error));
 
@@ -46,6 +47,13 @@ namespace hagame {
 								&m_error
 							)
 						);
+
+						m_rgbTextures.insert(
+							std::make_pair(
+								layer,
+								std::make_shared<RawTexture<GL_RGB, GL_FLOAT, GL_RGB>>(size, data)
+							)
+						);
 					}
 					else {
 						checkError(
@@ -58,14 +66,16 @@ namespace hagame {
 								&m_error
 							)
 						);
+
+						m_rgbaTextures.insert(
+							std::make_pair(
+								layer,
+								std::make_shared<RawTexture<GL_RGBA>>(size, data)
+							)
+						);
 					}
 
-					m_textures.insert(
-						std::make_pair(
-							layer,
-							std::make_shared<RawTexture<GL_RGBA>>(size, data)
-						)
-					);
+
 				}
 
 				if (!elementsAllEqual(sizes)) {
@@ -76,10 +86,18 @@ namespace hagame {
 			}
 
 			void draw() {
-				for (int i = 0; i < m_layers.size(); i++) {
-					glActiveTexture(GL_TEXTURE0 + i);
-					m_textures[m_layers[i]]->bind();
+				int index = 0;
+
+				for (auto& [layer, tex] : m_rgbaTextures) {
+					glActiveTexture(GL_TEXTURE0 + index++);
+					tex->bind();
 				}
+
+				for (auto& [layer, tex] : m_rgbTextures) {
+					glActiveTexture(GL_TEXTURE0 + index++);
+					tex->bind();
+				}
+
 				m_quad->getMesh()->draw();
 			}
 
@@ -91,7 +109,8 @@ namespace hagame {
 
 			const char* m_error = nullptr;
 			Array<String> m_layers;
-			Map<String, Ptr<RawTexture<GL_RGBA>>> m_textures;
+			Map<String, Ptr<RawTexture<GL_RGBA>>> m_rgbaTextures;
+			Map<String, Ptr<RawTexture<GL_RGB, GL_FLOAT, GL_RGB>>> m_rgbTextures;
 			Ptr<Quad> m_quad;
 
 			const Array<String> xyzLayers = {

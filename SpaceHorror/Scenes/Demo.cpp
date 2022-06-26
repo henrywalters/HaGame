@@ -12,16 +12,7 @@ void Demo::onSceneInit()
 
 	game->window->clearColor = Color("#003153");
 
-	addSystem<RenderSystem>();
-	addSystem<PartitionSystem>();
-	addSystem<CollisionSystem>();
-	addSystem<PlatformerSystem>();
-	addSystem<UISystem>();
-	addSystem<AISystem>();
-	addSystem<CustomRenderSystem>();
-	addSystem<PhysicsSystem>();
-	addSystem<WeaponSystem>();
-	addSystem<HealthSystem>();
+
 
 	addCamera();
 	uiOrth = std::make_shared<OrthographicCamera>(game->window->size);
@@ -57,6 +48,9 @@ void Demo::onSceneInit()
 			case 'M':
 				mover = addSprite("prototype", Vec2(j, i).prod(BLOCK_SIZE), BLOCK_SIZE);
 				break;
+			case 'L':
+				light = addLight(Vec2(j, i).prod(BLOCK_SIZE), 10.0f);
+				break;
 			case 'B':
 				addBoxCollider(
 					addSprite("explosive_barrel", Vec2(j, i).prod(BLOCK_SIZE), BLOCK_SIZE),
@@ -70,10 +64,10 @@ void Demo::onSceneInit()
 	
 	std::cout << start << " -> " << end << "\n";
 
-	auto mPlatform = mover->addComponent<MovingPlatform>();
-	mPlatform->start = start;
-	mPlatform->end = end;
-	addBoxCollider(mover, BLOCK_SIZE, true);
+	//auto mPlatform = mover->addComponent<MovingPlatform>();
+	//mPlatform->start = start;
+	//mPlatform->end = end;
+	//addBoxCollider(mover, BLOCK_SIZE, true);
 
 	player->addTag("player");
 	player->name = "player";
@@ -111,6 +105,8 @@ void Demo::onSceneInit()
 
 void Demo::onSceneActivate()
 {
+	game->window->ambientColor = Color::black();
+	game->window->clearColor = Color::black();
 	player->getComponent<WeaponController>()->setWeapon(getSystem<WeaponSystem>()->getWeaponByName("AssaultRifle"), 3, 12);
 }
 
@@ -123,8 +119,37 @@ void Demo::onSceneBeforeUpdate()
 void Demo::onSceneUpdate(double dt)
 {
 
+	if (game->input.keyboardMouse.keyboard.numbersPressed[1]) {
+		std::cout << "RECOMPILING Shaders\n";
+		game->resources->recompileShaderProgram("light2d", "Shaders/light2d_vert.glsl", "Shaders/light2d_frag.glsl");
+		game->resources->recompileShaderProgram("screen", "Shaders/screen_vert.glsl", "Shaders/screen_frag.glsl");
+	}
+
 	frameTime = dt;
 	auto playerBody = player->getComponent<RigidBody>();
+
+	ImGui::Begin("Light Settings");
+	ImGui::ColorEdit4("Color", lColor.vector);
+	ImGui::SliderFloat("Constant", &lConst, 0.0, 10.0);
+	ImGui::SliderFloat("Linear", &lLin, 0.0, 10.0);
+	ImGui::SliderFloat("Quadratic", &lQuad, 0.0, 10.0);
+
+	light->setPos(mousePos);
+
+	auto discLight = light->getComponent<DiscLightRenderer>();
+
+	discLight->color = lColor;
+	discLight->constant = lConst;
+	discLight->linear = lLin;
+	discLight->quadratic = lQuad;
+
+	if (game->input.keyboardMouse.mouse.leftPressed && !guiActive()) {
+		discLight = addLight(mousePos, 5.0f)->getComponent<DiscLightRenderer>();
+		discLight->color = lColor;
+		discLight->constant = lConst;
+		discLight->linear = lLin;
+		discLight->quadratic = lQuad;
+	}
 
 	ImGui::Begin("Entity Tree");
 	ecs.entities.forEach([this](auto entity) {
@@ -176,4 +201,9 @@ void Demo::renderPlayerConfig()
 	ImGui::Text(rigidbody->vel.toString().c_str()); 
 	ImGui::DragFloat3("Gravity", rigidbody->forceDueToGravity.vector, 0.1f, -100.0f, 100.0f);
 	ImGui::End();
+}
+
+bool Demo::guiActive()
+{
+	return ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow | ImGuiHoveredFlags_AllowWhenBlockedByActiveItem);
 }

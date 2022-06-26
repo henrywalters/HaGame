@@ -7,6 +7,7 @@
 #include "./Scenes/Demo.cpp"
 #include "./Scenes/Home.h"
 #include "./Scenes/Editor.cpp"
+#include "./Scenes/Runtime.cpp"
 #include "./Systems/PlatformerSystem.cpp"
 #include "./Systems/AISystem.cpp"
 #include "./../HaGame/Graphics/EXR.h"
@@ -40,6 +41,7 @@ public:
 		addScene<Demo>("demo");
 		addScene<Home>("home");
 		addScene<Editor>("editor");
+		addScene<Runtime>("runtime");
 
 		scenes.setActive("home");
 
@@ -64,7 +66,7 @@ public:
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-		window->setTitle("SpaceHorror - " + std::to_string(fps / 1000000));
+		window->setTitle("SpaceHorror - " + std::to_string(fps));
 	}
 
 
@@ -76,7 +78,8 @@ public:
 			"crosshair.png",
 			"scifi_block.png",
 			"prototype.jpg",
-			"explosive_barrel.png"
+			"explosive_barrel.png",
+			"player_start.png"
 		};
 
 		Array<String> shaders = {
@@ -84,12 +87,15 @@ public:
 			"text",
 			"sprite",
 			"sprite2d",
+			"light2d",
+			"sprite2d_normal",
 			"particle",
+			"particle_normal",
 			"batch_line",
 			"exr"
 		};
 
-		resources->loadEXR("test_exr", "Textures/SpaceHorror/Player/0001.exr");
+		resources->loadEXR("test_exr", "Textures/SpaceHorror/0001.exr");
 
 		resources->loadFile("bullets_conf", "../SpaceHorror/Config/Bullets.conf");
 		resources->loadFile("weapons_conf", "../SpaceHorror/Config/Weapons.conf");
@@ -106,6 +112,8 @@ public:
 		resources->loadTexture("mesh_texture", "Textures/HaGame/ui/mesh.png");
 		resources->loadTexture("shader_texture", "Textures/HaGame/ui/shader.png");
 
+		resources->loadTexture("light_basic", "Textures/Lights/light_basic.png");
+
 		for (auto texture : textures) {
 			auto parts = stringSplit(texture, '.');
 			resources->loadTexture(parts[0], "Textures/" + texture);
@@ -113,6 +121,7 @@ public:
 
 		for (auto shader : shaders) {
 			resources->loadShaderProgram(shader, "Shaders/" + shader + "_vert.glsl", "Shaders/" + shader + "_frag.glsl");
+			std::cout << "\nLoaded Shader: " << shader;
 		}
 	}
 };

@@ -20,6 +20,7 @@ namespace hagame {
 			Ptr<Quad> quad;
 			Vec3 pos;
 			Color color = Color::white();
+			RenderMode renderMode = RenderMode::Geometry;
 
 			void draw() {
 				glActiveTexture(GL_TEXTURE0);

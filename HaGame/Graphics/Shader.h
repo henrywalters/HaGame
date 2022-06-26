@@ -12,13 +12,29 @@ namespace hagame {
 	namespace graphics {
 
 		class Shader {
+
+		private:
+
+			GLuint m_id;
+			GLuint m_type;
+
 		public:
-			GLuint id;
+
+			Shader(GLuint type): m_type(type), m_id(glCreateShader(type)) {};
+
+			~Shader() {
+				glDeleteShader(m_id);
+			}
+
+			GLuint getId() {
+				return m_id;
+			}
+
+			bool compile(String source, bool crashOnError = true);
 
 			// Static Members
-			static Shader Load(GLuint type, std::string source);
-			static Shader LoadVertex(std::string source);
-			static Shader LoadFragment(std::string source);
+			static Ptr<Shader> LoadVertex(std::string source);
+			static Ptr<Shader> LoadFragment(std::string source);
 
 			// Regular members
 			std::string getShaderLog();

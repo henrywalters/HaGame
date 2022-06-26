@@ -295,7 +295,7 @@ bool linesIntersect(Vec2 a, Vec2 b, Vec2 p, Vec2 q, float& t) {
 		return true;
 	}
 	else {
-		return 0;
+		return false;
 	}
 }
 

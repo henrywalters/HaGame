@@ -8,8 +8,8 @@ namespace hagame {
 		class OrthographicCamera : public Camera {
 
 			float MAX_LOG_ZOOM = 2.0f;
-			float MAX_LOG_ZOOM_ABS = 1.99f;
-			float MIN_LOG_ZOOM_ABS = 0.01f;
+			float MAX_LOG_ZOOM_ABS = 5.00f;
+			float MIN_LOG_ZOOM_ABS = 0.001f;
 			float ZOOM_MIDPOINT = 1.0f;
 			float LOG_ZOOM_RATE = 0.1;
 

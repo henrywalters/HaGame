@@ -40,6 +40,7 @@ namespace hagame {
 			virtual void onSystemPhysicsUpdate(double dt) {}
 			virtual void onSystemPhysicsAfterUpdate(double dt) {}
 			virtual void onSystemAfterUpdate(double dt) {}
+			virtual void onSystemPostTick() {}
 			virtual void onSystemStop() {}
 
 			template <class T>
@@ -106,6 +107,12 @@ namespace hagame {
 			void afterUpdate(double dt) {
 				if (active) {
 					onSystemAfterUpdate(dt);
+				}
+			}
+
+			void postTick() {
+				if (active) {
+					onSystemPostTick();
 				}
 			}
 		};

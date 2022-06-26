@@ -131,6 +131,8 @@
 #ifndef HAGAME_IMPLEMENTATION
 #define HAGAME_IMPLEMENTATION
 
+#include "Graphics/Systems/RenderSystem.cpp"
+
 #include "Physics/Collisions.cpp"
 #include "Core/ECS/Entity.cpp"
 

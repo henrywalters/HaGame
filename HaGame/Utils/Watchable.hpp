@@ -55,9 +55,17 @@ namespace hagame {
 				}
 			}
 
+			bool operator==(const T& value) {
+				return m_value == value;
+			}
+
 			// Get a reference to the watched value. A change will not be detected until isDirty is called.
 			T* ref() {
 				return &m_value;
+			}
+
+			T value() {
+				return m_value;
 			}
 
 			// If the value has been dirtied, the onChange event is fired.

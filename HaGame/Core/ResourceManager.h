@@ -50,6 +50,9 @@ namespace hagame {
 
 		// Create a shader program from individually specified vertex and fragment paths
 		hagame::graphics::ShaderProgram* loadShaderProgram(String programName, String vertPath, String fragPath);
+		
+		// Recompile a shader program without recreating the OpenGL object
+		hagame::graphics::ShaderProgram* recompileShaderProgram(String programName, String vertPath, String fragPath);
 
 		hagame::graphics::ShaderProgram* getShaderProgram(String programName);
 

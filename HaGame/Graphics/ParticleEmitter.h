@@ -23,6 +23,7 @@ namespace hagame {
 			Vec3 pos;
 			Vec2 size;
 			Vec4 color;
+			Vec3 normal;
 			float speed;
 			Vec3 dir;
 			double createdAt;
@@ -51,6 +52,9 @@ namespace hagame {
 			float minLife = 0.1f;
 			float maxLife = 0.5f;
 
+			float minTheta = 0.0;
+			float maxTheta = 2 * PI;
+
 			Color startColor = Color(1.0f, 0.0f, 0.0f, 0.5f);
 			Color endColor = Color(1.0f, 1.0f, 0.0f, 0.25f);
 
@@ -68,6 +72,8 @@ namespace hagame {
 				maxSpeed = config.getValue<float>("Settings", "maxSpeed");
 				maxSize = config.getValue<float>("Settings", "maxSize");
 				maxLife = config.getValue<float>("Settings", "maxLife");
+				minTheta = config.getValue<float>("Settings", "minTheta");
+				maxTheta = config.getValue<float>("Settings", "maxTheta");
 				config.getArray<float, 4>("Settings", "startColor", startColor.vector);
 				config.getArray<float, 4>("Settings", "endColor", endColor.vector);
 				config.getArray<float, 3>("Settings", "accel", accel.vector);
@@ -87,6 +93,8 @@ namespace hagame {
 				config.setValue("Settings", "maxSpeed", maxSpeed);
 				config.setValue("Settings", "maxSize", maxSize);
 				config.setValue("Settings", "maxLife", maxLife);
+				config.setValue("Settings", "minTheta", minTheta);
+				config.setValue("Settings", "maxTheta", maxTheta);
 				config.setArray<float, 4>("Settings", "startColor", startColor.vector);
 				config.setArray<float, 4>("Settings", "endColor", endColor.vector);
 				config.setArray<float, 3>("Settings", "accel", accel.vector);
@@ -117,12 +125,15 @@ namespace hagame {
 				auto vao = disc->getMesh()->getVAO();
 				particleBuffer->bind();
 				vao->bind();
+				vao->defineAttribute(particleBuffer.get(), DataType::Float, 2, 2, offsetof(Particle, normal));
 				vao->defineAttribute(particleBuffer.get(), DataType::Float, 3, 3, offsetof(Particle, pos));
 				vao->defineAttribute(particleBuffer.get(), DataType::Float, 4, 2, offsetof(Particle, size));
 				vao->defineAttribute(particleBuffer.get(), DataType::Float, 5, 4, offsetof(Particle, color));
+				vao->setInstanced(2);
 				vao->setInstanced(3);
 				vao->setInstanced(4);
 				vao->setInstanced(5);
+				
 			}
 
 			void updateBuffers() {
@@ -196,6 +207,10 @@ namespace hagame {
 						p.pos = Vec3::Zero();
 						p.dir = getRandomDir();
 						p.speed = rand.real(settings.minSpeed, settings.maxSpeed);
+
+						auto randomAngle = rand.real(settings.minTheta, settings.maxTheta);
+						p.normal = Quat(randomAngle, Vec3::Top()) * Vec3::Right();
+
 						p.createdAt = elapsedTime;
 						p.aliveFor = rand.real(settings.minLife, settings.maxLife);
 						particles.push_back(p);

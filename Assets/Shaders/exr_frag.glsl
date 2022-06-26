@@ -1,6 +1,7 @@
 #version 330 core
 in vec2 TexCoords;
 in vec4 Color;
+flat in int Mode;
 out vec4 LFragment;
 
 layout (binding=0) uniform sampler2D combined;
@@ -16,8 +17,16 @@ void main() {
 	vec4 diffDir = texture(diffDir, TexCoords);
 	vec4 gloss = texture(glossCol, TexCoords);
 	vec4 glossDir = texture(glossDir, TexCoords);
-	LFragment = diff + glossDir;
-	LFragment.a = LFragment.r = 0 && LFragment.g = 0 && LFragment.b = 0 ? 0.0f : LFragment.a;
-
-	//LFragment = vec4(1.0);
+	vec4 normal = texture(Normal, TexCoords);
+	
+	if (Mode == 0) {
+		LFragment = diff + diffDir;
+		if (LFragment.r == 0 && LFragment.g == 0 && LFragment.b == 0) {
+			LFragment.a = 0;
+		}
+	} else if (Mode == 1) {
+		LFragment = gloss + glossDir;
+	} else if (Mode == 2) {
+		LFragment = normal;
+	}
 }

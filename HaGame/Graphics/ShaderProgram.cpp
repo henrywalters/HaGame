@@ -1,17 +1,11 @@
 #include "ShaderProgram.h"
 
-hagame::graphics::ShaderProgram::ShaderProgram(String _name, hagame::graphics::Shader vertex, hagame::graphics::Shader fragment): vertexShader(vertex), fragmentShader(fragment) {
+hagame::graphics::ShaderProgram::ShaderProgram(String _name, Ptr<hagame::graphics::Shader> vertex, Ptr<hagame::graphics::Shader> fragment): vertexShader(vertex), fragmentShader(fragment) {
 	name = _name;
 	id = glCreateProgram();
-	glAttachShader(id, vertexShader.id);
-	glAttachShader(id, fragmentShader.id);
-	glLinkProgram(id);
-	GLint programSuccess = GL_TRUE;
-	glGetProgramiv(id, GL_LINK_STATUS, &programSuccess);
-	if (programSuccess != GL_TRUE) {
-		getProgramLog();
-		throw new std::exception("Failed to link program. Check console for details");
-	}
+	glAttachShader(id, vertexShader->getId());
+	glAttachShader(id, fragmentShader->getId());
+	link();
 }
 
 std::string hagame::graphics::ShaderProgram::getProgramLog() {
@@ -31,6 +25,17 @@ std::string hagame::graphics::ShaderProgram::getProgramLog() {
 	}
 	else {
 		return "Is not program";
+	}
+}
+
+void hagame::graphics::ShaderProgram::link()
+{
+	glLinkProgram(id);
+	GLint programSuccess = GL_TRUE;
+	glGetProgramiv(id, GL_LINK_STATUS, &programSuccess);
+	if (programSuccess != GL_TRUE) {
+		getProgramLog();
+		throw new std::exception("Failed to link program. Check console for details");
 	}
 }
 

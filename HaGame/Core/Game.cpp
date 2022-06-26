@@ -21,7 +21,7 @@ void hagame::Game::run()
 		long now = hagame::utils::Clock::Now();
 		double dt = ((double)now - (double)lastTick) / TICKS_PER_SECOND;
 		secondsElapsed += dt;
-		fps = (double) TICKS_PER_SECOND / dt;
+		fps = (double) 1.0 / dt;
 
 		bool physicsUpdate = false;
 		double physicsDt = 0;
@@ -36,7 +36,7 @@ void hagame::Game::run()
 
 		// Update the game state
 
-		window->clear();
+		// window->clear();
 		input.pollEvents();
 		onGameBeforeUpdate();
 		onGameUpdate(dt);
@@ -105,7 +105,9 @@ void hagame::Game::run()
 			if (sceneChange("after update")) continue;
 		}
 		onGameAfterUpdate();
-		window->render();
+
+		scenes.active()->ecs.systems.postTickAll();
+		// window->render();
 	}
 
 	if (scenes.hasActive()) scenes.active()->deactivate();

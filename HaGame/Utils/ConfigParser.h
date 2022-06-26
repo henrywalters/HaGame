@@ -339,6 +339,7 @@ namespace hagame {
 		};
 
 
+		// If a class inherits from Configurable, it is able to be saved and loaded from a .config file
 		class Configurable {
 		public:
 			virtual void loadFromConfig(ConfigFile config) = 0;

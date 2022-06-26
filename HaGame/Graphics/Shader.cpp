@@ -1,41 +1,54 @@
-#include "Shader.h"
+#include "shader.h"
 
-hagame::graphics::Shader hagame::graphics::Shader::Load(GLuint type, std::string source) {
-	Shader shader = Shader();
+bool hagame::graphics::Shader::compile(String source, bool crashOnError)
+{
 	const char* cStr = source.c_str();
-	shader.id = glCreateShader(type);
-	glShaderSource(shader.id, 1, &cStr, NULL);
+	glShaderSource(m_id, 1, &cStr, NULL);
 	GLint shaderCompiled = GL_FALSE;
-	glCompileShader(shader.id);
-	glGetShaderiv(shader.id, GL_COMPILE_STATUS, &shaderCompiled);
+	glCompileShader(m_id);
+	glGetShaderiv(m_id, GL_COMPILE_STATUS, &shaderCompiled);
 	if (shaderCompiled != GL_TRUE) {
-		std::cout << "######## SHADER SOURCE CODE #######\n" << source << "\n######## END SOURCE CODE ########\n";
-		std::cout << shader.getShaderLog() << std::endl;
-		throw new std::exception("Failed to compile shader. Please refer to console for more details");
+		std::cout << "######## SHADER SOURCE CODE #######\n";
+		auto lines = stringSplit(source, '\n');
+		for (int i = 0; i < lines.size(); i++) {
+			std::cout << (i + 1) << ": " << lines[i] << "\n";
+		}
+
+		std::cout << "\n######## END SOURCE CODE ########\n";
+		std::cout << getShaderLog() << std::endl;
+
+		if (crashOnError) {
+			throw new std::exception("Failed to compile shader. Please refer to console for more details");
+		}
+
+		return false;
 	}
+	return true;
+}
+
+
+Ptr<hagame::graphics::Shader> hagame::graphics::Shader::LoadVertex(std::string source) {
+	auto shader = std::make_shared<Shader>(GL_VERTEX_SHADER);
+	shader->compile(source);
 	return shader;
 }
 
-hagame::graphics::Shader hagame::graphics::Shader::LoadVertex(std::string source) {
-	return hagame::graphics::Shader::Load(GL_VERTEX_SHADER, source);
-}
-
-hagame::graphics::Shader hagame::graphics::Shader::LoadFragment(std::string source) {
-	return hagame::graphics::Shader::Load(GL_FRAGMENT_SHADER, source);
+Ptr<hagame::graphics::Shader> hagame::graphics::Shader::LoadFragment(std::string source) {
+	auto shader = std::make_shared<Shader>(GL_FRAGMENT_SHADER);
+	shader->compile(source);
+	return shader;
 }
 
 std::string hagame::graphics::Shader::getShaderLog() {
-	if (glIsShader(id)) {
+	if (glIsShader(m_id)) {
 		int logLength = 0;
 		int maxLength = logLength;
 
-		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &maxLength);
+		glGetShaderiv(m_id, GL_INFO_LOG_LENGTH, &maxLength);
 
 		char* infoLog = new char[maxLength];
 
-		glGetShaderInfoLog(id, maxLength, &logLength, infoLog);
-
-		printf("%s\n", infoLog);
+		glGetShaderInfoLog(m_id, maxLength, &logLength, infoLog);
 
 		return infoLog;
 	}

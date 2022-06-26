@@ -19,7 +19,7 @@ namespace hagame {
 		class LineBuffer {
 		public:
 
-			const size_t MAX_LINE_COUNT = 10000;
+			const size_t MAX_LINE_COUNT = 1000000;
 
 			LineBuffer() {}
 

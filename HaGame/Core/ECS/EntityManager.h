@@ -55,6 +55,7 @@ namespace hagame {
 			void forEach(std::function<void(RawPtr<Entity>)> lambda) {
 				for (auto& [id, entity] : enttMap) {
 					if (entity == nullptr) continue;
+					if (!entity->active) continue;
 					lambda(entity.get());
 				}
 			}
@@ -62,6 +63,7 @@ namespace hagame {
 			void forEach(std::function<void(RawPtr<Entity>)> lambda, Array<uint64_t> ignoreEntities, Array<String> ignoreTags) {
 				for (auto& [id, entity] : enttMap) {
 					if (entity == nullptr) continue;
+					if (!entity->active) continue;
 					if (!hasElement(ignoreEntities, (uint64_t)entity->uuid) && !entity->hasTag(ignoreTags)) {
 						lambda(entity.get());
 					}
@@ -79,6 +81,7 @@ namespace hagame {
 			template <class T>
 			void forEach(std::function<void(RawPtr<T>, Ptr<Entity>)> lambda, Array<uint64_t> ignoreEntities, Array<String> ignoreTags) {
 				for (auto entity : registry->view<T>()) {
+					if (!entity->active) continue;
 					if (!hasElement(ignoreEntities, (uint64_t)entity->uuid) && !entity->hasTag(ignoreTags)) {
 						lambda(&registry->get<T>(entity), getByEnttId(entity));
 					}

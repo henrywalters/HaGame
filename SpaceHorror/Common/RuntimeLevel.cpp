@@ -9,7 +9,7 @@ RawPtr<hagame::ecs::Entity> RuntimeLevel::addCamera()
 {
 	camera = addEntity();
 	auto cameraComp = camera->addComponent<hagame::graphics::CameraComponent>();
-	orth = std::make_shared<hagame::graphics::OrthographicCamera>(game->window->size / PIXELS_PER_METER);
+	orth = std::make_shared<hagame::graphics::OrthographicCamera>(game->window->size / game->window->pixelsPerMeter);
 	cameraComp->camera = orth;
 	//camera->transform->setPosition(game->window->size.resize<3>() / 2.0f);
 	return camera;
@@ -40,6 +40,18 @@ RawPtr<hagame::ecs::Entity> RuntimeLevel::addSprite(String textureName, Vec2 pos
 	renderer->sprite = std::make_shared<hagame::graphics::Sprite2D>();
 	renderer->sprite->quad = std::make_shared<Quad>(size);
 	renderer->sprite->texture = game->resources->getTexture(textureName);
+	entity->transform->setPosition(pos.resize<3>());
+	return entity;
+}
+
+RawPtr<hagame::ecs::Entity> RuntimeLevel::addLight(Vec2 pos, float radius, Color color)
+{
+	auto entity = addEntity();
+	entity->addTag("resizable");
+	auto renderer = entity->addComponent<hagame::graphics::DiscLightRenderer>();
+	renderer->shader = game->resources->getShaderProgram("light2d");
+	renderer->disc = std::make_shared<hagame::graphics::Disc>(radius);
+	renderer->color = color;
 	entity->transform->setPosition(pos.resize<3>());
 	return entity;
 }
@@ -88,17 +100,27 @@ hagame::physics::Collider* RuntimeLevel::addCircleCollider(Ptr<hagame::ecs::Enti
 	return collider;
 }
 
+void RuntimeLevel::renderBlockOutline(Vec2 pos)
+{
+	hagame::graphics::drawRect(Rect(pos.rounded() * BLOCK_SIZE - BLOCK_SIZE * 0.5, BLOCK_SIZE), Color::green(), DEBUG_SHADER, 0.1f);
+}
+
 void RuntimeLevel::setMousePos(Vec2 rawMousePos)
 {
 	rawMousePos[1] = game->window->size[1] - rawMousePos[1];
-	mousePos = orth->getGamePos(camera->transform, rawMousePos / PIXELS_PER_METER);
+	mousePos = orth->getGamePos(camera->transform, rawMousePos / game->window->pixelsPerMeter);
 }
 
 void RuntimeLevel::setWindowSize(Vec2 size)
 {
-	orth->size = size / PIXELS_PER_METER;
+	orth->size = size / game->window->pixelsPerMeter;
 	uiOrth->size = size;
 	cellSize = size / 10.0f;
+}
+
+bool RuntimeLevel::guiActive()
+{
+	return ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow | ImGuiHoveredFlags_AllowWhenBlockedByActiveItem);
 }
 
 float RuntimeLevel::binarySearchCollisionTime(Cube entityCube, Cube otherCube, Vec2 velocity, double dt)

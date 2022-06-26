@@ -16,12 +16,17 @@ namespace hagame {
 		public:
 			GLuint id;
 			String name;
-			hagame::graphics::Shader vertexShader;
-			hagame::graphics::Shader fragmentShader;
+			Ptr<hagame::graphics::Shader> vertexShader;
+			Ptr<hagame::graphics::Shader> fragmentShader;
 
-			ShaderProgram(String _name, hagame::graphics::Shader vertex, hagame::graphics::Shader fragment);
+			ShaderProgram(String _name, Ptr <hagame::graphics::Shader> vertex, Ptr <hagame::graphics::Shader> fragment);
+			~ShaderProgram() {
+				glDeleteProgram(id);
+			}
 
 			std::string getProgramLog();
+
+			void link();
 
 			void use();
 

@@ -16,6 +16,7 @@
 #include "RawTexture.h"
 #include "Quad.hpp"
 #include "ShaderProgram.h"
+#include "RenderPasses.h"
 
 namespace hagame {
 	namespace graphics {
@@ -48,14 +49,34 @@ namespace hagame {
 			Filled,
 		};
 
+		enum class RenderMode {
+			Geometry,
+			Light,
+			Normal,
+			Specular,
+			Unlit,
+			All,
+		};
+
+		const std::vector<String> RENDER_MODES = {
+			"Geometry",
+			"Light",
+			"Normal",
+			"Specular",
+			"Unlit",
+			"All"
+		};
+
 		class Window {
 		private:
 			void initGLAttribs();
 			void initGLContext();
 			Rect _viewport;
 			WindowRenderMode renderMode;
-			Ptr<FrameBuffer> m_frameBuffer;
-			Ptr<RawTexture<GL_RGBA>> m_colorTexture;
+			Ptr<FrameBuffer> m_lightBuffer;
+			Ptr<FrameBuffer> m_geometryBuffer;
+			Ptr<RawTexture<GL_RGBA>> m_lightColorTexture;
+			Ptr<RawTexture<GL_RGBA>> m_geometryColorTexture;
 			Ptr<RawTexture<GL_RGBA16F>> m_normalTexture;
 			Ptr<RawTexture<GL_RGBA16F>> m_positionTexture;
 			Ptr<Quad> m_renderQuad;
@@ -67,6 +88,11 @@ namespace hagame {
 			Vec2 pos;
 			std::string title;
 			hagame::graphics::Color clearColor = hagame::graphics::Color::black();
+			hagame::graphics::Color ambientColor = hagame::graphics::Color::white();
+			RenderPasses<RenderMode> renderPasses;
+			RenderMode renderPassMode = RenderMode::All;
+
+			int pixelsPerMeter = 1;
 
 			SDL_Window* window;
 			SDL_GLContext gl;
@@ -102,8 +128,25 @@ namespace hagame {
 			// Destroy (and close) the window
 			void destroy();
 
-			// Clear all contents of window
-			void clear();
+			// Clear contents of Geometry buffer
+			void clearGeometry();
+
+			// Clear contents of Light Buffer
+			void clearLight();
+
+			void resetGl();
+
+			// Activate the geometry buffer - every draw call will be rendered to the geometry texture
+			void activateGeometryBuffer();
+
+			// Activate the light buffer - every draw call will be rendererd to the light texture
+			void activateLightBuffer();
+
+			// Render contents of Geometry Buffer to texture
+			void renderGeometry();
+
+			// Render contents of Light buffer to texture
+			void renderLight();
 
 			// Render the display buffer to window
 			void render();
