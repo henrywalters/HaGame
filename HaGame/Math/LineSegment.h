@@ -2,8 +2,6 @@
 #define LINE_SEGMENT_PRIMITIVE_H
 
 #include "../Utils/Aliases.h"
-#include "./Triangle.h"
-#include "./Functions.h"
 
 namespace hagame {
 	namespace math {
@@ -11,11 +9,12 @@ namespace hagame {
 			Vec3 a;
 			Vec3 b;
 
+			LineSegment() {}
 			LineSegment(Vec3 _a, Vec3 _b) : a(_a), b(_b) {}
 
 			// Get a point on the parameterized line
 			Vec3 getPointOnLine(float t) {
-				return a + (b - a) * clamp<float>(t, 0, 1);
+				return a + (b - a) * (t < 0 ? 0 : (t > 1 ? 1 : t));
 			}
 
 			// Calculates the point on the line closest to another point as well as the parameter t

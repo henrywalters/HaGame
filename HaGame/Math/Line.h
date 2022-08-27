@@ -10,6 +10,7 @@ namespace hagame {
 			Vec3 a;
 			Vec3 b;
 
+			Line() {}
 			Line(Vec3 _a, Vec3 _b) : a(_a), b(_b) {}
 
 			// Get a point on the parameterized line
@@ -41,6 +42,14 @@ namespace hagame {
 
 			float magnitudeSq() {
 				return (b - a).magnitudeSq();
+			}
+
+			bool operator==(const Line& line) {
+				return a == line.a && b == line.b;
+			}
+
+			bool operator!=(const Line& line) {
+				return a != line.a || b != line.b;
 			}
 		};
 

@@ -50,11 +50,17 @@ private:
 	// Level variables
 	double m_startTime;
 	RawPtr<hagame::ecs::Entity> m_playerStart = NULL;
+
+	float edgeThickness = 0.1;
+	Color edgeColor = Color::blue();
+	bool placingEdge = false;
+	hagame::math::Line currentEdge;
 	
 	//Array<RuntimeEntity> m_tiles;
 	hagame::utils::TileGrid<RuntimeEntity> m_tiles = hagame::utils::TileGrid<RuntimeEntity>(BLOCK_SIZE);
 	Array<Polygon2D> m_tileShapes;
 	Array<RuntimeEntity> m_lights;
+	Array<hagame::math::Line> m_edges;
 
 	Array<hagame::utils::TileGrid<RuntimeEntity>::Edge> edges;
 
@@ -69,7 +75,7 @@ private:
 	// Set the current preview icon to a certain texture
 	void setPreviewer(RawPtr<Texture> texture, Vec2 size);
 
-	Array<hagame::math::Triangle> computeLineOfSight(Vec2 pos);
+	Array<Vec2> computeLineOfSight(Vec2 pos);
 
 	void renderDeveloperWindow();
 

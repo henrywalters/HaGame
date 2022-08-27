@@ -70,11 +70,11 @@ void Runtime::onSceneUpdate(double dt)
 			}
 		}
 
-		auto tris = computeLineOfSight(mousePos);
-
-		for (auto tri : tris) {
-			hagame::graphics::drawTriangle(tri, Color::blue(), DEBUG_SHADER, 0.1);
+		for (auto edge : m_edges) {
+			hagame::graphics::drawLine(edge, Color::blue(), DEBUG_SHADER, edgeThickness);
 		}
+
+		auto points = computeLineOfSight(mousePos);
 
 		for (auto edge : edges) {
 			hagame::graphics::drawLine(hagame::math::Line(edge.start, edge.end), Color::blue(), DEBUG_SHADER, 0.1);
@@ -161,6 +161,8 @@ void Runtime::renderDeveloperWindow()
 	}
 
 	game->window->renderPassMode = (RenderMode)renderMode;
+
+	ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal);
 
 	for (auto tool : EDITOR_TOOLS) {
 		ImGui::RadioButton(tool->label.c_str(), editorMode.ref(), tool->id);
@@ -274,9 +276,42 @@ void Runtime::initializeEditorTools()
 		lightEditor.render();
 	};
 
+	
+	// Edge Tool
+
+	auto edgeTool = std::make_shared<EditorTool>("Edge Tool");
+	edgeTool->onActivate = [this]() {
+		m_previewer->active = false;
+	};
+	edgeTool->onUpdate = [this](Vec2 pos) {
+
+		if (game->input.keyboardMouse.mouse.leftPressed) {
+			if (placingEdge) {
+				currentEdge.b = pos;
+				placingEdge = false;
+				m_edges.push_back(currentEdge);
+			}
+			else {
+				currentEdge = hagame::math::Line(pos, pos);
+				placingEdge = true;
+			}
+		}
+
+		if (placingEdge) {
+			hagame::graphics::drawLine(hagame::math::Line(currentEdge.a, pos), Color::blue(), DEBUG_SHADER, edgeThickness);
+			LineIntersection intersection;
+			for (auto edge : m_edges) {
+				if (linesIntersect(pos, currentEdge.a, edge.b, edge.a, intersection) && !intersection.collinear()) {
+					hagame::graphics::drawRect(Rect(pos + (currentEdge.a - pos) * intersection.t(), Vec2(0.2)), Color::red());
+				}
+			}
+		}
+	};
+
 	EDITOR_TOOLS.push_back(tileTool);
 	EDITOR_TOOLS.push_back(playerStartTool);
 	EDITOR_TOOLS.push_back(lightTool);
+	EDITOR_TOOLS.push_back(edgeTool);
 	
 }
 
@@ -287,7 +322,7 @@ void Runtime::setPreviewer(RawPtr<Texture> texture, Vec2 size)
 	sprite->sprite->quad->setSize(texture->image->size.cast<float>().fill(size));
 }
 
-Array<hagame::math::Triangle> Runtime::computeLineOfSight(Vec2 pos)
+Array<Vec2> Runtime::computeLineOfSight(Vec2 pos)
 {
 	struct EdgePoint {
 		Vec2 pos;
@@ -296,59 +331,105 @@ Array<hagame::math::Triangle> Runtime::computeLineOfSight(Vec2 pos)
 
 	Array<hagame::math::Triangle> triangles;
 	Array<EdgePoint> points;
+	Array<Vec2> out;
 	hagame::math::Triangle currentTri;
 	Vec2 nearestWall;
 	float nearestDist;
 	bool hasNearest = false;
+	bool hasFurthest = false;
 	bool triStarted = false;
-	float t;
+	float magDist;
 
-	for (auto edge : edges) {
-		auto sDelta = pos - edge.start;
-		auto eDelta = pos - edge.end;
-		points.push_back(EdgePoint{ edge.start, atan2(sDelta.y(), sDelta.x()) });
-		points.push_back(EdgePoint{ edge.end, atan2(eDelta.y(), eDelta.x()) });
+	auto edgeCount = edges.size();
+
+	for (int i = 0; i < edgeCount; i++) {
+
+		auto sDelta = edges[i].start - pos;
+
+		points.push_back(EdgePoint{ edges[i].start, atan2(sDelta.y(), sDelta.x())});
+
+		std::cout << edges[i].start << "\n";
+
+		if (!hasFurthest || sDelta.magnitude() > magDist) {
+			magDist = sDelta.magnitude();
+			hasFurthest = true;
+		}
 	}
 
 	std::sort(points.begin(), points.end(), [](EdgePoint a, EdgePoint b) {
 		return a.theta > b.theta;
 	});
 
-	
+	int lastEdge = -1;
+	Vec2 lastHit;
+	bool hit = false;
+	Vec2 nearestHit;
+	LineIntersection intersection;
+	int index = 0;
+	int nearestEdge;
+
+	std::cout << "POINTS = " << points.size() << " EDGES = " << edges.size() << "\n";
 
 	for (auto point : points) {
-		bool hit = false;
-		Vec2 nearestHit;
+
+		Vec2 endpoint = point.pos;
+
+		hit = false;
+
 		for (auto edge : edges) {
 
-			if (linesIntersect(pos, point.pos, edge.start, edge.end, t) && t < nearestDist) {
-				hit = true;
-				nearestHit = edge.start + (edge.end - edge.start) * t;
-				nearestDist = t;
-			}
-
-			if (hit) {
-				hagame::graphics::drawRect(Rect(nearestHit, Vec2(0.25)), Color::red());
-
-				if (!hasNearest || nearestHit != nearestWall) {
-					hasNearest = true;
-					nearestWall = nearestHit;
-
-					if (!triStarted) {
-						currentTri = hagame::math::Triangle();
-						currentTri.a = pos;
-						currentTri.b = nearestWall;
-						triStarted = true;
-					}
-					else {
-						currentTri.c = nearestWall;
-						triangles.push_back(currentTri);
-						triStarted = false;
-					}
+			if (
+				linesIntersect(pos, endpoint, edge.start, edge.end, intersection) &&
+				!intersection.collinear()
+			) {
+				
+				if ((!hit || (intersection.t() < nearestDist))) {
+					hit = true;
+					nearestHit = intersection.pos();
+					nearestDist = intersection.t();
+					nearestEdge = index;
+					
 				}
 			}
+
+			index++;
+		}
+
+		if (hit) {
+			drawLine(hagame::math::Line(pos, nearestHit), Color::green(), DEBUG_SHADER, 0.05);
+			if (nearestEdge != lastEdge) {
+
+				if (triStarted) {
+					currentTri.c = lastHit;
+					triangles.push_back(currentTri);
+					triStarted = false;
+				}
+				else {
+					currentTri = hagame::math::Triangle();
+					currentTri.a = nearestHit;
+					currentTri.b = pos;
+					triStarted = true;
+				}
+
+				lastEdge = nearestEdge;
+				lastHit = nearestHit;
+			}
+
+			
+			out.push_back(nearestHit);
 		}
 	}
 
-	return triangles;
+	if (triStarted) {
+		currentTri.c = nearestHit;
+		triangles.push_back(currentTri);
+	}
+
+	std::cout << "TRIANGLES = " << triangles.size() << "\n";
+
+	for (auto tri : triangles) {
+		drawTriangle(tri, Color::green(), DEBUG_SHADER, 0.05);
+	}
+
+	return out;
 }

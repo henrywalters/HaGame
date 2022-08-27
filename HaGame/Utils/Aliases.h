@@ -231,6 +231,10 @@ inline Vec3 cross(Vec3 a, Vec3 b) {
 	return a.cross(b);
 }
 
+inline float cross2(Vec2 a, Vec2 b) {
+	return a.x() * b.y() - a.y() * b.x();
+}
+
 // Matrix aliases
 using Mat4 = hagame::math::Matrix<4, 4, float>;
 

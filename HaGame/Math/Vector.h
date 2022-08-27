@@ -330,10 +330,7 @@ namespace hagame {
 				return copy;
 			}
 
-
-			Vector<3, T> cross(Vector vect) const {
-				assert(size == 3);
-
+			Vector<3, T> cross(Vector<3, T> vect) const {
 				return Vector<3, T>({
 					vector[1] * vect[2] - vector[2] * vect[1],
 					-(vector[0] * vect[2] - vector[2] * vect[0]),

@@ -61,14 +61,14 @@ namespace hagame {
 
 						if (!has(w)) {
 							if (cells.has(n) && cells.get(n).edgeExists[WEST]) {
-								edges[cells.get(n).edgeId[WEST]].end[1] -= m_cellSize[1];
+								edges[cells.get(n).edgeId[WEST]].start[1] -= m_cellSize[1];
 								cell->edgeId[WEST] = cells.get(n).edgeId[WEST];
 								cell->edgeExists[WEST] = true;
 							}
 							else {
 								Edge edge;
-								edge.start = Vec2(col * m_cellSize[0] - m_cellSize[0] * 0.5, (row + 1) * m_cellSize[1] - m_cellSize[1] * 0.5);
-								edge.end = Vec2(edge.start[0], edge.start[1] - m_cellSize[1]);
+								edge.start = Vec2(col * m_cellSize[0] - m_cellSize[0] * 0.5, row * m_cellSize[1] - m_cellSize[1] * 0.5);
+								edge.end = Vec2(edge.start[0], edge.start[1] + m_cellSize[1]);
 								cell->edgeId[WEST] = edges.size();
 								cell->edgeExists[WEST] = true;
 								edges.push_back(edge);
@@ -109,14 +109,14 @@ namespace hagame {
 						
 						if (!has(s)) {
 							if (has(w) && cells.get(w).edgeExists[SOUTH]) {
-								edges[cells.get(w).edgeId[SOUTH]].end[0] += m_cellSize[0];
+								edges[cells.get(w).edgeId[SOUTH]].start[0] += m_cellSize[0];
 								cell->edgeId[SOUTH] = cells.get(w).edgeId[SOUTH];
 								cell->edgeExists[SOUTH] = true;
 							}
 							else {
 								Edge edge;
-								edge.start = Vec2((col)*m_cellSize[0] - m_cellSize[0] * 0.5, (row) * m_cellSize[1] - m_cellSize[1] * 0.5);
-								edge.end = Vec2(edge.start[0] + m_cellSize[0], edge.start[1]);
+								edge.start = Vec2((col + 1)*m_cellSize[0] - m_cellSize[0] * 0.5, (row) * m_cellSize[1] - m_cellSize[1] * 0.5);
+								edge.end = Vec2(edge.start[0] - m_cellSize[0], edge.start[1]);
 								cell->edgeId[SOUTH] = edges.size();
 								cell->edgeExists[SOUTH] = true;
 								edges.push_back(edge);
